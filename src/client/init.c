@@ -49,8 +49,8 @@ int xdag_init(int argc, char **argv, int isGui)
 {
 	xdag_init_path(argv[0]);
 
-	const char *addrports[256], *bindto = 0, *pubaddr = 0, *pool_arg = 0, *miner_address = 0;
-	int deamon_flags = 0, n_addrports = 0, mining_threads_count = 0, is_miner = 1, level, is_rpc = 0, rpc_port = 0;
+	const char *addrports[256], *bindto = 0, *pool_arg = 0, *miner_address = 0;
+	int deamon_flags = 0, n_addrports = 0, is_miner = 1, level, is_rpc = 0, rpc_port = 0;
 	
 	memset(addrports, 0, 256);
 	
@@ -108,11 +108,6 @@ int xdag_init(int argc, char **argv, int isGui)
 			return terminal();
 		} else if(ARG_EQUAL(argv[i], "-l", "")) { /* list balance */
 			return out_balances();
-		} else if(ARG_EQUAL(argv[i], "-m", "")) { /* mining thread number */
-			if (++i < argc) {
-				sscanf(argv[i], "%d", &mining_threads_count);
-				if (mining_threads_count < 0) mining_threads_count = 0;
-			}
 		} else if(ARG_EQUAL(argv[i], "-t", "")) { /* connect test net */
 			g_xdag_testnet = 1;
 		} else if(ARG_EQUAL(argv[i], "-v", "")) { /* log level */
@@ -122,9 +117,6 @@ int xdag_init(int argc, char **argv, int isGui)
 				printf("Illevel use of option -v\n");
 				return -1;
 			}
-		} else if(ARG_EQUAL(argv[i], "-z", "")) { /* memory map  */
-			if (++i < argc)
-				xdag_mem_tempfile_path(argv[i]);
 		} else if(ARG_EQUAL(argv[i], "", "-rpc-enable")) { /* enable JSON-RPC service */
 			is_rpc = 1;
 		} else if(ARG_EQUAL(argv[i], "", "-rpc-port")) { /* set JSON-RPC service port */
@@ -145,21 +137,8 @@ int xdag_init(int argc, char **argv, int isGui)
 		xdag_mem_tempfile_path("RAM");
 	}
 
-//	if (is_miner && (!is_miner || bindto || n_addrports)) {
-//		printf("Miner can't be a pool or have directly connected to the xdag network.\n");
-//		return -1;
-//	}
-
 	g_xdag_pool = !is_miner; // move to here to avoid Data Race
 	g_is_miner = is_miner;
-
-//	if (pubaddr && !bindto) {
-//		char str[64], *p = strchr(pubaddr, ':');
-//		if (p) {
-//			sprintf(str, "0.0.0.0%s", p);
-//			bindto = strdup(str);
-//		}
-//	}
 
 	if(g_xdag_testnet) {
 		g_block_header_type = XDAG_FIELD_HEAD_TEST; //block header has the different type in the test network
@@ -190,7 +169,7 @@ int xdag_init(int argc, char **argv, int isGui)
 		if(!!xdag_rpc_service_init(rpc_port)) return -1;
 	}
 	xdag_mess("Starting blocks engine...");
-	if (xdag_blocks_start(!g_is_miner, mining_threads_count, !!miner_address)) return -1;
+	if (xdag_blocks_start(!g_is_miner, 0, !!miner_address)) return -1;
 
 	xdag_mess("Starting engine...");
 	if(xdag_initialize_mining(pool_arg, miner_address)) return -1;
@@ -227,11 +206,8 @@ void printUsage(char* appName)
 		"  -h             - print this help\n"
 		"  -i             - run as interactive terminal for daemon running in this folder\n"
 		"  -l             - output non zero balances of all accounts\n"
-		"  -m N           - use N CPU mining threads (default is 0)\n"
 		"  -t             - connect to test net (default is main net)\n"
 		"  -v N           - set loglevel to N\n"
-		"  -z <path>      - path to temp-file folder\n"
-		"  -z RAM         - use RAM instead of temp-files\n"
 		"  -rpc-enable    - enable JSON-RPC service\n"
 		"  -rpc-port      - set HTTP JSON-RPC port (default is 7677)\n"
 		, appName);
