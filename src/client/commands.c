@@ -8,10 +8,11 @@
 #include "wallet.h"
 #include "utils/log.h"
 #include "miner.h"
-#include "transport.h"
+//#include "transport.h"
 #include "memory.h"
 #include "crypt.h"
 #include "common.h"
+#include "storage.h"
 #if !defined(_WIN32) && !defined(_WIN64)
 #include "utils/linenoise.h"
 #endif
@@ -137,15 +138,15 @@ XDAG_COMMAND* find_xdag_command(char *name)
 	return (XDAG_COMMAND *)NULL;
 }
 
-void startCommandProcessing(int transportFlags)
+void startCommandProcessing(int deamonFlags)
 {
 	char cmd[XDAG_COMMAND_MAX];
-	if(!(transportFlags & XDAG_DAEMON)) printf("Type command, help for example.\n");
+	if(!(deamonFlags & 0x1)) printf("Type command, help for example.\n");
 
 	xdag_init_commands();
 
 	for(;;) {
-		if(transportFlags & XDAG_DAEMON) {
+		if(deamonFlags & 0x1) {
 			sleep(100);
 		} else {
 			read_command(cmd);
