@@ -7,13 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3833516420EA849D0070E5A9 /* block.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF258520E7E6DE0058B19B /* block.c */; };
 		38CF25EF20E7E6DE0058B19B /* crc_c.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF257320E7E6DE0058B19B /* crc_c.c */; };
 		38CF25F020E7E6DE0058B19B /* dfslib_crypt.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF257420E7E6DE0058B19B /* dfslib_crypt.c */; };
 		38CF25F120E7E6DE0058B19B /* dfslib_random.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF257620E7E6DE0058B19B /* dfslib_random.c */; };
 		38CF25F220E7E6DE0058B19B /* dfslib_string.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF257820E7E6DE0058B19B /* dfslib_string.c */; };
 		38CF25F320E7E6DE0058B19B /* dfsrsa.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF257B20E7E6DE0058B19B /* dfsrsa.c */; };
 		38CF25F420E7E6DE0058B19B /* address.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF258220E7E6DE0058B19B /* address.c */; };
-		38CF25F620E7E6DE0058B19B /* block.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF258520E7E6DE0058B19B /* block.c */; };
 		38CF25F820E7E6DE0058B19B /* commands.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF258820E7E6DE0058B19B /* commands.c */; };
 		38CF25F920E7E6DE0058B19B /* crypt.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF258A20E7E6DE0058B19B /* crypt.c */; };
 		38CF25FA20E7E6DE0058B19B /* hash.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF258C20E7E6DE0058B19B /* hash.c */; };
@@ -33,7 +33,6 @@
 		38CF260B20E7E6DE0058B19B /* sha256-mb-x86_64-mac.s in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25B220E7E6DE0058B19B /* sha256-mb-x86_64-mac.s */; };
 		38CF260D20E7E6DE0058B19B /* sha256.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25B420E7E6DE0058B19B /* sha256.c */; };
 		38CF260F20E7E6DE0058B19B /* storage.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25B820E7E6DE0058B19B /* storage.c */; };
-		38CF261020E7E6DE0058B19B /* sync.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25BA20E7E6DE0058B19B /* sync.c */; };
 		38CF261120E7E6DE0058B19B /* terminal.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25BD20E7E6DE0058B19B /* terminal.c */; };
 		38CF261320E7E6DE0058B19B /* linenoise.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25C620E7E6DE0058B19B /* linenoise.c */; };
 		38CF261420E7E6DE0058B19B /* log.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25C820E7E6DE0058B19B /* log.c */; };
@@ -55,7 +54,6 @@
 		38CF262D20E7EB3B0058B19B /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 38CF262B20E7EB3B0058B19B /* libssl.a */; };
 		38CF262E20E7EB3B0058B19B /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 38CF262C20E7EB3B0058B19B /* libcrypto.a */; };
 		38CF263120E7F6110058B19B /* transport.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF262F20E7F6110058B19B /* transport.c */; };
-		38CF263420E7F6A20058B19B /* netdb.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF263320E7F6A20058B19B /* netdb.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -127,8 +125,6 @@
 		38CF25B620E7E6DE0058B19B /* state.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = state.h; sourceTree = "<group>"; };
 		38CF25B820E7E6DE0058B19B /* storage.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = storage.c; sourceTree = "<group>"; };
 		38CF25B920E7E6DE0058B19B /* storage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = storage.h; sourceTree = "<group>"; };
-		38CF25BA20E7E6DE0058B19B /* sync.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sync.c; sourceTree = "<group>"; };
-		38CF25BB20E7E6DE0058B19B /* sync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sync.h; sourceTree = "<group>"; };
 		38CF25BC20E7E6DE0058B19B /* system.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = system.h; sourceTree = "<group>"; };
 		38CF25BD20E7E6DE0058B19B /* terminal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = terminal.c; sourceTree = "<group>"; };
 		38CF25BE20E7E6DE0058B19B /* terminal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = terminal.h; sourceTree = "<group>"; };
@@ -178,8 +174,6 @@
 		38CF262C20E7EB3B0058B19B /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = lib/openssl/libcrypto.a; sourceTree = "<group>"; };
 		38CF262F20E7F6110058B19B /* transport.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = transport.c; sourceTree = "<group>"; };
 		38CF263020E7F6110058B19B /* transport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = transport.h; sourceTree = "<group>"; };
-		38CF263220E7F6A20058B19B /* netdb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = netdb.h; sourceTree = "<group>"; };
-		38CF263320E7F6A20058B19B /* netdb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = netdb.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -254,8 +248,6 @@
 		38CF258120E7E6DE0058B19B /* client */ = {
 			isa = PBXGroup;
 			children = (
-				38CF263320E7F6A20058B19B /* netdb.c */,
-				38CF263220E7F6A20058B19B /* netdb.h */,
 				38CF262F20E7F6110058B19B /* transport.c */,
 				38CF263020E7F6110058B19B /* transport.h */,
 				38CF258220E7E6DE0058B19B /* address.c */,
@@ -285,8 +277,6 @@
 				38CF25B620E7E6DE0058B19B /* state.h */,
 				38CF25B820E7E6DE0058B19B /* storage.c */,
 				38CF25B920E7E6DE0058B19B /* storage.h */,
-				38CF25BA20E7E6DE0058B19B /* sync.c */,
-				38CF25BB20E7E6DE0058B19B /* sync.h */,
 				38CF25BC20E7E6DE0058B19B /* system.h */,
 				38CF25BD20E7E6DE0058B19B /* terminal.c */,
 				38CF25BE20E7E6DE0058B19B /* terminal.h */,
@@ -466,13 +456,11 @@
 				38CF25FA20E7E6DE0058B19B /* hash.c in Sources */,
 				38CF261F20E7E6DE0058B19B /* dnet_log.c in Sources */,
 				38CF260F20E7E6DE0058B19B /* storage.c in Sources */,
-				38CF25F620E7E6DE0058B19B /* block.c in Sources */,
 				38CF261A20E7E6DE0058B19B /* dnet_command.c in Sources */,
 				38CF261520E7E6DE0058B19B /* moving_average.c in Sources */,
 				38CF263120E7F6110058B19B /* transport.c in Sources */,
 				38CF262220E7E6DE0058B19B /* dnet_stream.c in Sources */,
 				38CF260020E7E6DE0058B19B /* rpc_procedure.c in Sources */,
-				38CF261020E7E6DE0058B19B /* sync.c in Sources */,
 				38CF25F220E7E6DE0058B19B /* dfslib_string.c in Sources */,
 				38CF261120E7E6DE0058B19B /* terminal.c in Sources */,
 				38CF260420E7E6DE0058B19B /* main.c in Sources */,
@@ -481,9 +469,9 @@
 				38CF262420E7E6DE0058B19B /* dnet_threads.c in Sources */,
 				38CF261320E7E6DE0058B19B /* linenoise.c in Sources */,
 				38CF261B20E7E6DE0058B19B /* dnet_connection.c in Sources */,
+				3833516420EA849D0070E5A9 /* block.c in Sources */,
 				38CF260720E7E6DE0058B19B /* miner.c in Sources */,
 				38CF260620E7E6DE0058B19B /* memory.c in Sources */,
-				38CF263420E7F6A20058B19B /* netdb.c in Sources */,
 				38CF25F420E7E6DE0058B19B /* address.c in Sources */,
 				38CF25F820E7E6DE0058B19B /* commands.c in Sources */,
 				38CF261C20E7E6DE0058B19B /* dnet_crypt.c in Sources */,

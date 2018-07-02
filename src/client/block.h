@@ -9,6 +9,8 @@
 #include "system.h"
 #include "types.h"
 
+extern int g_xdag_sync_on;
+
 enum xdag_field_type {
 	XDAG_FIELD_NONCE,        //0
 	XDAG_FIELD_HEAD,         //1

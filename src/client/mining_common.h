@@ -28,29 +28,30 @@ extern time_t g_xdag_last_received;
 #ifdef __cplusplus
 extern "C" {
 #endif
-	
-extern struct xdag_pool_task g_xdag_pool_task[2];
-extern uint64_t g_xdag_pool_task_index; /* global variables are instantiated with 0 */
+	extern struct xdag_pool_task g_xdag_pool_task[2];
+	extern uint64_t g_xdag_pool_task_index; /* global variables are instantiated with 0 */
 
-/* poiter to mutex for optimal share  */
-extern void *g_ptr_share_mutex;
+	/* poiter to mutex for optimal share  */
+	extern void *g_ptr_share_mutex;
 
-/* 1 - program works as a pool */
-extern int g_xdag_pool;
+	/* 1 - program works as a pool */
+	extern int g_xdag_pool;
 
-extern const char *g_miner_address;
+	extern const char *g_miner_address;
 
-extern pthread_mutex_t g_share_mutex;
+	extern pthread_mutex_t g_share_mutex;
 
-extern struct dfslib_crypt *g_crypt;
+	extern struct dfslib_crypt *g_crypt;
 
-/* initialization of the pool (g_xdag_pool = 1) or connecting the miner to pool (g_xdag_pool = 0; pool_arg - pool parameters ip:port[:CFG];
-miner_addr - address of the miner, if specified */
-extern int xdag_initialize_mining(const char *pool_arg, const char *miner_address);
+	/* initialization of the pool (g_xdag_pool = 1) or connecting the miner to pool (g_xdag_pool = 0; pool_arg - pool parameters ip:port[:CFG];
+	miner_addr - address of the miner, if specified */
+	extern int xdag_initialize_mining(const char *pool_arg, const char *miner_address);
 
-//function sets minimal share for the task
-extern void xdag_set_min_share(struct xdag_pool_task *task, xdag_hash_t last, xdag_hash_t hash);
+	//function sets minimal share for the task
+	extern void xdag_set_min_share(struct xdag_pool_task *task, xdag_hash_t last, xdag_hash_t hash);
 
+	/* see dnet_user_crypt_action */
+	extern int xdag_user_crypt_action(unsigned *data, unsigned long long data_id, unsigned size, int action);
 #ifdef __cplusplus
 };
 #endif

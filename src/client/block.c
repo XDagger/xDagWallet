@@ -14,8 +14,6 @@
 #include "storage.h"
 #include "utils/log.h"
 #include "init.h"
-#include "sync.h"
-//#include "pool.h"
 #include "miner.h"
 #include "memory.h"
 #include "address.h"
@@ -41,6 +39,8 @@
 #define CACHE			    1
 #define CACHE_MAX_SIZE		5000000
 #define CACHE_MAX_SAMPLES	100
+
+int g_xdag_sync_on = 0;
 
 enum bi_flags {
 	BI_MAIN       = 0x01,
@@ -759,9 +759,9 @@ static void *add_block_callback(void *block, void *data)
 
 	pthread_mutex_unlock(&block_mutex);
 
-	if(res >= 0) {
-		xdag_sync_pop_block(b);
-	}
+//	if(res >= 0) {
+//		xdag_sync_pop_block(b);
+//	}
 
 	return 0;
 }
@@ -935,7 +935,8 @@ int xdag_create_block(struct xdag_field *fields, int inputsCount, int outputsCou
 //				block[0].field[XDAG_BLOCK_FIELDS - 1].data, sizeof(xdag_hash_t));
 //		}
 
-		xdag_send_new_block(block);
+//		xdag_send_new_block(block);
+		xdag_send_block_via_pool(block);
 
 		if(newBlockHashResult != NULL) {
 			memcpy(newBlockHashResult, newBlockHash, sizeof(xdag_hash_t));
@@ -946,71 +947,71 @@ int xdag_create_block(struct xdag_field *fields, int inputsCount, int outputsCou
 	return res;
 }
 
-
-static int request_blocks(xdag_time_t t, xdag_time_t dt)
-{
-	int i, res = 0;
-
-	if (!g_xdag_sync_on) return -1;
-
-	if (dt <= REQUEST_BLOCKS_MAX_TIME) {
-		xdag_time_t t0 = time_limit;
-
-		for (i = 0;
-			xdag_info("QueryB: t=%llx dt=%llx", t, dt),
-			i < QUERY_RETRIES && (res = xdag_request_blocks(t, t + dt, &t0, add_block_callback)) < 0;
-			++i);
-
-		if (res <= 0) {
-			return -1;
-		}
-	} else {
-		struct xdag_storage_sum lsums[16], rsums[16];
-		if (xdag_load_sums(t, t + dt, lsums) <= 0) {
-			return -1;
-		}
-
-		xdag_debug("Local : [%s]", xdag_log_array(lsums, 16 * sizeof(struct xdag_storage_sum)));
-
-		for (i = 0;
-			xdag_info("QueryS: t=%llx dt=%llx", t, dt),
-			i < QUERY_RETRIES && (res = xdag_request_sums(t, t + dt, rsums)) < 0;
-			++i);
-
-		if (res <= 0) {
-			return -1;
-		}
-
-		dt >>= 4;
-
-		xdag_debug("Remote: [%s]", xdag_log_array(rsums, 16 * sizeof(struct xdag_storage_sum)));
-
-		for (i = 0; i < 16; ++i) {
-			if (lsums[i].size != rsums[i].size || lsums[i].sum != rsums[i].sum) {
-				request_blocks(t + i * dt, dt);
-			}
-		}
-	}
-
-	return 0;
-}
+//
+//static int request_blocks(xdag_time_t t, xdag_time_t dt)
+//{
+//	int i, res = 0;
+//
+//	if (!g_xdag_sync_on) return -1;
+//
+//	if (dt <= REQUEST_BLOCKS_MAX_TIME) {
+//		xdag_time_t t0 = time_limit;
+//
+//		for (i = 0;
+//			xdag_info("QueryB: t=%llx dt=%llx", t, dt),
+//			i < QUERY_RETRIES && (res = xdag_request_blocks(t, t + dt, &t0, add_block_callback)) < 0;
+//			++i);
+//
+//		if (res <= 0) {
+//			return -1;
+//		}
+//	} else {
+//		struct xdag_storage_sum lsums[16], rsums[16];
+//		if (xdag_load_sums(t, t + dt, lsums) <= 0) {
+//			return -1;
+//		}
+//
+//		xdag_debug("Local : [%s]", xdag_log_array(lsums, 16 * sizeof(struct xdag_storage_sum)));
+//
+//		for (i = 0;
+//			xdag_info("QueryS: t=%llx dt=%llx", t, dt),
+//			i < QUERY_RETRIES && (res = xdag_request_sums(t, t + dt, rsums)) < 0;
+//			++i);
+//
+//		if (res <= 0) {
+//			return -1;
+//		}
+//
+//		dt >>= 4;
+//
+//		xdag_debug("Remote: [%s]", xdag_log_array(rsums, 16 * sizeof(struct xdag_storage_sum)));
+//
+//		for (i = 0; i < 16; ++i) {
+//			if (lsums[i].size != rsums[i].size || lsums[i].sum != rsums[i].sum) {
+//				request_blocks(t + i * dt, dt);
+//			}
+//		}
+//	}
+//
+//	return 0;
+//}
 
 /* a long procedure of synchronization */
-static void *sync_thread(void *arg)
-{
-	xdag_time_t t = 0;
-
-	for (;;) {
-		xdag_time_t st = get_timestamp();
-		if (st - t >= MAIN_CHAIN_PERIOD) {
-			t = st;
-			request_blocks(0, 1ll << 48);
-		}
-		sleep(1);
-	}
-
-	return 0;
-}
+//static void *sync_thread(void *arg)
+//{
+//	xdag_time_t t = 0;
+//
+//	for (;;) {
+//		xdag_time_t st = get_timestamp();
+//		if (st - t >= MAIN_CHAIN_PERIOD) {
+//			t = st;
+//			request_blocks(0, 1ll << 48);
+//		}
+//		sleep(1);
+//	}
+//
+//	return 0;
+//}
 
 static void reset_callback(struct ldus_rbtree *node)
 {
@@ -1022,7 +1023,7 @@ static void *work_thread(void *arg)
 {
 	xdag_time_t t = XDAG_ERA;
 	xdag_time_t conn_time = 0, sync_time = 0, t0;
-	int n_mining_threads = (int)(unsigned)(uintptr_t)arg, sync_thread_running = 0;
+//	int n_mining_threads = (int)(unsigned)(uintptr_t)arg, sync_thread_running = 0;
 	uint64_t nhashes0 = 0, nhashes = 0;
 //	pthread_t th;
 

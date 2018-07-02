@@ -15,14 +15,6 @@
 #include "system.h"
 #include "../dnet/dnet_main.h"
 
-#if USE_OPTIMIZED_EC == 1 || USE_OPTIMIZED_EC == 2
-
-#include "../secp256k1/include/secp256k1.h"
-
-secp256k1_context *ctx_noopenssl;
-
-#endif
-
 static EC_GROUP *group;
 
 extern unsigned int xOPENSSL_ia32cap_P[4];
@@ -38,10 +30,6 @@ int xdag_crypt_init(int withrandom)
 		xdag_debug("Seed  : [%s]", xdag_log_array(buf, sizeof(buf)));
 		RAND_seed(buf, sizeof(buf));
 	}
-
-#if USE_OPTIMIZED_EC == 1 || USE_OPTIMIZED_EC == 2
-	ctx_noopenssl = secp256k1_context_create(SECP256K1_CONTEXT_VERIFY);
-#endif
 
 	group = EC_GROUP_new_by_curve_name(NID_secp256k1);
 	if(!group) return -1;

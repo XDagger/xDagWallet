@@ -58,7 +58,7 @@ int terminal(void)
 		if(!strcmp(ptr, "exit")) break;
 		if(!strcmp(ptr, "xfer")) {
 			uint32_t pwd[4];
-			xdag_user_crypt_action(pwd, 0, 4, 4);
+			dnet_user_crypt_action(pwd, 0, 4, 4);
 			sprintf(cmd2, "pwd=%08x%08x%08x%08x ", pwd[0], pwd[1], pwd[2], pwd[3]);
 			ispwd = 1;
 		}

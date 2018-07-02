@@ -13,11 +13,11 @@
 #include "block.h"
 #include "crypt.h"
 #include "transport.h"
+//#include "../dnet/dnet_crypt.h"
+//#include "../dnet/dnet_history.h"
 #include "version.h"
 #include "wallet.h"
-#include "netdb.h"
 #include "init.h"
-#include "sync.h"
 #include "mining_common.h"
 #include "commands.h"
 #include "terminal.h"
@@ -103,7 +103,7 @@ int xdag_init(int argc, char **argv, int isGui)
 				addrports[n_addrports++] = argv[i];
 		} else if(ARG_EQUAL(argv[i], "-d", "")) { /* daemon mode */
 #if !defined(_WIN32) && !defined(_WIN64)
-			transport_flags |= XDAG_DAEMON;
+//			transport_flags |= XDAG_DAEMON;
 #endif
 		} else if(ARG_EQUAL(argv[i], "-h", "")) { /* help */
 			printUsage(argv[0]);
@@ -188,12 +188,16 @@ int xdag_init(int argc, char **argv, int isGui)
 	memset(&g_xdag_extstats, 0, sizeof(g_xdag_extstats));
 
 	xdag_mess("Starting %s, version %s", g_progname, XDAG_VERSION);
-	xdag_mess("Starting synchonization engine...");
-	if (xdag_sync_init()) return -1;
+//	xdag_mess("Starting synchonization engine...");
+//	if (xdag_sync_init()) return -1;
 	xdag_mess("Starting dnet transport...");
 	printf("Transport module: ");
 	if (xdag_transport_start(transport_flags, bindto, n_addrports, addrports)) return -1;
-	
+//	if(dnet_crypt_init(DNET_VERSION)) {
+//		xdag_err("dnet crypt init failed...");
+//		return -1;
+//	}
+
 	if (xdag_log_init()) return -1;
 
 	xdag_mess("Initializing cryptography...");
@@ -215,15 +219,15 @@ int xdag_init(int argc, char **argv, int isGui)
 	}
 
 	if (!isGui) {
-		if (is_pool || (transport_flags & XDAG_DAEMON) > 0) {
-			xdag_mess("Starting terminal server...");
-			pthread_t th;
-			const int err = pthread_create(&th, 0, &terminal_thread, 0);
-			if(err != 0) {
-				printf("create terminal_thread failed, error : %s\n", strerror(err));
-				return -1;
-			}
-		}
+//		if (is_pool || (transport_flags & XDAG_DAEMON) > 0) {
+//			xdag_mess("Starting terminal server...");
+//			pthread_t th;
+//			const int err = pthread_create(&th, 0, &terminal_thread, 0);
+//			if(err != 0) {
+//				printf("create terminal_thread failed, error : %s\n", strerror(err));
+//				return -1;
+//			}
+//		}
 
 		startCommandProcessing(transport_flags);
 	}
@@ -233,7 +237,7 @@ int xdag_init(int argc, char **argv, int isGui)
 
 int xdag_set_password_callback(int(*callback)(const char *prompt, char *buf, unsigned size))
 {
-    return xdag_user_crypt_action((uint32_t *)(void *)callback, 0, 0, 6);
+    return dnet_user_crypt_action((uint32_t *)(void *)callback, 0, 0, 6);
 }
 
 void printUsage(char* appName)

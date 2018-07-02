@@ -4,8 +4,8 @@
 #include <sys/socket.h>
 #include "mining_common.h"
 #include "miner.h"
-//#include "pool.h"
 #include "../dus/dfslib_crypt.h"
+#include "../dnet/dnet_crypt.h"
 
 #define MINERS_PWD             "minersgonnamine"
 #define SECTOR0_BASE           0x1947f3acu
@@ -89,4 +89,10 @@ void xdag_set_min_share(struct xdag_pool_task *task, xdag_hash_t last, xdag_hash
 
 		pthread_mutex_unlock(&g_share_mutex);
 	}
+}
+
+/* see dnet_user_crypt_action */
+int xdag_user_crypt_action(unsigned *data, unsigned long long data_id, unsigned size, int action)
+{
+	return dnet_user_crypt_action(data, data_id, size, action);
 }

@@ -20,7 +20,6 @@
 #include "init.h"
 #include "miner.h"
 #include "storage.h"
-#include "sync.h"
 #include "utils/log.h"
 #include "mining_common.h"
 #include "../dnet/dnet_main.h"
