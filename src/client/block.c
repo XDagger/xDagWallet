@@ -20,7 +20,6 @@
 #include "commands.h"
 #include "utils/utils.h"
 #include "common.h"
-#include "../dnet/dnet_main.h"
 
 #define MAIN_CHAIN_PERIOD       (64 << 10)
 #define MAX_WAITING_MAIN        1
@@ -853,42 +852,6 @@ int xdag_create_block(struct xdag_field *fields, int inputsCount, int outputsCou
 		xdag_sign(defkey->key, signatureHash, block[0].field[i].data, block[0].field[i + 1].data);
 	}
 
-//	if (mining) {
-//		uint64_t taskIndex = g_xdag_pool_task_index + 1;
-//		struct xdag_pool_task *task = &g_xdag_pool_task[taskIndex & 1];
-//
-//		dnet_generate_random_array(block[0].field[XDAG_BLOCK_FIELDS - 1].data, sizeof(xdag_hash_t));
-//
-//		task->task_time = MAIN_TIME(send_time);
-//
-//		xdag_hash_init(task->ctx0);
-//		xdag_hash_update(task->ctx0, block, sizeof(struct xdag_block) - 2 * sizeof(struct xdag_field));
-//		xdag_hash_get_state(task->ctx0, task->task[0].data);
-//		xdag_hash_update(task->ctx0, block[0].field[XDAG_BLOCK_FIELDS - 2].data, sizeof(struct xdag_field));
-//		memcpy(task->ctx, task->ctx0, xdag_hash_ctx_size());
-//
-//		xdag_hash_update(task->ctx, block[0].field[XDAG_BLOCK_FIELDS - 1].data, sizeof(struct xdag_field) - sizeof(uint64_t));
-//		memcpy(task->task[1].data, block[0].field[XDAG_BLOCK_FIELDS - 2].data, sizeof(struct xdag_field));
-//		memcpy(task->nonce.data, block[0].field[XDAG_BLOCK_FIELDS - 1].data, sizeof(struct xdag_field));
-//		memcpy(task->lastfield.data, block[0].field[XDAG_BLOCK_FIELDS - 1].data, sizeof(struct xdag_field));
-//
-//		xdag_hash_final(task->ctx, &task->nonce.amount, sizeof(uint64_t), task->minhash.data);
-//		g_xdag_pool_task_index = taskIndex;
-//
-//		while (get_timestamp() <= send_time) {
-//			sleep(1);
-//			struct block_internal *pretop_new = pretop_block();
-//			if (pretop != pretop_new && get_timestamp() < send_time) {
-//				pretop = pretop_new;
-//				xdag_info("Mining: start from beginning because of pre-top block changed");
-//				goto begin;
-//			}
-//		}
-//
-//		pthread_mutex_lock((pthread_mutex_t*)g_ptr_share_mutex);
-//		memcpy(block[0].field[XDAG_BLOCK_FIELDS - 1].data, task->lastfield.data, sizeof(struct xdag_field));
-//		pthread_mutex_unlock((pthread_mutex_t*)g_ptr_share_mutex);
-//	}
 
 	xdag_hash(block, sizeof(struct xdag_block), newBlockHash);
 	block[0].field[0].transport_header = 1;
@@ -897,14 +860,6 @@ int xdag_create_block(struct xdag_field *fields, int inputsCount, int outputsCou
 
 	res = xdag_add_block(block);
 	if (res > 0) {
-//		if (mining) {
-//			memcpy(g_xdag_mined_hashes[MAIN_TIME(send_time) & (CONFIRMATIONS_COUNT - 1)],
-//				newBlockHash, sizeof(xdag_hash_t));
-//			memcpy(g_xdag_mined_nonce[MAIN_TIME(send_time) & (CONFIRMATIONS_COUNT - 1)],
-//				block[0].field[XDAG_BLOCK_FIELDS - 1].data, sizeof(xdag_hash_t));
-//		}
-
-//		xdag_send_new_block(block);
 		xdag_send_block_via_pool(block);
 
 		if(newBlockHashResult != NULL) {
@@ -916,72 +871,6 @@ int xdag_create_block(struct xdag_field *fields, int inputsCount, int outputsCou
 	return res;
 }
 
-//
-//static int request_blocks(xdag_time_t t, xdag_time_t dt)
-//{
-//	int i, res = 0;
-//
-//	if (!g_xdag_sync_on) return -1;
-//
-//	if (dt <= REQUEST_BLOCKS_MAX_TIME) {
-//		xdag_time_t t0 = time_limit;
-//
-//		for (i = 0;
-//			xdag_info("QueryB: t=%llx dt=%llx", t, dt),
-//			i < QUERY_RETRIES && (res = xdag_request_blocks(t, t + dt, &t0, add_block_callback)) < 0;
-//			++i);
-//
-//		if (res <= 0) {
-//			return -1;
-//		}
-//	} else {
-//		struct xdag_storage_sum lsums[16], rsums[16];
-//		if (xdag_load_sums(t, t + dt, lsums) <= 0) {
-//			return -1;
-//		}
-//
-//		xdag_debug("Local : [%s]", xdag_log_array(lsums, 16 * sizeof(struct xdag_storage_sum)));
-//
-//		for (i = 0;
-//			xdag_info("QueryS: t=%llx dt=%llx", t, dt),
-//			i < QUERY_RETRIES && (res = xdag_request_sums(t, t + dt, rsums)) < 0;
-//			++i);
-//
-//		if (res <= 0) {
-//			return -1;
-//		}
-//
-//		dt >>= 4;
-//
-//		xdag_debug("Remote: [%s]", xdag_log_array(rsums, 16 * sizeof(struct xdag_storage_sum)));
-//
-//		for (i = 0; i < 16; ++i) {
-//			if (lsums[i].size != rsums[i].size || lsums[i].sum != rsums[i].sum) {
-//				request_blocks(t + i * dt, dt);
-//			}
-//		}
-//	}
-//
-//	return 0;
-//}
-
-/* a long procedure of synchronization */
-//static void *sync_thread(void *arg)
-//{
-//	xdag_time_t t = 0;
-//
-//	for (;;) {
-//		xdag_time_t st = get_timestamp();
-//		if (st - t >= MAIN_CHAIN_PERIOD) {
-//			t = st;
-//			request_blocks(0, 1ll << 48);
-//		}
-//		sleep(1);
-//	}
-//
-//	return 0;
-//}
-
 static void reset_callback(struct ldus_rbtree *node)
 {
 	free(node);
@@ -992,7 +881,6 @@ static void *work_thread(void *arg)
 {
 	xdag_time_t t = XDAG_ERA;
 	xdag_time_t conn_time = 0, sync_time = 0, t0;
-//	int n_mining_threads = (int)(unsigned)(uintptr_t)arg, sync_thread_running = 0;
 	uint64_t nhashes0 = 0, nhashes = 0;
 //	pthread_t th;
 
