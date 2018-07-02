@@ -49,8 +49,6 @@ void processAccountCommand(char *nextParam, FILE *out);
 void processBalanceCommand(char *nextParam, FILE *out);
 void processKeyGenCommand(FILE *out);
 void processLevelCommand(char *nextParam, FILE *out);
-//void processMiningCommand(char *nextParam, FILE *out);
-void processStatsCommand(FILE *out);
 void processExitCommand(void);
 void processXferCommand(char *nextParam, FILE *out, int ispwd, uint32_t* pwd);
 void processHelpCommand(FILE *out);
@@ -74,7 +72,6 @@ XDAG_COMMAND commands[] = {
 	{ "keyGen"     , 0, xdag_com_keyGen },
 	{ "level"      , 0, xdag_com_level },
 	{ "state"      , 0, xdag_com_state },
-	{ "stats"      , 0, xdag_com_stats },
 	{ "terminate"  , 0, xdag_com_terminate },
 	{ "exit"       , 0, xdag_com_exit },
 	{ "xfer"       , 0, (xdag_com_func_t)NULL},
@@ -103,12 +100,6 @@ int xdag_com_keyGen(char * args, FILE* out)
 int xdag_com_level(char * args, FILE* out)
 {
 	processLevelCommand(args, out);
-	return 0;
-}
-
-int xdag_com_stats(char * args, FILE* out)
-{
-	processStatsCommand(out);
 	return 0;
 }
 
@@ -250,11 +241,6 @@ void processLevelCommand(char *nextParam, FILE *out)
 	} else {
 		xdag_set_log_level(level);
 	}
-}
-
-void processStatsCommand(FILE *out)
-{
-	fprintf(out, "your hashrate MHs: %.2lf\n", xdagGetHashRate());
 }
 
 void processExitCommand()
@@ -518,7 +504,6 @@ void processHelpCommand(FILE *out)
 		"  keygen              - generate new private/public key pair and set it by default\n"
 		"  level [N]           - print level of logging or set it to N (0 - nothing, ..., 9 - all)\n"
 		"  state               - print the program state\n"
-		"  stats               - print statistics for loaded and all known blocks\n"
 		"  terminate           - terminate both daemon and this program\n"
 		"  xfer S A            - transfer S our %s to the address A\n"
 		, g_coinname);
