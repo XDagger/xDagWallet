@@ -504,10 +504,10 @@ int xdag_rpc_init_procedures(void)
 	rpc_register_func(xdag_state);
 	rpc_register_func(xdag_stats);
 	
-	/* register xdag_get_account, xdag_get_balance, xdag_do_xfer, xdag_get_transactions */
+	/* register xdag_get_account, xdag_get_balance, xdag_do_xfer */
 	rpc_register_func(xdag_get_account);
 	rpc_register_func(xdag_get_balance);
 	rpc_register_func(xdag_do_xfer);
-	rpc_register_func(xdag_get_transactions);
+//	rpc_register_func(xdag_get_transactions);
 	return 0;
 }
