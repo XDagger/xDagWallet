@@ -34,7 +34,6 @@ char *g_coinname, *g_progname;
 int g_xdag_state = XDAG_STATE_INIT;
 int g_xdag_testnet = 0;
 int g_is_miner = 0;
-static int g_is_pool = 0;
 int g_xdag_run = 0;
 time_t g_xdag_xfer_last = 0;
 enum xdag_field_type g_block_header_type = XDAG_FIELD_HEAD;
@@ -48,10 +47,10 @@ void printUsage(char* appName);
 
 int xdag_init(int argc, char **argv, int isGui)
 {
-    xdag_init_path(argv[0]);
+	xdag_init_path(argv[0]);
 
 	const char *addrports[256], *bindto = 0, *pubaddr = 0, *pool_arg = 0, *miner_address = 0;
-	int transport_flags = 0, n_addrports = 0, mining_threads_count = 0, is_pool = 0, is_miner = 1, level, is_rpc = 0, rpc_port = 0;
+	int transport_flags = 0, n_addrports = 0, mining_threads_count = 0, is_miner = 1, level, is_rpc = 0, rpc_port = 0;
 	
 	memset(addrports, 0, 256);
 	
@@ -98,9 +97,6 @@ int xdag_init(int argc, char **argv, int isGui)
 		
 		if (ARG_EQUAL(argv[i], "-a", "")) { /* miner address */
 			if (++i < argc) miner_address = argv[i];
-		} else if(ARG_EQUAL(argv[i], "-c", "")) { /* another full node address */
-			if (++i < argc && n_addrports < 256)
-				addrports[n_addrports++] = argv[i];
 		} else if(ARG_EQUAL(argv[i], "-d", "")) { /* daemon mode */
 #if !defined(_WIN32) && !defined(_WIN64)
 //			transport_flags |= XDAG_DAEMON;
@@ -117,20 +113,6 @@ int xdag_init(int argc, char **argv, int isGui)
 				sscanf(argv[i], "%d", &mining_threads_count);
 				if (mining_threads_count < 0) mining_threads_count = 0;
 			}
-		} else if(ARG_EQUAL(argv[i], "-p", "")) { /* public address & port */
-			if (++i < argc) {
-				is_pool = 1;
-				pubaddr = argv[i];
-			}
-		} else if(ARG_EQUAL(argv[i], "-P", "")) { /* pool config */
-			if (++i < argc) {
-				pool_arg = argv[i];
-			}
-		} else if(ARG_EQUAL(argv[i], "-r", "")) { /* load blocks and wait for run command */
-			g_xdag_run = 0;
-		} else if(ARG_EQUAL(argv[i], "-s", "")) { /* address of this node */
-			if (++i < argc)
-				bindto = argv[i];
 		} else if(ARG_EQUAL(argv[i], "-t", "")) { /* connect test net */
 			g_xdag_testnet = 1;
 		} else if(ARG_EQUAL(argv[i], "-v", "")) { /* log level */
@@ -152,44 +134,41 @@ int xdag_init(int argc, char **argv, int isGui)
 					rpc_port = 0;
 				}
 			}
-		} else if(ARG_EQUAL(argv[i], "-dm", "")) {
-			g_disable_mining = 1;
 		} else {
 			printUsage(argv[0]);
 			return 0;
 		}
 	}
 
-	if (is_miner && (is_pool || bindto || n_addrports)) {
-		printf("Miner can't be a pool or have directly connected to the xdag network.\n");
-		return -1;
+	// use RAM as default config for miner
+	if(is_miner) {
+		xdag_mem_tempfile_path("RAM");
 	}
-	
-	g_xdag_pool = is_pool; // move to here to avoid Data Race
 
+//	if (is_miner && (!is_miner || bindto || n_addrports)) {
+//		printf("Miner can't be a pool or have directly connected to the xdag network.\n");
+//		return -1;
+//	}
+
+	g_xdag_pool = !is_miner; // move to here to avoid Data Race
 	g_is_miner = is_miner;
-	g_is_pool = is_pool;
-	if (pubaddr && !bindto) {
-		char str[64], *p = strchr(pubaddr, ':');
-		if (p) {
-			sprintf(str, "0.0.0.0%s", p);
-			bindto = strdup(str);
-		}
-	}
+
+//	if (pubaddr && !bindto) {
+//		char str[64], *p = strchr(pubaddr, ':');
+//		if (p) {
+//			sprintf(str, "0.0.0.0%s", p);
+//			bindto = strdup(str);
+//		}
+//	}
 
 	if(g_xdag_testnet) {
 		g_block_header_type = XDAG_FIELD_HEAD_TEST; //block header has the different type in the test network
-	}
-	if(g_disable_mining && g_is_miner) {
-		g_disable_mining = 0;   // this option is only for pools
 	}
 
 	memset(&g_xdag_stats, 0, sizeof(g_xdag_stats));
 	memset(&g_xdag_extstats, 0, sizeof(g_xdag_extstats));
 
 	xdag_mess("Starting %s, version %s", g_progname, XDAG_VERSION);
-//	xdag_mess("Starting synchonization engine...");
-//	if (xdag_sync_init()) return -1;
 	xdag_mess("Starting dnet transport...");
 	printf("Transport module: ");
 	if (xdag_transport_start(transport_flags, bindto, n_addrports, addrports)) return -1;
@@ -211,15 +190,13 @@ int xdag_init(int argc, char **argv, int isGui)
 		if(!!xdag_rpc_service_init(rpc_port)) return -1;
 	}
 	xdag_mess("Starting blocks engine...");
-	if (xdag_blocks_start(g_is_pool, mining_threads_count, !!miner_address)) return -1;
+	if (xdag_blocks_start(!g_is_miner, mining_threads_count, !!miner_address)) return -1;
 
-	if(!g_disable_mining) {
-		xdag_mess("Starting pool engine...");
-		if(xdag_initialize_mining(pool_arg, miner_address)) return -1;
-	}
+	xdag_mess("Starting engine...");
+	if(xdag_initialize_mining(pool_arg, miner_address)) return -1;
 
 	if (!isGui) {
-//		if (is_pool || (transport_flags & XDAG_DAEMON) > 0) {
+//		if (!is_miner || (transport_flags & XDAG_DAEMON) > 0) {
 //			xdag_mess("Starting terminal server...");
 //			pthread_t th;
 //			const int err = pthread_create(&th, 0, &terminal_thread, 0);
@@ -246,29 +223,16 @@ void printUsage(char* appName)
 		"If pool_ip:port argument is given, then the node operates as a miner.\n"
 		"Flags:\n"
 		"  -a address     - specify your address to use in the miner\n"
-		"  -c ip:port     - address of another xdag full node to connect\n"
 		"  -d             - run as daemon (default is interactive mode)\n"
 		"  -h             - print this help\n"
 		"  -i             - run as interactive terminal for daemon running in this folder\n"
 		"  -l             - output non zero balances of all accounts\n"
 		"  -m N           - use N CPU mining threads (default is 0)\n"
-		"  -p ip:port     - public address of this node\n"
-		"  -P ip:port:CFG - run the pool, bind to ip:port, CFG is miners:maxip:maxconn:fee:reward:direct:fund\n"
-		"                     miners - maximum allowed number of miners,\n"
-		"                     maxip - maximum allowed number of miners connected from single ip,\n"
-		"                     maxconn - maximum allowed number of miners with the same address,\n"
-		"                     fee - pool fee in percent,\n"
-		"                     reward - reward to miner who got a block in percent,\n"
-		"                     direct - reward to miners participated in earned block in percent,\n"
-		"                     fund - community fund fee in percent\n"
-		"  -r             - load local blocks and wait for 'run' command to continue\n"
-		"  -s ip:port     - address of this node to bind to\n"
 		"  -t             - connect to test net (default is main net)\n"
 		"  -v N           - set loglevel to N\n"
 		"  -z <path>      - path to temp-file folder\n"
 		"  -z RAM         - use RAM instead of temp-files\n"
 		"  -rpc-enable    - enable JSON-RPC service\n"
 		"  -rpc-port      - set HTTP JSON-RPC port (default is 7677)\n"
-		"  -dm            - disable mining on pool (-P option is ignored)\n"
 		, appName);
 }
