@@ -1014,11 +1014,7 @@ begin:
 		sleep(1);
 	}
 
-	g_xdag_sync_on = 1;
-
-	// start mining threads
-//	xdag_mess("Starting mining threads...");
-//	xdag_mining_start(n_mining_threads);
+	g_xdag_sync_on = 1; // todo: remove this shit!!
 
 	// periodic generation of blocks and determination of the main block
 	xdag_mess("Entering main cycle...");
@@ -1048,7 +1044,6 @@ begin:
 		if (g_xdag_state == XDAG_STATE_REST) {
 			g_xdag_sync_on = 0;
 			pthread_mutex_unlock(&block_mutex);
-			xdag_mining_start(0);
 
 			while (get_timestamp() - t < MAIN_CHAIN_PERIOD + (3 << 10)) {
 				sleep(1);

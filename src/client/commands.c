@@ -11,6 +11,7 @@
 #include "transport.h"
 #include "memory.h"
 #include "crypt.h"
+#include "common.h"
 #if !defined(_WIN32) && !defined(_WIN64)
 #include "utils/linenoise.h"
 #endif
@@ -48,7 +49,7 @@ void processAccountCommand(char *nextParam, FILE *out);
 void processBalanceCommand(char *nextParam, FILE *out);
 void processKeyGenCommand(FILE *out);
 void processLevelCommand(char *nextParam, FILE *out);
-void processMiningCommand(char *nextParam, FILE *out);
+//void processMiningCommand(char *nextParam, FILE *out);
 void processStatsCommand(FILE *out);
 void processExitCommand(void);
 void processXferCommand(char *nextParam, FILE *out, int ispwd, uint32_t* pwd);
@@ -58,19 +59,12 @@ int xdag_com_account(char *, FILE*);
 int xdag_com_balance(char *, FILE*);
 int xdag_com_keyGen(char *, FILE*);
 int xdag_com_level(char *, FILE*);
-//int xdag_com_miner(char *, FILE*);
-//int xdag_com_miners(char *, FILE*);
-int xdag_com_mining(char *, FILE*);
-//int xdag_com_net(char *, FILE*);
-//int xdag_com_pool(char *, FILE*);
 int xdag_com_stats(char *, FILE*);
 int xdag_com_state(char *, FILE*);
 int xdag_com_cache(char *, FILE*);
 int xdag_com_help(char *, FILE*);
-//int xdag_com_run(char *, FILE*);
 int xdag_com_terminate(char *, FILE*);
 int xdag_com_exit(char *, FILE*);
-//int xdag_com_disconnect(char *, FILE*);
 
 XDAG_COMMAND* find_xdag_command(char*);
 
@@ -79,7 +73,6 @@ XDAG_COMMAND commands[] = {
 	{ "balance"    , 0, xdag_com_balance },
 	{ "keyGen"     , 0, xdag_com_keyGen },
 	{ "level"      , 0, xdag_com_level },
-	{ "mining"     , 1, xdag_com_mining },
 	{ "state"      , 0, xdag_com_state },
 	{ "stats"      , 0, xdag_com_stats },
 	{ "terminate"  , 0, xdag_com_terminate },
@@ -110,12 +103,6 @@ int xdag_com_keyGen(char * args, FILE* out)
 int xdag_com_level(char * args, FILE* out)
 {
 	processLevelCommand(args, out);
-	return 0;
-}
-
-int xdag_com_mining(char * args, FILE* out)
-{
-	processMiningCommand(args, out);
 	return 0;
 }
 
@@ -262,20 +249,6 @@ void processLevelCommand(char *nextParam, FILE *out)
 		fprintf(out, "Illegal level.\n");
 	} else {
 		xdag_set_log_level(level);
-	}
-}
-
-void processMiningCommand(char *nextParam, FILE *out)
-{
-	int nthreads;
-	char *cmd = strtok_r(nextParam, " \t\r\n", &nextParam);
-	if(!cmd) {
-		fprintf(out, "%d mining threads running\n", g_xdag_mining_threads);
-	} else if(sscanf(cmd, "%d", &nthreads) != 1 || nthreads < 0) {
-		fprintf(out, "Illegal number.\n");
-	} else {
-		xdag_mining_start(nthreads);
-		fprintf(out, "%d mining threads running\n", g_xdag_mining_threads);
 	}
 }
 
@@ -544,17 +517,11 @@ void processHelpCommand(FILE *out)
 		"  help                - print this help\n"
 		"  keygen              - generate new private/public key pair and set it by default\n"
 		"  level [N]           - print level of logging or set it to N (0 - nothing, ..., 9 - all)\n"
-		"  mining [N]          - print number of mining threads or set it to N\n"
 		"  state               - print the program state\n"
 		"  stats               - print statistics for loaded and all known blocks\n"
 		"  terminate           - terminate both daemon and this program\n"
 		"  xfer S A            - transfer S our %s to the address A\n"
 		, g_coinname);
-}
-
-void xdagSetCountMiningTread(int miningThreadsCount)
-{
-	xdag_mining_start(miningThreadsCount);
 }
 
 double xdagGetHashRate(void)

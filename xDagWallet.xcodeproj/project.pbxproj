@@ -30,7 +30,6 @@
 		38CF260620E7E6DE0058B19B /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25A420E7E6DE0058B19B /* memory.c */; };
 		38CF260720E7E6DE0058B19B /* miner.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25A620E7E6DE0058B19B /* miner.c */; };
 		38CF260820E7E6DE0058B19B /* common.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25A820E7E6DE0058B19B /* common.c */; };
-		38CF260B20E7E6DE0058B19B /* sha256-mb-x86_64-mac.s in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25B220E7E6DE0058B19B /* sha256-mb-x86_64-mac.s */; };
 		38CF260D20E7E6DE0058B19B /* sha256.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25B420E7E6DE0058B19B /* sha256.c */; };
 		38CF260F20E7E6DE0058B19B /* storage.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25B820E7E6DE0058B19B /* storage.c */; };
 		38CF261120E7E6DE0058B19B /* terminal.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25BD20E7E6DE0058B19B /* terminal.c */; };
@@ -38,7 +37,6 @@
 		38CF261420E7E6DE0058B19B /* log.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25C820E7E6DE0058B19B /* log.c */; };
 		38CF261620E7E6DE0058B19B /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25CD20E7E6DE0058B19B /* utils.c */; };
 		38CF261720E7E6DE0058B19B /* wallet.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25D020E7E6DE0058B19B /* wallet.c */; };
-		38CF261820E7E6DE0058B19B /* x86_64cpuid-mac.s in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25D220E7E6DE0058B19B /* x86_64cpuid-mac.s */; };
 		38CF261A20E7E6DE0058B19B /* dnet_command.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25D520E7E6DE0058B19B /* dnet_command.c */; };
 		38CF261B20E7E6DE0058B19B /* dnet_connection.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25D720E7E6DE0058B19B /* dnet_connection.c */; };
 		38CF261C20E7E6DE0058B19B /* dnet_crypt.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25D920E7E6DE0058B19B /* dnet_crypt.c */; };
@@ -118,7 +116,6 @@
 		38CF25A720E7E6DE0058B19B /* miner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = miner.h; sourceTree = "<group>"; };
 		38CF25A820E7E6DE0058B19B /* common.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = common.c; sourceTree = "<group>"; };
 		38CF25A920E7E6DE0058B19B /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
-		38CF25B220E7E6DE0058B19B /* sha256-mb-x86_64-mac.s */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "sha256-mb-x86_64-mac.s"; sourceTree = "<group>"; };
 		38CF25B420E7E6DE0058B19B /* sha256.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sha256.c; sourceTree = "<group>"; };
 		38CF25B520E7E6DE0058B19B /* sha256.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sha256.h; sourceTree = "<group>"; };
 		38CF25B620E7E6DE0058B19B /* state.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = state.h; sourceTree = "<group>"; };
@@ -139,7 +136,6 @@
 		38CF25CF20E7E6DE0058B19B /* version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = version.h; sourceTree = "<group>"; };
 		38CF25D020E7E6DE0058B19B /* wallet.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = wallet.c; sourceTree = "<group>"; };
 		38CF25D120E7E6DE0058B19B /* wallet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wallet.h; sourceTree = "<group>"; };
-		38CF25D220E7E6DE0058B19B /* x86_64cpuid-mac.s */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "x86_64cpuid-mac.s"; sourceTree = "<group>"; };
 		38CF25D520E7E6DE0058B19B /* dnet_command.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dnet_command.c; sourceTree = "<group>"; };
 		38CF25D620E7E6DE0058B19B /* dnet_command.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dnet_command.h; sourceTree = "<group>"; };
 		38CF25D720E7E6DE0058B19B /* dnet_connection.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dnet_connection.c; sourceTree = "<group>"; };
@@ -268,7 +264,6 @@
 				38CF25A720E7E6DE0058B19B /* miner.h */,
 				38CF25A820E7E6DE0058B19B /* common.c */,
 				38CF25A920E7E6DE0058B19B /* common.h */,
-				38CF25B220E7E6DE0058B19B /* sha256-mb-x86_64-mac.s */,
 				38CF25B420E7E6DE0058B19B /* sha256.c */,
 				38CF25B520E7E6DE0058B19B /* sha256.h */,
 				38CF25B620E7E6DE0058B19B /* state.h */,
@@ -283,7 +278,6 @@
 				38CF25CF20E7E6DE0058B19B /* version.h */,
 				38CF25D020E7E6DE0058B19B /* wallet.c */,
 				38CF25D120E7E6DE0058B19B /* wallet.h */,
-				38CF25D220E7E6DE0058B19B /* x86_64cpuid-mac.s */,
 			);
 			path = client;
 			sourceTree = "<group>";
@@ -461,9 +455,7 @@
 				38CF25F420E7E6DE0058B19B /* address.c in Sources */,
 				38CF25F820E7E6DE0058B19B /* commands.c in Sources */,
 				38CF261C20E7E6DE0058B19B /* dnet_crypt.c in Sources */,
-				38CF261820E7E6DE0058B19B /* x86_64cpuid-mac.s in Sources */,
 				38CF25FC20E7E6DE0058B19B /* url.c in Sources */,
-				38CF260B20E7E6DE0058B19B /* sha256-mb-x86_64-mac.s in Sources */,
 				38CF25F920E7E6DE0058B19B /* crypt.c in Sources */,
 				38CF260820E7E6DE0058B19B /* common.c in Sources */,
 				38CF25F320E7E6DE0058B19B /* dfsrsa.c in Sources */,
