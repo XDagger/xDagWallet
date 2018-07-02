@@ -8,6 +8,7 @@
 #include "wallet.h"
 #include "init.h"
 //#include "transport.h"
+#include "common.h"
 #include "utils/log.h"
 #include "utils/utils.h"
 
@@ -47,7 +48,7 @@ static int add_key(xdag_hash_t priv)
 		
 		memcpy(priv32, k->priv, sizeof(xdag_hash_t));
 		
-		dnet_user_crypt_action(priv32, nkeys, sizeof(xdag_hash_t) / sizeof(uint32_t), 1);
+		xdag_user_crypt_action(priv32, nkeys, sizeof(xdag_hash_t) / sizeof(uint32_t), 1);
 		
 		if (fwrite(priv32, sizeof(xdag_hash_t), 1, f) != 1) {
 			xdag_close_file(f);
@@ -123,7 +124,7 @@ int xdag_wallet_init(void)
 	}
 
 	while (fread(priv32, sizeof(xdag_hash_t), 1, f) == 1) {
-		dnet_user_crypt_action(priv32, n++, sizeof(xdag_hash_t) / sizeof(uint32_t), 2);
+		xdag_user_crypt_action(priv32, n++, sizeof(xdag_hash_t) / sizeof(uint32_t), 2);
 		memcpy(priv, priv32, sizeof(xdag_hash_t));
 		add_key(priv);
 	}

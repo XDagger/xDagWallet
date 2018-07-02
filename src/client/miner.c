@@ -21,7 +21,7 @@
 #include "miner.h"
 #include "storage.h"
 #include "utils/log.h"
-#include "mining_common.h"
+#include "common.h"
 #include "../dnet/dnet_main.h"
 
 #define MINERS_PWD             "minersgonnamine"

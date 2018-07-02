@@ -13,12 +13,12 @@
 #include "block.h"
 #include "crypt.h"
 #include "transport.h"
-//#include "../dnet/dnet_crypt.h"
+#include "../dnet/dnet_main.h"
 //#include "../dnet/dnet_history.h"
 #include "version.h"
 #include "wallet.h"
 #include "init.h"
-#include "mining_common.h"
+#include "common.h"
 #include "commands.h"
 #include "terminal.h"
 #include "memory.h"
@@ -50,7 +50,7 @@ int xdag_init(int argc, char **argv, int isGui)
 	xdag_init_path(argv[0]);
 
 	const char *addrports[256], *bindto = 0, *pubaddr = 0, *pool_arg = 0, *miner_address = 0;
-	int transport_flags = 0, n_addrports = 0, mining_threads_count = 0, is_miner = 1, level, is_rpc = 0, rpc_port = 0;
+	int deamon_flags = 0, n_addrports = 0, mining_threads_count = 0, is_miner = 1, level, is_rpc = 0, rpc_port = 0;
 	
 	memset(addrports, 0, 256);
 	
@@ -99,7 +99,7 @@ int xdag_init(int argc, char **argv, int isGui)
 			if (++i < argc) miner_address = argv[i];
 		} else if(ARG_EQUAL(argv[i], "-d", "")) { /* daemon mode */
 #if !defined(_WIN32) && !defined(_WIN64)
-//			transport_flags |= XDAG_DAEMON;
+			deamon_flags |= 0x1;
 #endif
 		} else if(ARG_EQUAL(argv[i], "-h", "")) { /* help */
 			printUsage(argv[0]);
@@ -171,7 +171,7 @@ int xdag_init(int argc, char **argv, int isGui)
 	xdag_mess("Starting %s, version %s", g_progname, XDAG_VERSION);
 	xdag_mess("Starting dnet transport...");
 	printf("Transport module: ");
-	if (xdag_transport_start(transport_flags, bindto, n_addrports, addrports)) return -1;
+	if (xdag_transport_start(deamon_flags, bindto, n_addrports, addrports)) return -1;
 //	if(dnet_crypt_init(DNET_VERSION)) {
 //		xdag_err("dnet crypt init failed...");
 //		return -1;
@@ -196,17 +196,17 @@ int xdag_init(int argc, char **argv, int isGui)
 	if(xdag_initialize_mining(pool_arg, miner_address)) return -1;
 
 	if (!isGui) {
-//		if (!is_miner || (transport_flags & XDAG_DAEMON) > 0) {
-//			xdag_mess("Starting terminal server...");
-//			pthread_t th;
-//			const int err = pthread_create(&th, 0, &terminal_thread, 0);
-//			if(err != 0) {
-//				printf("create terminal_thread failed, error : %s\n", strerror(err));
-//				return -1;
-//			}
-//		}
+		if (!is_miner || (deamon_flags & 0x1) > 0) {
+			xdag_mess("Starting terminal server...");
+			pthread_t th;
+			const int err = pthread_create(&th, 0, &terminal_thread, 0);
+			if(err != 0) {
+				printf("create terminal_thread failed, error : %s\n", strerror(err));
+				return -1;
+			}
+		}
 
-		startCommandProcessing(transport_flags);
+		startCommandProcessing(deamon_flags);
 	}
 
 	return 0;
@@ -214,7 +214,7 @@ int xdag_init(int argc, char **argv, int isGui)
 
 int xdag_set_password_callback(int(*callback)(const char *prompt, char *buf, unsigned size))
 {
-    return dnet_user_crypt_action((uint32_t *)(void *)callback, 0, 0, 6);
+    return xdag_user_crypt_action((uint32_t *)(void *)callback, 0, 0, 6);
 }
 
 void printUsage(char* appName)

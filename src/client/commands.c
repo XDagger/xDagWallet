@@ -304,7 +304,7 @@ void processXferCommand(char *nextParam, FILE *out, int ispwd, uint32_t* pwd)
 		fprintf(out, "Xfer: destination address not given.\n");
 		return;
 	}
-	if(out == stdout ? dnet_user_crypt_action(0, 0, 0, 3) : (ispwd ? dnet_user_crypt_action(pwd, 0, 4, 5) : 1)) {
+	if(out == stdout ? xdag_user_crypt_action(0, 0, 0, 3) : (ispwd ? xdag_user_crypt_action(pwd, 0, 4, 5) : 1)) {
 		sleep(3);
 		fprintf(out, "Password incorrect.\n");
 	} else {
@@ -365,7 +365,7 @@ int xdag_do_xfer(void *outv, const char *amount, const char *address, int isGui)
 	struct xfer_callback_data xfer;
 	FILE *out = (FILE *)outv;
 
-	if(isGui && dnet_user_crypt_action(0, 0, 0, 3)) {
+	if(isGui && xdag_user_crypt_action(0, 0, 0, 3)) {
 		sleep(3);
 		return 1;
 	}
