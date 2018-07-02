@@ -19,7 +19,6 @@
 #include "address.h"
 #include "commands.h"
 #include "utils/utils.h"
-#include "utils/moving_statistics/moving_average.h"
 #include "common.h"
 #include "../dnet/dnet_main.h"
 
