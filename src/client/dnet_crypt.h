@@ -17,9 +17,7 @@ struct dnet_key {
 #ifdef __cplusplus
 extern "C" {
 #endif
-	
-extern int dnet_limited_version;
-extern int dnet_crypt_init(const char *version);
+	extern int dnet_crypt_init(const char *version);
 #ifdef __cplusplus
 };
 #endif

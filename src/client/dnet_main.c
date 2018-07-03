@@ -22,31 +22,23 @@
 
 extern int getdtablesize(void);
 
-#ifdef __LDuS__
-#include <ldus/system/kernel.h>
-static void catcher(int signum) {
-	ldus_block_signal(0, signum);	/* заблокировать его, чтобы самому повторно не получить */
-	ldus_kill_task(0, signum);	/* передать сигнал дальше */
-}
-#endif
-
 static void daemonize(void) {
 #if !defined(_WIN32) && !defined(_WIN64) && !defined(QDNET) && !defined(NO_DNET_FORK)
 	int i;
-#ifndef __LDuS__
-    if (getppid() == 1) exit(0); /* already a daemon */
-    i = fork();
-    if (i < 0) exit(1); /* fork error */
-    if (i > 0) exit(0); /* parent exits */
 
-    /* child (daemon) continues */
-    setsid(); /* obtain a new process group */
-    for (i = getdtablesize(); i >= 0; --i) close(i); /* close all descriptors */
-    i = open("/dev/null", O_RDWR); dup(i); dup(i); /* handle standard I/O */
+	if (getppid() == 1) exit(0); /* already a daemon */
+	i = fork();
+	if (i < 0) exit(1); /* fork error */
+	if (i > 0) exit(0); /* parent exits */
+
+	/* child (daemon) continues */
+	setsid(); /* obtain a new process group */
+	for (i = getdtablesize(); i >= 0; --i) close(i); /* close all descriptors */
+	i = open("/dev/null", O_RDWR); dup(i); dup(i); /* handle standard I/O */
 
     /* first instance continues */
 #if 0
-    signal(SIGCHLD, SIG_IGN); /* ignore child */
+	signal(SIGCHLD, SIG_IGN); /* ignore child */
 #endif
 	signal(SIGHUP, SIG_IGN);
 	signal(SIGPIPE, SIG_IGN);
@@ -59,11 +51,6 @@ static void daemonize(void) {
 	signal(SIGTTOU, SIG_IGN);
 	signal(SIGVTALRM, SIG_IGN);
 	signal(SIGPROF, SIG_IGN);
-#else
-	/* перехват всех сигналов */
-	for (i = 1; i <= INT_SIG_END - INT_SIG; ++i) if (i != SIGCONT)
-		signal(i, &catcher);
-#endif
 #endif
 }
 
@@ -75,22 +62,22 @@ static void angelize(void) {
 		signal(SIGINT, SIG_IGN);
 		signal(SIGTERM, SIG_IGN);
 		if (childpid > 0) while (waitpid(childpid, &stat, 0) == -1) {
-            if (errno != EINTR) {
-                abort();
-            }
-        }
-        if (stat >= 0 && stat <= 5) {
-            exit(stat);
-        }
-        sleep(10);
+			if (errno != EINTR) {
+				abort();
+			}
+		}
+		if (stat >= 0 && stat <= 5) {
+			exit(stat);
+		}
+		sleep(10);
     }
 #endif
 }
 
 int dnet_init(int argc, char **argv) {
-    int i = 0, err = 0, res = 0, is_daemon = 0, is_server = 0;
+	int i = 0, err = 0, res = 0, is_daemon = 0, is_server = 0;
 
-    for (i = 1; i < argc + 2; ++i) {
+	for (i = 1; i < argc + 2; ++i) {
 		if (i == 1) {
 #if !defined(_WIN32) && !defined(_WIN64)
 			if (i < argc && !strcmp(argv[i], "-d")) is_daemon = 1;
@@ -114,6 +101,6 @@ int dnet_init(int argc, char **argv) {
 			i++;
 			continue;
 		}
-    }
+	}
 	return res;
 }

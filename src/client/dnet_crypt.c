@@ -20,14 +20,6 @@
 #define SECTOR_SIZE (1 << SECTOR_LOG)
 #define KEYLEN_MIN	(DNET_KEYLEN / 4)
 
-#if !defined(_WIN32) && !defined(_WIN64)
-extern int gethostname(char *name, size_t namelen);
-extern int getlogin_r(char *name, size_t namesize);
-#else
-#define gethostname(n, l) strncpy(n, "localhost", l)
-#define getlogin_r(n, l) strncpy(n, "Administrator", l)
-#endif
-
 struct dnet_keys {
     struct dnet_key priv;
     struct dnet_key pub;
@@ -50,7 +42,6 @@ struct dnet_session {
 	uint32_t route_port;
 };
 
-int dnet_limited_version = 0;
 static int g_keylen = 0;
 
 static int input_password(const char *prompt, char *buf, unsigned len) {
@@ -134,10 +125,6 @@ int dnet_generate_random_array(void *array, unsigned long size) {
 	}
 	return 0;
 }
-
-//void dnet_generate_stream_id(struct dnet_stream_id *id) {
-//	dnet_generate_random_array(id, sizeof(struct dnet_stream_id));
-//}
 
 static int dnet_test_keys(void) {
     uint32_t src[SECTOR_SIZE / 4], dest[SECTOR_SIZE / 4];
@@ -265,31 +252,8 @@ int dnet_crypt_init(const char *version) {
         struct dfslib_string str;
 		f = xdag_open_file(KEYFILE, "wb");
 		if (!f) return 3;
-#ifndef QDNET
-        if (dnet_limited_version)
-#endif
-        {
-			int len;
-			memset(buf, 0, 256);
-#ifndef __LDuS__
-			gethostname(buf, 255);
-			len = (int)strlen(buf);
-			buf[len++] = ',';
-#if !defined(QDNET) || !defined(__arm__)
-			getlogin_r(buf + len, 255 - len);
-			len += strlen(buf + len);
-            buf[len++] = ',';
-#endif
-#else
-			len = 0;
-#endif
-			dfslib_random_fill(buf + len, 255 - len, 0, 0);
-			for (; len < 255; len++) {
-				buf[len] %= (0x80 - ' ');
-				buf[len] += ' ';
-			}
-#ifndef QDNET
-        } else {
+
+		{
 			struct dfslib_string str, str1;
 			char pwd[256], pwd1[256];
 			(*g_input_password)("Set password", pwd, 256);
@@ -301,15 +265,14 @@ int dnet_crypt_init(const char *version) {
 			}
 			if (str.len) set_user_crypt(&str);
 			(*g_input_password)("Type random keys", buf, 256);
-#endif
 		}
-        dfslib_random_fill(keys->pub.key, DNET_KEYLEN * sizeof(dfsrsa_t), 0, dfslib_utf8_string(&str, buf, strlen(buf)));
+
+		dfslib_random_fill(keys->pub.key, DNET_KEYLEN * sizeof(dfsrsa_t), 0, dfslib_utf8_string(&str, buf, strlen(buf)));
 		printf("Generating host keys... "); fflush(stdout);
 #ifdef __arm__
 		g_keylen = KEYLEN_MIN;
 #else
-		if (dnet_limited_version) g_keylen = DNET_KEYLEN / 2;
-		else g_keylen = DNET_KEYLEN;
+		g_keylen = DNET_KEYLEN;
 #endif
 		dfsrsa_keygen(keys->priv.key, keys->pub.key, g_keylen);
 		dnet_make_key(keys->priv.key, g_keylen);
