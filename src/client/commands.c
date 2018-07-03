@@ -475,26 +475,6 @@ int out_balances()
 	return 0;
 }
 
-int xdag_show_state(xdag_hash_t hash)
-{
-	char balance[64], address[64], state[256];
-	if(!g_xdag_show_state) {
-		return -1;
-	}
-	if(g_xdag_state < XDAG_STATE_XFER) {
-		strcpy(balance, "Not ready");
-	} else {
-		sprintf(balance, "%.9Lf", amount2xdags(xdag_get_balance(0)));
-	}
-	if(!hash) {
-		strcpy(address, "Not ready");
-	} else {
-		xdag_hash2address(hash, address);
-	}
-	strcpy(state, get_state());
-	return (*g_xdag_show_state)(state, balance, address);
-}
-
 void processHelpCommand(FILE *out)
 {
 	fprintf(out, "Commands:\n"

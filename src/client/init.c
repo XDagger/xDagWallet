@@ -34,14 +34,11 @@ char *g_coinname, *g_progname;
 int g_xdag_state = XDAG_STATE_INIT;
 int g_xdag_testnet = 0;
 int g_is_miner = 0;
-int g_xdag_run = 0;
 time_t g_xdag_xfer_last = 0;
 enum xdag_field_type g_block_header_type = XDAG_FIELD_HEAD;
 struct xdag_stats g_xdag_stats;
 struct xdag_ext_stats g_xdag_extstats;
 int g_disable_mining = 0;
-
-int(*g_xdag_show_state)(const char *state, const char *balance, const char *address) = 0;
 
 void printUsage(char* appName);
 
@@ -74,9 +71,6 @@ int xdag_init(int argc, char **argv, int isGui)
 	if (!isGui) {
 		printf("%s client/server, version %s.\n", g_progname, XDAG_VERSION);
 	}
-
-	g_xdag_run = 1;
-	xdag_show_state(0);
 
 	if (argc <= 1) {
 		printUsage(argv[0]);

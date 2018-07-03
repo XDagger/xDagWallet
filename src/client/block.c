@@ -720,11 +720,6 @@ static void *add_block_callback(void *block, void *data)
 	}
 
 	pthread_mutex_unlock(&block_mutex);
-
-//	if(res >= 0) {
-//		xdag_sync_pop_block(b);
-//	}
-
 	return 0;
 }
 
@@ -876,79 +871,18 @@ static void *work_thread(void *arg)
 	xdag_time_t t = XDAG_ERA;
 	xdag_time_t conn_time = 0, sync_time = 0, t0;
 	uint64_t nhashes0 = 0, nhashes = 0;
-//	pthread_t th;
-
-begin:
-//	// loading block from the local storage
-//	g_xdag_state = XDAG_STATE_LOAD;
-//	xdag_mess("Loading blocks from local storage...");
-//
-//	uint64_t start = get_timestamp();
-//	xdag_show_state(0);
-//
-//	sleep(2);
-//
-//	xdag_load_blocks(t, get_timestamp(), &t, &add_block_callback);
-//
-//	xdag_mess("Finish loading blocks, time cost %ldms", get_timestamp() - start);
-//
-//	// waiting for command "run"
-////	while (!g_xdag_run) {
-////		g_xdag_state = XDAG_STATE_STOP;
-////		sleep(1);
-////	}
-//
-//	g_xdag_sync_on = 1; // todo: remove this shit!!
 
 	// periodic generation of blocks and determination of the main block
 	xdag_mess("Entering main cycle...");
 
 	for (;;) {
-//		unsigned nblk;
-
 		t0 = t;
 		t = get_timestamp();
 		nhashes0 = nhashes;
 		nhashes = g_xdag_extstats.nhashes;
-
-//		if (t > t0) {
-//			g_xdag_extstats.hashrate_s = ((double)(nhashes - nhashes0) * 1024) / (t - t0);
-//		}
-//
-//		if (!g_light_mode && (nblk = (unsigned)g_xdag_extstats.nnoref / (XDAG_BLOCK_FIELDS - 5))) {
-//			nblk = nblk / 61 + (nblk % 61 > (unsigned)rand() % 61);
-//
-//			while (nblk--) {
-//				xdag_create_block(0, 0, 0, 0, 0, NULL);
-//			}
-//		}
-
 		pthread_mutex_lock(&block_mutex);
 
 		if (g_xdag_state == XDAG_STATE_REST) {
-//			g_xdag_sync_on = 0;
-//			pthread_mutex_unlock(&block_mutex);
-//
-//			while (get_timestamp() - t < MAIN_CHAIN_PERIOD + (3 << 10)) {
-//				sleep(1);
-//			}
-//
-//			pthread_mutex_lock(&block_mutex);
-//
-//			if (xdag_free_all()) {
-//				ldus_rbtree_walk_up(root, reset_callback);
-//			}
-//
-//			root = 0;
-//			g_balance = 0;
-//			top_main_chain = pretop_main_chain = 0;
-//			ourfirst = ourlast = noref_first = noref_last = 0;
-//			memset(&g_xdag_stats, 0, sizeof(g_xdag_stats));
-//			memset(&g_xdag_extstats, 0, sizeof(g_xdag_extstats));
-//			pthread_mutex_unlock(&block_mutex);
-//			conn_time = sync_time = 0;
-//
-//			goto begin;
 			xdag_err("block reset!!!");
 		} else {
 			pthread_mutex_lock(&g_transport_mutex);
@@ -981,13 +915,7 @@ begin:
 			pthread_mutex_unlock(&g_transport_mutex);
 		}
 
-//		if (!g_light_mode) {
-//			check_new_main();
-//		}
-
-		struct block_internal *ours = ourfirst;
 		pthread_mutex_unlock(&block_mutex);
-		xdag_show_state(ours ? ours->hash : 0);
 
 		while (get_timestamp() - t < 1024) {
 			sleep(1);
@@ -1028,7 +956,6 @@ int xdag_blocks_start(int is_pool, int mining_threads_count, int miner_address)
 	g_xdag_state = XDAG_STATE_LOAD;
 	xdag_mess("Loading blocks from local storage...");
 	uint64_t start = get_timestamp();
-	xdag_show_state(0);
 	xdag_load_blocks(t, get_timestamp(), &t, &add_block_callback);
 	xdag_mess("Finish loading blocks, time cost %ldms", get_timestamp() - start);
 	g_xdag_sync_on = 1; // todo: remove this shit!!
@@ -1228,7 +1155,6 @@ int xdag_blocks_reset(void)
 	if (g_xdag_state != XDAG_STATE_REST) {
 		xdag_crit("The local storage is corrupted. Resetting blocks engine.");
 		g_xdag_state = XDAG_STATE_REST;
-		xdag_show_state(0);
 	}
 	pthread_mutex_unlock(&block_mutex);
 

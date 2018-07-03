@@ -36,7 +36,7 @@ static void daemonize(void) {
 	for (i = getdtablesize(); i >= 0; --i) close(i); /* close all descriptors */
 	i = open("/dev/null", O_RDWR); dup(i); dup(i); /* handle standard I/O */
 
-    /* first instance continues */
+	/* first instance continues */
 #if 0
 	signal(SIGCHLD, SIG_IGN); /* ignore child */
 #endif
