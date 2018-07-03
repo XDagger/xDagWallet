@@ -373,11 +373,11 @@ static void *init_storage_load_thread(void *data)
 				
 				sum.size = sum.sum = 0;
 				mask = (1l << 16) - 1;
-			} else if (sprintf(path, STORAGE_DIR3, STORAGE_DIR3_ARGS(start_time)), xdag_file_exists(path)) {
+			} else if ((void)(sprintf(path, STORAGE_DIR3, STORAGE_DIR3_ARGS(start_time))), xdag_file_exists(path)) {
 				mask = (1l << 16) - 1;
-			} else if (sprintf(path, STORAGE_DIR2, STORAGE_DIR2_ARGS(start_time)), xdag_file_exists(path)) {
+			} else if ((void)(sprintf(path, STORAGE_DIR2, STORAGE_DIR2_ARGS(start_time))), xdag_file_exists(path)) {
 				mask = (1l << 24) - 1;
-			} else if (sprintf(path, STORAGE_DIR1, STORAGE_DIR1_ARGS(start_time)), xdag_file_exists(path)) {
+			} else if ((void)(sprintf(path, STORAGE_DIR1, STORAGE_DIR1_ARGS(start_time))), xdag_file_exists(path)) {
 				mask = (1ll << 32) - 1;
 			} else {
 				mask = (1ll << 40) - 1;
@@ -552,11 +552,11 @@ uint64_t xdag_load_blocks(xdag_time_t start_time, xdag_time_t end_time, void *da
 				
 				s.size = s.sum = 0;
 				mask = (1l << 16) - 1;
-			} else if (sprintf(path, STORAGE_DIR3, STORAGE_DIR3_ARGS(start_time)), xdag_file_exists(path)) {
+			} else if ((void)(sprintf(path, STORAGE_DIR3, STORAGE_DIR3_ARGS(start_time))), xdag_file_exists(path)) {
 				mask = (1l << 16) - 1;
-			} else if (sprintf(path, STORAGE_DIR2, STORAGE_DIR2_ARGS(start_time)), xdag_file_exists(path)) {
+			} else if ((void)(sprintf(path, STORAGE_DIR2, STORAGE_DIR2_ARGS(start_time))), xdag_file_exists(path)) {
 				mask = (1l << 24) - 1;
-			} else if (sprintf(path, STORAGE_DIR1, STORAGE_DIR1_ARGS(start_time)), xdag_file_exists(path)) {
+			} else if ((void)(sprintf(path, STORAGE_DIR1, STORAGE_DIR1_ARGS(start_time))), xdag_file_exists(path)) {
 				mask = (1ll << 32) - 1;
 			} else {
 				mask = (1ll << 40) - 1;
@@ -607,7 +607,8 @@ int xdag_load_sums(xdag_time_t start_time, xdag_time_t end_time, struct xdag_sto
 		memset(sums, 0, 16 * sizeof(struct xdag_storage_sum));
 
 		for (i = 0; i < 256; ++i) {
-			sums[i >> 4].size += buf[i].size, sums[i >> 4].sum += buf[i].sum;
+			sums[i >> 4].size += buf[i].size;
+			sums[i >> 4].sum += buf[i].sum;
 		}
 	} else {
 		memcpy(sums, buf + (start_time >> ((level + 4) * 4) & 0xf0), 16 * sizeof(struct xdag_storage_sum));

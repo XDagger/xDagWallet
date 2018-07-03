@@ -121,7 +121,8 @@ static int dfsrsa_getlen(dfsrsa_t *num, int len)
 // compares two long numbers and return -1, 0, 1
 int dfsrsa_cmp(dfsrsa_t *left, dfsrsa_t *right, int len)
 {
-	left += len, right += len;
+	left += len;
+	right += len;
 	while(len-- && *--left == *--right);
 	if(len < 0) return 0;
 	else if(*left < *right) return -1;
@@ -133,7 +134,9 @@ static void dfsrsa_addeq(dfsrsa_t *sum, dfsrsa_t small, int len)
 {
 	dfsrsa_long_t res = small;
 	while(len-- && res) {
-		res += *sum, *sum++ = (dfsrsa_t)res, res >>= DFSRSA_T_BITS;
+		res += *sum;
+		*sum++ = (dfsrsa_t)res;
+		res >>= DFSRSA_T_BITS;
 	}
 }
 
@@ -143,7 +146,8 @@ int dfsrsa_add(dfsrsa_t *sum, dfsrsa_t *add1, dfsrsa_t *add2, int len)
 	dfsrsa_long_t res = 0;
 	while(len--) {
 		res += (dfsrsa_long_t)*add1++ + *add2++;
-		*sum++ = (dfsrsa_t)res, res >>= DFSRSA_T_BITS;
+		*sum++ = (dfsrsa_t)res;
+		res >>= DFSRSA_T_BITS;
 	}
 	return (int)res;
 }
@@ -155,7 +159,8 @@ static dfsrsa_t dfsrsa_adc(dfsrsa_t *sum, dfsrsa_t *add1, dfsrsa_t *add2,
 	dfsrsa_long_t res = carry;
 	while(len--) {
 		res += (dfsrsa_long_t)*add1++ + *add2++;
-		*sum++ = (dfsrsa_t)res, res >>= DFSRSA_T_BITS;
+		*sum++ = (dfsrsa_t)res;
+		res >>= DFSRSA_T_BITS;
 	}
 	return (dfsrsa_t)res;
 }
@@ -166,7 +171,8 @@ static int dfsrsa_sub(dfsrsa_t *sub, dfsrsa_t *from, dfsrsa_t *to, int len)
 	dfsrsa_slong_t res = 0;
 	while(len--) {
 		res += (dfsrsa_long_t)*from++ - *to++;
-		*sub++ = (dfsrsa_t)res, res >>= DFSRSA_T_BITS;
+		*sub++ = (dfsrsa_t)res;
+		res >>= DFSRSA_T_BITS;
 	}
 	return (int)res;
 }
@@ -178,7 +184,8 @@ static int dfsrsa_shr1(dfsrsa_t *num, int len, int carry)
 	int next_carry;
 	num += len;
 	while(len--) {
-		next_carry = *--num & 1, *num >>= 1;
+		next_carry = *--num & 1;
+		*num >>= 1;
 		*num |= (dfsrsa_t)carry << (DFSRSA_T_BITS - 1);
 		carry = next_carry;
 	}
@@ -197,7 +204,8 @@ static void dfsrsa_muladd(dfsrsa_t *sum, dfsrsa_t *big, dfsrsa_t small, int len)
 	dfsrsa_long_t res = 0;
 	while(len--) {
 		res += (dfsrsa_long_t)*big++ * small + *sum;
-		*sum++ = (dfsrsa_t)res, res >>= DFSRSA_T_BITS;
+		*sum++ = (dfsrsa_t)res;
+		res >>= DFSRSA_T_BITS;
 	}
 	*sum = (dfsrsa_t)res;
 }
@@ -210,7 +218,8 @@ static void dfsrsa_mulsub(dfsrsa_t *sub, dfsrsa_t *big, dfsrsa_t small, int len)
 	dfsrsa_long_t res = 0;
 	while(len--) {
 		res += *sub - (dfsrsa_long_t)*big++ * small;
-		*sub++ = (dfsrsa_t)res, res >>= DFSRSA_T_BITS;
+		*sub++ = (dfsrsa_t)res;
+		res >>= DFSRSA_T_BITS;
 		if(res) {
 			res |= (dfsrsa_long_t)0 - ((dfsrsa_long_t)1 << DFSRSA_T_BITS);
 		}
@@ -569,22 +578,30 @@ static void dfsrsa_karatsuba_mul(dfsrsa_t *prod, dfsrsa_t *mul1, dfsrsa_t *mul2,
 		dfsrsa_mul(prod, mul1, mul2, len);
 		return;
 	}
-	r = 1, llen = len, len >>= 1;
+	r = 1;
+	llen = len;
+	len >>= 1;
 	if(dfsrsa_cmp(mul1 + len, mul1, len) >= 0) {
 		dfsrsa_sub(work, mul1 + len, mul1, len);
 	} else {
-		dfsrsa_sub(work, mul1, mul1 + len, len), r = -r;
+		dfsrsa_sub(work, mul1, mul1 + len, len);
+		r = -r;
 	}
 	if(dfsrsa_cmp(mul2 + len, mul2, len) >= 0) {
 		dfsrsa_sub(work + len, mul2 + len, mul2, len);
 	} else {
-		dfsrsa_sub(work + len, mul2, mul2 + len, len), r = -r;
+		dfsrsa_sub(work + len, mul2, mul2 + len, len);
+		r = -r;
 	}
 	dfsrsa_karatsuba_mul(work + llen, work, work + len, len, prod);
 	dfsrsa_karatsuba_mul(prod, mul1, mul2, len, work);
 	dfsrsa_karatsuba_mul(prod + llen, mul1 + len, mul2 + len, len, work);
 	dfsrsa_copy(work, prod, llen);
-	mul1 = prod + llen, mul2 = work, work += llen, prod += len, rem = 0;
+	mul1 = prod + llen;
+	mul2 = work;
+	work += llen;
+	prod += len;
+	rem = 0;
 	if(r > 0) {
 		while(llen--) {
 			rem += (dfsrsa_long_t)*prod + (dfsrsa_long_t)*mul1++
@@ -601,7 +618,9 @@ static void dfsrsa_karatsuba_mul(dfsrsa_t *prod, dfsrsa_t *mul1, dfsrsa_t *mul2,
 		}
 	}
 	while(rem) {
-		rem += *prod, *prod++ = (dfsrsa_t)rem, rem >>= DFSRSA_T_BITS;
+		rem += *prod;
+		*prod++ = (dfsrsa_t)rem;
+		rem >>= DFSRSA_T_BITS;
 	}
 #ifdef DFSRSA_DEBUG
 	dfsrsa_mul(w, m1, m2, l);
@@ -633,9 +652,11 @@ static dfsrsa_t dfsrsa_modsmall(dfsrsa_t *div, int len, dfsrsa_t mod)
 	dfsrsa_long_t rem = 0;
 	if(!mod) return 0;
 	while(len) {
-		rem <<= DFSRSA_T_BITS, rem |= div[--len], rem %= mod;
+		rem <<= DFSRSA_T_BITS;
+		rem |= div[--len];
+		rem %= mod;
 	}
-	return rem;
+	return (dfsrsa_t)rem;
 }
 
 // calculates the rest of division of number `mod` of length `mlen` by number `div` of length `len`
@@ -744,7 +765,8 @@ static void dfsrsa_powmod(dfsrsa_t *res, dfsrsa_t *base, dfsrsa_t *exp, dfsrsa_t
 	dfsrsa_set(work, len, 1);
 	int explen = dfsrsa_getlen(exp, len);
 	while(explen--) {
-		bits = exp[explen], i = DFSRSA_T_BITS;
+		bits = exp[explen];
+		i = DFSRSA_T_BITS;
 		while(i--) {
 			if(flag) {
 				off = off1 - off;
@@ -773,10 +795,16 @@ static int dfsrsa_inverse(dfsrsa_t *inv, dfsrsa_t *num, dfsrsa_t *mod,
 	dfsrsa_t *pn = work, *px = inv, *qn = work + len, *qx = work + 2 * len,
 		*mod4 = work + 3 * len, mask = 0;
 	int carry;
-	dfsrsa_copy(pn, num, len), dfsrsa_set(px, len, 1);
+	dfsrsa_copy(pn, num, len);
+	dfsrsa_set(px, len, 1);
 	dfsrsa_copy(mod4, mod, len);
-	while(!(*mod4 & 1)) dfsrsa_shr1(mod4, len, 0), mask <<= 1, mask |= 1;
-	dfsrsa_copy(qn, mod4, len), dfsrsa_set(qx, len, 0);
+	while(!(*mod4 & 1)) {
+		dfsrsa_shr1(mod4, len, 0);
+		mask <<= 1;
+		mask |= 1;
+	}
+	dfsrsa_copy(qn, mod4, len);
+	dfsrsa_set(qx, len, 0);
 	dfsrsa_debug(INV, "inv mod/4", mod4, len);
 	for(;;) {
 		dfsrsa_debug(INV, "inv pn", pn, len);
@@ -907,7 +935,8 @@ static void dfsrsa_montgomery_powmod(dfsrsa_t *res, dfsrsa_t *base, dfsrsa_t *ex
 	if(dfsrsa_montgomery_reduce(mbase, mod, mdata, len)) goto powmod;
 	int explen = dfsrsa_getlen(exp, len);
 	while(explen--) {
-		bits = exp[explen], i = DFSRSA_T_BITS;
+		bits = exp[explen];
+		i = DFSRSA_T_BITS;
 		while(i--) {
 			if(flag) {
 				off = off1 - off;
@@ -980,10 +1009,15 @@ static int dfsrsa_isprime(dfsrsa_t *n, dfsrsa_t *work, int len)
 		if(!dfsrsa_modsmall(n, len, d)) return 0;
 		++i;
 	}
-	work2 = work + 2 * len, res = work + 12 * len, a = res + len,
-		nm1 = a + len, o = nm1 + len;
-	dfsrsa_set(o, len, 1); dfsrsa_set(a, len, 0);
-	dfsrsa_copy(nm1, n, len), --*nm1;
+	work2 = work + 2 * len;
+	res = work + 12 * len;
+	a = res + len;
+	nm1 = a + len;
+	o = nm1 + len;
+	dfsrsa_set(o, len, 1);
+	dfsrsa_set(a, len, 0);
+	dfsrsa_copy(nm1, n, len);
+	--*nm1;
 	dfsrsa_debug(MILLER, "miller n-1", nm1, len);
 #ifndef USE_MILLER_RABIN
 	lim *= lim;
@@ -1020,7 +1054,8 @@ static int dfsrsa_isprime(dfsrsa_t *n, dfsrsa_t *work, int len)
 static void dfsrsa_genprime(dfsrsa_t *n, dfsrsa_t *work, int len)
 {
 	dfsrsa_debug(GEN, "genprime random", n, len);
-	*n |= 3, n[len - 1] |= 3 << (DFSRSA_T_BITS - 2);
+	*n |= 3;
+	n[len - 1] |= 3 << (DFSRSA_T_BITS - 2);
 	dfsrsa_debug(GEN, "genprime before", n, len);
 	while(!dfsrsa_isprime(n, work, len)) {
 		dfsrsa_addeq(n, 4, len);
@@ -1108,7 +1143,8 @@ int dfsrsa_keygen(dfsrsa_t *privkey, dfsrsa_t *pubkey, int keylen)
 	dfsrsa_genprime(q, work, len);
 	dfsrsa_mul(n, p, q, len);
 	dfsrsa_debug(GEN, "pq", n, len << 1);
-	--*p, --*q;
+	--*p;
+	--*q;
 	dfsrsa_mul(phin0, p, q, len);
 	len <<= 1;
 	dfsrsa_copy(phin, phin0, len);

@@ -23,7 +23,7 @@
 #include "crc.h"
 #endif
 
-static const char version[] = "CRC library, ...-T4.046-T11.609"; /* $DVS:time$ */
+//static const char version[] = "CRC library, ...-T4.046-T11.609"; /* $DVS:time$ */
 
 unsigned *crc_table = NULL;
 
@@ -34,7 +34,7 @@ int crc_makeTable(unsigned table[256])
 		crc = i;
 		for(j = 0; j < 8; j++)
 			crc = (crc >> 1) ^ (crc & 1 ? 0xEDB88320UL : 0);
-		table[i] = crc;
+		table[i] = (unsigned)crc;
 	}
 	return 0;
 }

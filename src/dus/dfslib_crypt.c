@@ -94,11 +94,15 @@ static inline void dfs_unmixArray(register dfs32 *d, int size) {
 		dfs_crypt3(a,b,c,d,x,y,z,t), dfs_crypt3(a,b,c,d,x,y,z,t)
 
 static inline dfs16 dfs_mod(dfs64 big_, dfs16 small_) {
-	if ((unsigned long)big_ == big_) return (unsigned long)big_ % small_;
-	else {
+	if ((unsigned long)big_ == big_) {
+		return (unsigned long)big_ % small_;
+	} else {
 	    dfs32 tmp = (dfs32)(big_ >> 32) % small_;
-	    tmp <<= 16, tmp |= (dfs32)big_ >> 16, tmp %= small_;
-	    tmp <<= 16, tmp |= (dfs16)big_; return tmp % small_;
+		tmp <<= 16;
+		tmp |= (dfs32)big_ >> 16;
+		tmp %= small_;
+		tmp <<= 16;
+		tmp |= (dfs16)big_; return tmp % small_;
 	}
 }
 
@@ -111,7 +115,10 @@ static void dfs_prepare(struct dfslib_crypt *dfsc, dfs64 sectorNo,
 	z = dfsc->pwd[2] ^ dfsc->regs[dfs_mod(sectorNo, 65519) +  5];
 	t = dfsc->pwd[3] ^ dfsc->regs[dfs_mod(sectorNo, 65521) +  3];
 	dfs_crypt6(a,b,c,d,x,y,z,t);
-	*px = x, *py = y, *pz = z, *pt = t;
+	*px = x;
+	*py = y;
+	*pz = z;
+	*pt = t;
 }
 
 #define dfs_encrypt2(a,b,c,d,x,y,z,t,data) \

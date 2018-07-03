@@ -13,7 +13,7 @@
 #include "crypt.h"
 #include "utils/log.h"
 #include "system.h"
-#include "../dnet/dnet_main.h"
+#include "./dnet_main.h"
 
 static EC_GROUP *group;
 
@@ -268,7 +268,8 @@ int xdag_sign(const void *key, const xdag_hash_t hash, xdag_hash_t sign_r, xdag_
 		return -1;
 	}
 
-	p = buf + 3, s = *p++;
+	p = buf + 3;
+	s = *p++;
 
 	if(s >= sizeof(xdag_hash_t)) {
 		memcpy(sign_r, p + s - sizeof(xdag_hash_t), sizeof(xdag_hash_t));
@@ -277,7 +278,8 @@ int xdag_sign(const void *key, const xdag_hash_t hash, xdag_hash_t sign_r, xdag_
 		memcpy((uint8_t*)sign_r + sizeof(xdag_hash_t) - s, p, s);
 	}
 
-	p += s + 1, s = *p++;
+	p += s + 1;
+	s = *p++;
 
 	if(s >= sizeof(xdag_hash_t)) {
 		memcpy(sign_s, p + s - sizeof(xdag_hash_t), sizeof(xdag_hash_t));
@@ -326,10 +328,10 @@ int xdag_verify_signature(const void *key, const xdag_hash_t hash, const xdag_ha
 	ptr = add_number_to_sign(ptr, sign_s);
 	buf[0] = 0x30;
 	buf[1] = ptr - buf - 2;
-	res = ECDSA_verify(0, (const uint8_t*)hash, sizeof(xdag_hash_t), buf, ptr - buf, (EC_KEY*)key);
+	res = ECDSA_verify(0, (const uint8_t*)hash, sizeof(xdag_hash_t), buf, (int)(ptr - buf), (EC_KEY*)key);
 
 	xdag_debug("Verify: res=%2d key=%lx hash=[%s] sign=[%s] r=[%s], s=[%s]", res, (long)key, xdag_log_hash(hash),
-		xdag_log_array(buf, ptr - buf), xdag_log_hash(sign_r), xdag_log_hash(sign_s));
+		xdag_log_array(buf, (int)(ptr - buf)), xdag_log_hash(sign_r), xdag_log_hash(sign_s));
 
 	return res != 1;
 }

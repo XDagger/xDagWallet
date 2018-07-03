@@ -11,19 +11,14 @@
 #include <sys/wait.h>
 #endif
 #include "dnet_crypt.h"
-#include "dnet_database.h"
-#include "dnet_history.h"
-#include "dnet_connection.h"
-#include "dnet_threads.h"
-#include "dnet_log.h"
-#include "dnet_command.h"
 #include "dnet_main.h"
+#include "./utils/log.h"
 
 #if defined (__MACOS__) || defined (__APPLE__)
 #define SIGPOLL SIGIO
 #endif
 
-#define NO_DNET_FORK
+//#define NO_DNET_FORK
 
 extern int getdtablesize(void);
 
@@ -93,15 +88,7 @@ static void angelize(void) {
 }
 
 int dnet_init(int argc, char **argv) {
-	char command[DNET_COMMAND_MAX];
-    struct dnet_output out;
-    struct dnet_thread *thread;
-    int i = 0, err = 0, res, is_daemon = 0, is_server = 0;
-    const char *mess = 0;
-
-    if (system_init() || dnet_threads_init() || dnet_hosts_init()) {
-		err = 4; mess = "initializing error"; goto end;
-    }
+    int i = 0, err = 0, res = 0, is_daemon = 0, is_server = 0;
 
     for (i = 1; i < argc + 2; ++i) {
 		if (i == 1) {
@@ -116,7 +103,7 @@ int dnet_init(int argc, char **argv) {
 		work:
 			if (is_daemon) daemonize();
 			angelize();
-			dnet_log_printf("%s %s%s.\n", argv[0], DNET_VERSION, (is_daemon ? ", running as daemon" : ""));
+			xdag_mess("%s %s%s.\n", argv[0], DNET_VERSION, (is_daemon ? ", running as daemon" : ""));
 			if (is_daemon) continue;
 		}
 		if (i < argc && !strcmp(argv[i], "-s")) {
@@ -127,49 +114,6 @@ int dnet_init(int argc, char **argv) {
 			i++;
 			continue;
 		}
-
-		thread = malloc(sizeof(struct dnet_thread));
-		if (!thread) { err = 2; goto end; }
-		if (i < argc) {
-			thread->arg = argv[i];
-			thread->conn.socket = -1;
-			thread->type = (is_server ? DNET_THREAD_SERVER : DNET_THREAD_CLIENT);
-		} else if (i == argc) {
-			thread->type = DNET_THREAD_WATCHDOG;
-		} else {
-			thread->type = DNET_THREAD_COLLECTOR;
-		}
-		res = dnet_thread_create(thread);
-		if (res) { err = 3; goto end; }
-
-		is_server = 0;
     }
-
-    out.f = stdout;
-    i = 1;
-    while (1) {
-		while (i < argc && strcmp(argv[i], "-c")) i++;
-		if (i + 1 < argc) {
-			if (!strcmp(argv[++i], "repeat")) {
-				i = 1;
-				continue;
-			}
-			strcpy(command, argv[i++]);
-		} else if (is_daemon) {
-			return 0;
-
-		} else {
-            return 0;
-		}
-    	if (dnet_command(command, &out) < 0) break;
-    }
-
-end:
-    if (err) {
-        if (!mess) mess = strerror(errno);
-		if (!is_daemon) printf("%s: error %X: %s.\n", argv[0], err, mess);
-        dnet_log_printf("%s: error %X: %s.\n", argv[0], err, mess);
-        if (err < 0) goto work;
-    }
-    exit(err);
+	return res;
 }

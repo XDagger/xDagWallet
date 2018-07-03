@@ -17,9 +17,9 @@
 unsigned dfslib_random_get(unsigned limit) {
 	unsigned res;
 #ifdef USE_RAND48
-	res = mrand48();
+	res = (unsigned)mrand48();
 #else
-	res = rand();
+	res = rand()ź
 #endif
 	if (limit) res %= limit;
 	return res;
@@ -37,12 +37,12 @@ void dfslib_random_fill(void *buf, unsigned long len, int xor, struct dfslib_str
 		}
 		rnd += uni;
 	    }
-	    res *= 41, res += rnd % 41, bytes3 += 2;
+		(void)(res *= 41), (void)(res += rnd % 41), bytes3 += 2;
 	    if (bytes3 >= 10) {
 		if (xor) *(unsigned char *)buf ^= (unsigned char)res;
 		else *(unsigned char *)buf = (unsigned char)res;
-		res >>= 8, bytes3 -= 3;
-		buf = (unsigned char *)buf + 1, --len;
+			(void)(res >>= 8), bytes3 -= 3;
+			(void)(buf = (unsigned char *)buf + 1), --len;
 	    }
 	}
 }
@@ -61,7 +61,7 @@ void dfslib_random_sector(dfs32 *sector, struct dfslib_crypt *crypt0,
 		dfs32 res = crypt->pwd[i];
 		int j;
 		for (j = 0; j < 6; ++j)
-		    tips[i * 6 + j] = (res % 41) + 0x21, res /= 41;
+			(void)(tips[i * 6 + j] = (res % 41) + 0x21), res /= 41;
 	    }
 	    dfslib_utf8_string(tip0, tips, 6 * DFSLIB_CRYPT_PWDLEN);
 	    tip = tip0;
@@ -105,7 +105,7 @@ void dfslib_random_init(void) {
 	    unsigned short xsubi[3];
 	    int i;
 	    for (i = 0; i < 3; ++i)
-		xsubi[i] = seed & 0xFFFF, seed >>= 16;
+			(void)(xsubi[i] = seed & 0xFFFF), seed >>= 16;
 	    seed48(xsubi);
 	}
 #else

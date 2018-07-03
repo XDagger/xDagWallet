@@ -13,7 +13,7 @@
 #include "block.h"
 #include "crypt.h"
 #include "transport.h"
-#include "../dnet/dnet_main.h"
+#include "./dnet_main.h"
 //#include "../dnet/dnet_history.h"
 #include "version.h"
 #include "wallet.h"

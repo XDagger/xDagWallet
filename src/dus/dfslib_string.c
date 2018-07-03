@@ -5,14 +5,14 @@
 int dfslib_unicode_to_utf8(dfs16 uni, char **pbuf, unsigned *psize) {
 	if (!(uni & ~0x7F)) {
 	    if (!*psize) return DFSLIB_NAME_TOO_LONG;
-	    *(*pbuf)++ = (dfs8)uni, (*psize)--;
+		(void)(*(*pbuf)++ = (dfs8)uni), (*psize)--;
 	} else if (!(uni & ~0x7FF)) {
 	    if (*psize < 2) return DFSLIB_NAME_TOO_LONG;
-	    *(*pbuf)++ = uni >> 6 | 0xC0, *(*pbuf)++ = (uni & 0x3F) | 0x80, *psize -= 2;
+		(void)(*(*pbuf)++ = uni >> 6 | 0xC0), (void)(*(*pbuf)++ = (uni & 0x3F) | 0x80), *psize -= 2;
 	} else {
 	    if (*psize < 3) return DFSLIB_NAME_TOO_LONG;
-	    *(*pbuf)++ = uni >> 12 | 0xE0, *(*pbuf)++ = (uni >> 6 & 0x3F) | 0x80, 
-	    *(*pbuf)++ = (uni & 0x3F) | 0x80, *psize -= 3;
+		(void)(*(*pbuf)++ = uni >> 12 | 0xE0), (void)(*(*pbuf)++ = (uni >> 6 & 0x3F) | 0x80),
+		(void)(*(*pbuf)++ = (uni & 0x3F) | 0x80), *psize -= 3;
 	}
 	return 0;
 }
@@ -26,14 +26,14 @@ int dfslib_utf8_to_unicode(const char **utf, unsigned *plen) {
 	if (c < 0xE0) {
 	    int d;
 	    if (!*plen) return DFSLIB_INVALID_NAME;
-	    c &= 0x1F, c <<= 6; --*plen;
+		(void)(c &= 0x1F), c <<= 6; --*plen;
 	    if ((d = (dfs8)*(*utf)++) < 0x80 || d >= 0xC0) return DFSLIB_INVALID_NAME;
 	    return c | (d & 0x3F);
 	}
 	if (c < 0xF0) {
 	    int d;
 	    if (*plen < 2) return DFSLIB_INVALID_NAME;
-	    c &= 0xF, c <<= 12; --*plen;
+		(void)(c &= 0xF), c <<= 12; --*plen;
 	    if ((d = (dfs8)*(*utf)++) < 0x80 || d >= 0xC0) return DFSLIB_INVALID_NAME;
 	    c |= (d & 0x3F) << 6; --*plen;
 	    if ((d = (dfs8)*(*utf)++) < 0x80 || d >= 0xC0) return DFSLIB_INVALID_NAME;
@@ -47,9 +47,9 @@ int dfslib_unicode_read(const struct dfslib_string *str, unsigned *ptr) {
 	    case DFSLIB_STRING_UTF8:
 		{
 		    const char *utf = str->utf8 + *ptr;
-		    unsigned size = str->len - *ptr;
+		    unsigned size = (unsigned)(str->len - *ptr);
 		    int unicode = dfslib_utf8_to_unicode(&utf, &size);
-		    *ptr = utf - str->utf8;
+		    *ptr = (unsigned int)(utf - str->utf8);
 		    return unicode;
 		}
 	    case DFSLIB_STRING_UNICODE:
@@ -67,7 +67,7 @@ int dfslib_unicode_cmp(const struct dfslib_string *str, unsigned *ptr, int unico
 }
 
 int dfslib_unicode_strlen(const struct dfslib_string *str) {
-	if (str->type == DFSLIB_STRING_UNICODE) return str->len;
+	if (str->type == DFSLIB_STRING_UNICODE) return (int)str->len;
 	else {
 	    unsigned ptr = 0, count = 0;
 	    int res;
@@ -78,7 +78,7 @@ int dfslib_unicode_strlen(const struct dfslib_string *str) {
 }
 
 int dfslib_string_to_unicode(struct dfslib_string *str, dfs16 *buf, unsigned len) {
-	if (str->type == DFSLIB_STRING_UNICODE) return str->len;
+	if (str->type == DFSLIB_STRING_UNICODE) return (int)str->len;
 	else {
 	    unsigned ptr = 0, count = 0;
         int res = 0;
@@ -94,7 +94,7 @@ int dfslib_string_to_unicode(struct dfslib_string *str, dfs16 *buf, unsigned len
 int dfslib_string_to_utf8(struct dfslib_string *str, char *buf, unsigned len) {
 	switch (str->type) {
 	    case DFSLIB_STRING_UTF8:
-		return str->len;
+		return (int)str->len;
 	    case DFSLIB_STRING_UNICODE:
 		{
 		int res; unsigned i;
@@ -103,7 +103,7 @@ int dfslib_string_to_utf8(struct dfslib_string *str, char *buf, unsigned len) {
 		    res = dfslib_unicode_to_utf8(str->unicode[i], &ptr, &len);
 		    if (res < 0) return res;
 		}
-		len = ptr - buf;
+		len = (unsigned)(ptr - buf);
 		dfslib_utf8_string(str, buf, len);
 		return len;
 		}
@@ -126,7 +126,7 @@ int dfslib_substring(const struct dfslib_string *str, struct dfslib_string *subs
 int dfslib_unicode_strchr(const struct dfslib_string *str, int unicode) {
 	unsigned ptr = 0, ptr0;
 	int res;
-	while (ptr0 = ptr, (res = dfslib_unicode_read(str, &ptr)) >= 0)
+	while ((void)(ptr0 = ptr), (res = dfslib_unicode_read(str, &ptr)) >= 0)
 	    if (res == unicode) return ptr0;
 	return res;
 }
@@ -136,10 +136,10 @@ int dfslib_unicode_strtok(const struct dfslib_string *str,
 		unsigned *ptr) {
 	unsigned begin, end;
 	int res;
-	while (begin = *ptr, (res = dfslib_unicode_read(str, ptr)) >= 0
+	while ((void)(begin = *ptr), (res = dfslib_unicode_read(str, ptr)) >= 0
 		&& dfslib_unicode_strchr(limits, res) >= 0);
 	if (res < 0) return res;
-	while (end = *ptr, (res = dfslib_unicode_read(str, ptr)) >= 0
+	while ((void)(end = *ptr), (res = dfslib_unicode_read(str, ptr)) >= 0
 		&& dfslib_unicode_strchr(limits, res) < 0);
 	if (res < 0 && res != DFSLIB_NAME_TOO_LONG) return res;
 	dfslib_substring(str, token, begin, end);

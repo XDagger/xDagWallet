@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		3833516420EA849D0070E5A9 /* block.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF258520E7E6DE0058B19B /* block.c */; };
+		384C360420EBB98C002A7B52 /* dnet_crypt.c in Sources */ = {isa = PBXBuildFile; fileRef = 384C360220EBB98C002A7B52 /* dnet_crypt.c */; };
+		384C360720EBBB73002A7B52 /* dnet_main.c in Sources */ = {isa = PBXBuildFile; fileRef = 384C360520EBBB73002A7B52 /* dnet_main.c */; };
 		38CF25EF20E7E6DE0058B19B /* crc_c.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF257320E7E6DE0058B19B /* crc_c.c */; };
 		38CF25F020E7E6DE0058B19B /* dfslib_crypt.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF257420E7E6DE0058B19B /* dfslib_crypt.c */; };
 		38CF25F120E7E6DE0058B19B /* dfslib_random.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF257620E7E6DE0058B19B /* dfslib_random.c */; };
@@ -37,17 +39,6 @@
 		38CF261420E7E6DE0058B19B /* log.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25C820E7E6DE0058B19B /* log.c */; };
 		38CF261620E7E6DE0058B19B /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25CD20E7E6DE0058B19B /* utils.c */; };
 		38CF261720E7E6DE0058B19B /* wallet.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25D020E7E6DE0058B19B /* wallet.c */; };
-		38CF261A20E7E6DE0058B19B /* dnet_command.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25D520E7E6DE0058B19B /* dnet_command.c */; };
-		38CF261B20E7E6DE0058B19B /* dnet_connection.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25D720E7E6DE0058B19B /* dnet_connection.c */; };
-		38CF261C20E7E6DE0058B19B /* dnet_crypt.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25D920E7E6DE0058B19B /* dnet_crypt.c */; };
-		38CF261D20E7E6DE0058B19B /* dnet_database.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25DB20E7E6DE0058B19B /* dnet_database.c */; };
-		38CF261E20E7E6DE0058B19B /* dnet_files.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25DD20E7E6DE0058B19B /* dnet_files.c */; };
-		38CF261F20E7E6DE0058B19B /* dnet_log.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25E020E7E6DE0058B19B /* dnet_log.c */; };
-		38CF262020E7E6DE0058B19B /* dnet_main.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25E220E7E6DE0058B19B /* dnet_main.c */; };
-		38CF262120E7E6DE0058B19B /* dnet_packet.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25E420E7E6DE0058B19B /* dnet_packet.c */; };
-		38CF262220E7E6DE0058B19B /* dnet_stream.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25E620E7E6DE0058B19B /* dnet_stream.c */; };
-		38CF262320E7E6DE0058B19B /* dnet_tap.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25E820E7E6DE0058B19B /* dnet_tap.c */; };
-		38CF262420E7E6DE0058B19B /* dnet_threads.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25EA20E7E6DE0058B19B /* dnet_threads.c */; };
 		38CF262D20E7EB3B0058B19B /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 38CF262B20E7EB3B0058B19B /* libssl.a */; };
 		38CF262E20E7EB3B0058B19B /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 38CF262C20E7EB3B0058B19B /* libcrypto.a */; };
 		38CF263120E7F6110058B19B /* transport.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF262F20E7F6110058B19B /* transport.c */; };
@@ -66,6 +57,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		384C360220EBB98C002A7B52 /* dnet_crypt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dnet_crypt.c; sourceTree = "<group>"; };
+		384C360320EBB98C002A7B52 /* dnet_crypt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dnet_crypt.h; sourceTree = "<group>"; };
+		384C360520EBBB73002A7B52 /* dnet_main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dnet_main.c; sourceTree = "<group>"; };
+		384C360620EBBB73002A7B52 /* dnet_main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dnet_main.h; sourceTree = "<group>"; };
 		38CF256720E7E61C0058B19B /* xDagWallet */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = xDagWallet; sourceTree = BUILT_PRODUCTS_DIR; };
 		38CF257220E7E6DE0058B19B /* crc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crc.h; sourceTree = "<group>"; };
 		38CF257320E7E6DE0058B19B /* crc_c.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = crc_c.c; sourceTree = "<group>"; };
@@ -136,31 +131,6 @@
 		38CF25CF20E7E6DE0058B19B /* version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = version.h; sourceTree = "<group>"; };
 		38CF25D020E7E6DE0058B19B /* wallet.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = wallet.c; sourceTree = "<group>"; };
 		38CF25D120E7E6DE0058B19B /* wallet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wallet.h; sourceTree = "<group>"; };
-		38CF25D520E7E6DE0058B19B /* dnet_command.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dnet_command.c; sourceTree = "<group>"; };
-		38CF25D620E7E6DE0058B19B /* dnet_command.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dnet_command.h; sourceTree = "<group>"; };
-		38CF25D720E7E6DE0058B19B /* dnet_connection.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dnet_connection.c; sourceTree = "<group>"; };
-		38CF25D820E7E6DE0058B19B /* dnet_connection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dnet_connection.h; sourceTree = "<group>"; };
-		38CF25D920E7E6DE0058B19B /* dnet_crypt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dnet_crypt.c; sourceTree = "<group>"; };
-		38CF25DA20E7E6DE0058B19B /* dnet_crypt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dnet_crypt.h; sourceTree = "<group>"; };
-		38CF25DB20E7E6DE0058B19B /* dnet_database.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dnet_database.c; sourceTree = "<group>"; };
-		38CF25DC20E7E6DE0058B19B /* dnet_database.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dnet_database.h; sourceTree = "<group>"; };
-		38CF25DD20E7E6DE0058B19B /* dnet_files.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dnet_files.c; sourceTree = "<group>"; };
-		38CF25DE20E7E6DE0058B19B /* dnet_files.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dnet_files.h; sourceTree = "<group>"; };
-		38CF25DF20E7E6DE0058B19B /* dnet_history.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dnet_history.h; sourceTree = "<group>"; };
-		38CF25E020E7E6DE0058B19B /* dnet_log.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dnet_log.c; sourceTree = "<group>"; };
-		38CF25E120E7E6DE0058B19B /* dnet_log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dnet_log.h; sourceTree = "<group>"; };
-		38CF25E220E7E6DE0058B19B /* dnet_main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dnet_main.c; sourceTree = "<group>"; };
-		38CF25E320E7E6DE0058B19B /* dnet_main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dnet_main.h; sourceTree = "<group>"; };
-		38CF25E420E7E6DE0058B19B /* dnet_packet.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dnet_packet.c; sourceTree = "<group>"; };
-		38CF25E520E7E6DE0058B19B /* dnet_packet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dnet_packet.h; sourceTree = "<group>"; };
-		38CF25E620E7E6DE0058B19B /* dnet_stream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dnet_stream.c; sourceTree = "<group>"; };
-		38CF25E720E7E6DE0058B19B /* dnet_stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dnet_stream.h; sourceTree = "<group>"; };
-		38CF25E820E7E6DE0058B19B /* dnet_tap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dnet_tap.c; sourceTree = "<group>"; };
-		38CF25E920E7E6DE0058B19B /* dnet_tap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dnet_tap.h; sourceTree = "<group>"; };
-		38CF25EA20E7E6DE0058B19B /* dnet_threads.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dnet_threads.c; sourceTree = "<group>"; };
-		38CF25EB20E7E6DE0058B19B /* dnet_threads.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dnet_threads.h; sourceTree = "<group>"; };
-		38CF25EC20E7E6DE0058B19B /* dthread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dthread.h; sourceTree = "<group>"; };
-		38CF25EE20E7E6DE0058B19B /* system.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = system.h; sourceTree = "<group>"; };
 		38CF262720E7E8030058B19B /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = "../xdag-1/mac/lib/openssl/lib/libssl.a"; sourceTree = "<group>"; };
 		38CF262820E7E8030058B19B /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = "../xdag-1/mac/lib/openssl/lib/libcrypto.a"; sourceTree = "<group>"; };
 		38CF262B20E7EB3B0058B19B /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = lib/openssl/libssl.a; sourceTree = "<group>"; };
@@ -203,7 +173,6 @@
 			isa = PBXGroup;
 			children = (
 				38CF258120E7E6DE0058B19B /* client */,
-				38CF25D420E7E6DE0058B19B /* dnet */,
 				38CF257120E7E6DE0058B19B /* dus */,
 				38CF257D20E7E6DE0058B19B /* ldus */,
 			);
@@ -241,6 +210,10 @@
 		38CF258120E7E6DE0058B19B /* client */ = {
 			isa = PBXGroup;
 			children = (
+				384C360520EBBB73002A7B52 /* dnet_main.c */,
+				384C360620EBBB73002A7B52 /* dnet_main.h */,
+				384C360220EBB98C002A7B52 /* dnet_crypt.c */,
+				384C360320EBB98C002A7B52 /* dnet_crypt.h */,
 				38CF262F20E7F6110058B19B /* transport.c */,
 				38CF263020E7F6110058B19B /* transport.h */,
 				38CF258220E7E6DE0058B19B /* address.c */,
@@ -334,38 +307,6 @@
 			path = utils;
 			sourceTree = "<group>";
 		};
-		38CF25D420E7E6DE0058B19B /* dnet */ = {
-			isa = PBXGroup;
-			children = (
-				38CF25D520E7E6DE0058B19B /* dnet_command.c */,
-				38CF25D620E7E6DE0058B19B /* dnet_command.h */,
-				38CF25D720E7E6DE0058B19B /* dnet_connection.c */,
-				38CF25D820E7E6DE0058B19B /* dnet_connection.h */,
-				38CF25D920E7E6DE0058B19B /* dnet_crypt.c */,
-				38CF25DA20E7E6DE0058B19B /* dnet_crypt.h */,
-				38CF25DB20E7E6DE0058B19B /* dnet_database.c */,
-				38CF25DC20E7E6DE0058B19B /* dnet_database.h */,
-				38CF25DD20E7E6DE0058B19B /* dnet_files.c */,
-				38CF25DE20E7E6DE0058B19B /* dnet_files.h */,
-				38CF25DF20E7E6DE0058B19B /* dnet_history.h */,
-				38CF25E020E7E6DE0058B19B /* dnet_log.c */,
-				38CF25E120E7E6DE0058B19B /* dnet_log.h */,
-				38CF25E220E7E6DE0058B19B /* dnet_main.c */,
-				38CF25E320E7E6DE0058B19B /* dnet_main.h */,
-				38CF25E420E7E6DE0058B19B /* dnet_packet.c */,
-				38CF25E520E7E6DE0058B19B /* dnet_packet.h */,
-				38CF25E620E7E6DE0058B19B /* dnet_stream.c */,
-				38CF25E720E7E6DE0058B19B /* dnet_stream.h */,
-				38CF25E820E7E6DE0058B19B /* dnet_tap.c */,
-				38CF25E920E7E6DE0058B19B /* dnet_tap.h */,
-				38CF25EA20E7E6DE0058B19B /* dnet_threads.c */,
-				38CF25EB20E7E6DE0058B19B /* dnet_threads.h */,
-				38CF25EC20E7E6DE0058B19B /* dthread.h */,
-				38CF25EE20E7E6DE0058B19B /* system.h */,
-			);
-			path = dnet;
-			sourceTree = "<group>";
-		};
 		38CF262620E7E8020058B19B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -433,46 +374,37 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				38CF262120E7E6DE0058B19B /* dnet_packet.c in Sources */,
 				38CF25FA20E7E6DE0058B19B /* hash.c in Sources */,
-				38CF261F20E7E6DE0058B19B /* dnet_log.c in Sources */,
 				38CF260F20E7E6DE0058B19B /* storage.c in Sources */,
-				38CF261A20E7E6DE0058B19B /* dnet_command.c in Sources */,
 				38CF263120E7F6110058B19B /* transport.c in Sources */,
-				38CF262220E7E6DE0058B19B /* dnet_stream.c in Sources */,
 				38CF260020E7E6DE0058B19B /* rpc_procedure.c in Sources */,
 				38CF25F220E7E6DE0058B19B /* dfslib_string.c in Sources */,
 				38CF261120E7E6DE0058B19B /* terminal.c in Sources */,
 				38CF260420E7E6DE0058B19B /* main.c in Sources */,
 				38CF25F120E7E6DE0058B19B /* dfslib_random.c in Sources */,
 				38CF261620E7E6DE0058B19B /* utils.c in Sources */,
-				38CF262420E7E6DE0058B19B /* dnet_threads.c in Sources */,
 				38CF261320E7E6DE0058B19B /* linenoise.c in Sources */,
-				38CF261B20E7E6DE0058B19B /* dnet_connection.c in Sources */,
 				3833516420EA849D0070E5A9 /* block.c in Sources */,
 				38CF260720E7E6DE0058B19B /* miner.c in Sources */,
 				38CF260620E7E6DE0058B19B /* memory.c in Sources */,
 				38CF25F420E7E6DE0058B19B /* address.c in Sources */,
 				38CF25F820E7E6DE0058B19B /* commands.c in Sources */,
-				38CF261C20E7E6DE0058B19B /* dnet_crypt.c in Sources */,
+				384C360420EBB98C002A7B52 /* dnet_crypt.c in Sources */,
 				38CF25FC20E7E6DE0058B19B /* url.c in Sources */,
 				38CF25F920E7E6DE0058B19B /* crypt.c in Sources */,
 				38CF260820E7E6DE0058B19B /* common.c in Sources */,
 				38CF25F320E7E6DE0058B19B /* dfsrsa.c in Sources */,
 				38CF260D20E7E6DE0058B19B /* sha256.c in Sources */,
-				38CF261D20E7E6DE0058B19B /* dnet_database.c in Sources */,
 				38CF25F020E7E6DE0058B19B /* dfslib_crypt.c in Sources */,
 				38CF25FD20E7E6DE0058B19B /* init.c in Sources */,
+				384C360720EBBB73002A7B52 /* dnet_main.c in Sources */,
 				38CF260120E7E6DE0058B19B /* rpc_procedures.c in Sources */,
 				38CF260320E7E6DE0058B19B /* rpc_wrapper.c in Sources */,
 				38CF260220E7E6DE0058B19B /* rpc_service.c in Sources */,
 				38CF261720E7E6DE0058B19B /* wallet.c in Sources */,
-				38CF262320E7E6DE0058B19B /* dnet_tap.c in Sources */,
 				38CF261420E7E6DE0058B19B /* log.c in Sources */,
 				38CF25FB20E7E6DE0058B19B /* http.c in Sources */,
-				38CF261E20E7E6DE0058B19B /* dnet_files.c in Sources */,
 				38CF25EF20E7E6DE0058B19B /* crc_c.c in Sources */,
-				38CF262020E7E6DE0058B19B /* dnet_main.c in Sources */,
 				38CF25FE20E7E6DE0058B19B /* cJSON.c in Sources */,
 				38CF25FF20E7E6DE0058B19B /* cJSON_Utils.c in Sources */,
 			);
@@ -536,6 +468,8 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
+				STRINGS_FILE_OUTPUT_ENCODING = "UTF-8";
+				VALID_ARCHS = x86_64;
 			};
 			name = Debug;
 		};
@@ -587,14 +521,18 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
+				STRINGS_FILE_OUTPUT_ENCODING = "UTF-8";
+				VALID_ARCHS = x86_64;
 			};
 			name = Release;
 		};
 		38CF256F20E7E61C0058B19B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CODE_SIGN_STYLE = Automatic;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					__MACOS__,
@@ -612,12 +550,14 @@
 					"\"/usr/local/Cellar/openssl@1.1/1.1.0e/include/\"",
 					/usr/local/opt/openssl/include,
 				);
+				VALID_ARCHS = x86_64;
 			};
 			name = Debug;
 		};
 		38CF257020E7E61C0058B19B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CODE_SIGN_STYLE = Automatic;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -637,6 +577,7 @@
 					"\"/usr/local/Cellar/openssl@1.1/1.1.0e/include/\"",
 					/usr/local/opt/openssl/include,
 				);
+				VALID_ARCHS = x86_64;
 			};
 			name = Release;
 		};

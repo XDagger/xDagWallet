@@ -13,6 +13,7 @@
 #include "commands.h"
 #include "init.h"
 #include "transport.h"
+#include "common.h"
 #include "utils/log.h"
 #include "utils/utils.h"
 
@@ -20,7 +21,7 @@
 #include <string.h>
 #endif
 
-#include "../dnet/system.h"
+//#include "../dnet/system.h"
 
 #if defined(_WIN32) || defined(_WIN64)
 #define poll WSAPoll
@@ -39,10 +40,6 @@ int terminal(void)
 {
 	char *lasts;
 	int sock;
-
-	if(system_init() != 0) {
-		printf("Can't initialize sockets");
-	}
 
 	char cmd[XDAG_COMMAND_MAX];
 	char cmd2[XDAG_COMMAND_MAX];
@@ -159,7 +156,7 @@ void *terminal_thread(void *arg)
 				res = -1;
 				break;
 			}
-			p += res = read(clientSock, &cmd[p], sizeof(cmd) - p);
+			p += res = (int)read(clientSock, &cmd[p], sizeof(cmd) - p);
 		} while (res > 0 && p < sizeof(cmd) && cmd[p - 1] != '\0');
 
 		if (res < 0 || cmd[p - 1] != '\0') {

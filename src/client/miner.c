@@ -22,7 +22,7 @@
 #include "storage.h"
 #include "utils/log.h"
 #include "common.h"
-#include "../dnet/dnet_main.h"
+#include "./dnet_main.h"
 
 #define MINERS_PWD             "minersgonnamine"
 #define SECTOR0_BASE           0x1947f3acu
@@ -41,7 +41,7 @@ static pthread_mutex_t g_miner_mutex = PTHREAD_MUTEX_INITIALIZER;
 /* a number of mining threads */
 int g_xdag_mining_threads = 0;
 
-static int g_socket = -1, g_stop_mining = 1;
+static int g_socket = -1;
 
 static int can_send_share(time_t current_time, time_t task_time, time_t share_time)
 {
@@ -120,7 +120,7 @@ static int send_to_pool(struct xdag_field *fld, int nfld)
 
 		if(!(p.revents & POLLOUT)) continue;
 
-		int res = write(g_socket, (uint8_t*)f + done, todo);
+		int res = (int)write(g_socket, (uint8_t*)f + done, todo);
 		if(res <= 0) {
 			return -1;
 		}
@@ -291,7 +291,7 @@ begin:
 		}
 
 		if(p.revents & POLLIN) {
-			res = read(g_socket, (uint8_t*)data + ndata, maxndata - ndata);
+			res = (int)read(g_socket, (uint8_t*)data + ndata, maxndata - ndata);
 			if(res < 0) {
 				pthread_mutex_unlock(&g_miner_mutex); mess = "read error on socket"; goto err;
 			}

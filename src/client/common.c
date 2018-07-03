@@ -5,7 +5,7 @@
 #include "common.h"
 #include "miner.h"
 #include "../dus/dfslib_crypt.h"
-#include "../dnet/dnet_main.h"
+#include "./dnet_main.h"
 
 #define MINERS_PWD             "minersgonnamine"
 #define SECTOR0_BASE           0x1947f3acu

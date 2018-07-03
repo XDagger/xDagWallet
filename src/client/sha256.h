@@ -35,9 +35,15 @@ typedef SHA256_CTX SHA256REF_CTX;
 #define datalen num
 #endif
 
-/*********************** FUNCTION DECLARATIONS **********************/
-void sha256_init(SHA256REF_CTX *ctx);
-void sha256_update(SHA256REF_CTX *ctx, const xBYTE data[], size_t len);
-void sha256_final(SHA256REF_CTX *ctx, xBYTE hash[]);
+#ifdef __cplusplus
+extern "C" {
+#endif
+	/*********************** FUNCTION DECLARATIONS **********************/
+	void sha256_init(SHA256REF_CTX *ctx);
+	void sha256_update(SHA256REF_CTX *ctx, const xBYTE data[], size_t len);
+	void sha256_final(SHA256REF_CTX *ctx, xBYTE hash[]);
 
+#ifdef __cplusplus
+}
+#endif
 #endif   // SHA256_H

@@ -4,6 +4,7 @@
 #define DFSLIB_STRING_H_INCLUDED
 
 #include "dfslib_types.h"
+#include <stddef.h>
 
 enum dfslib_string_types {
 	DFSLIB_STRING_NONE,
@@ -15,7 +16,7 @@ enum dfslib_string_types {
 */
 struct dfslib_string {
 	int type;
-	unsigned len;
+	size_t len;
 	union {
 	    const char *utf8;
 	    const dfs16 *unicode;
@@ -39,7 +40,7 @@ extern int dfslib_unicode_strchr(const struct dfslib_string *str, int unicode);
 extern int dfslib_unicode_strtok(const struct dfslib_string *str, struct dfslib_string *token, const struct dfslib_string *limits, unsigned *ptr);
 
 static inline struct dfslib_string *dfslib_utf8_string(struct dfslib_string *str,
-		const char *utf8, unsigned len) {
+		const char *utf8, size_t len) {
 	str->type = DFSLIB_STRING_UTF8;
 	str->len = len;
 	str->utf8 = utf8;

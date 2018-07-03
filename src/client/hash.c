@@ -90,7 +90,7 @@ void xdag_hash_set_state(void *ctxv, xdag_hash_t state, size_t size)
 
 	memcpy(ctx->state, state, sizeof(xdag_hash_t));
 	ctx->datalen = 0;
-	ctx->bitlen = size << 3;
+	ctx->bitlen = (unsigned int) (size << 3);
 	ctx->bitlenH = 0;
 	ctx->md_len = SHA256_BLOCK_SIZE;
 }

@@ -45,33 +45,33 @@ extern struct xdag_ext_stats
 extern "C" {
 #endif
 
-/* the program state */
-extern int g_xdag_state;
+	/* the program state */
+	extern int g_xdag_state;
 
-/* is there command 'run' */
-extern int g_xdag_run;
+	/* is there command 'run' */
+	extern int g_xdag_run;
 
-/* 1 - the program works in a test network */
-extern int g_xdag_testnet;
+	/* 1 - the program works in a test network */
+	extern int g_xdag_testnet;
 
-/* coin token and program name */
-extern char *g_coinname, *g_progname;
+	/* coin token and program name */
+	extern char *g_coinname, *g_progname;
 
-//defines if client runs as miner or pool
-extern int g_is_miner;
+	//defines if client runs as miner or pool
+	extern int g_is_miner;
 
-//defines if mining is disabled (pool)
-extern int g_disable_mining;
+	//defines if mining is disabled (pool)
+	extern int g_disable_mining;
 
-//Default type of the block header
-//Test network and main network have different types of the block headers, so blocks from different networks are incompatible
-extern enum xdag_field_type g_block_header_type;
+	//Default type of the block header
+	//Test network and main network have different types of the block headers, so blocks from different networks are incompatible
+	extern enum xdag_field_type g_block_header_type;
 
-extern int xdag_init(int argc, char **argv, int isGui);
+	extern int xdag_init(int argc, char **argv, int isGui);
 
-extern int xdag_set_password_callback(int(*callback)(const char *prompt, char *buf, unsigned size));
+	extern int xdag_set_password_callback(int(*callback)(const char *prompt, char *buf, unsigned size));
 
-extern int(*g_xdag_show_state)(const char *state, const char *balance, const char *address);
+	extern int(*g_xdag_show_state)(const char *state, const char *balance, const char *address);
 
 #ifdef __cplusplus
 };
