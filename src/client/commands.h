@@ -33,7 +33,6 @@ struct xfer_callback_data {
 void startCommandProcessing(int transportFlags);
 int xdag_command(char *cmd, FILE *out);
 void xdag_log_xfer(xdag_hash_t from, xdag_hash_t to, xdag_amount_t amount);
-int out_balances(void);
 
 int xfer_callback(void *data, xdag_hash_t hash, xdag_amount_t amount, xdag_time_t time, int n_our_key);
 

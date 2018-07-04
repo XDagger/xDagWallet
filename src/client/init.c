@@ -37,7 +37,6 @@ time_t g_xdag_xfer_last = 0;
 enum xdag_field_type g_block_header_type = XDAG_FIELD_HEAD;
 struct xdag_stats g_xdag_stats;
 struct xdag_ext_stats g_xdag_extstats;
-int g_disable_mining = 0;
 
 void printUsage(char* appName);
 
@@ -45,11 +44,9 @@ int xdag_init(int argc, char **argv, int isGui)
 {
 	xdag_init_path(argv[0]);
 
-	const char *addrports[256], *bindto = 0, *pool_arg = 0, *miner_address = 0;
-	int deamon_flags = 0, n_addrports = 0, is_miner = 1, level, is_rpc = 0, rpc_port = 0;
-	
-	memset(addrports, 0, 256);
-	
+	const char *pool_arg = 0;
+	int deamon_flags = 0, is_miner = 1, level, is_rpc = 0, rpc_port = 0;
+
 #if !defined(_WIN32) && !defined(_WIN64)
 	signal(SIGHUP, SIG_IGN);
 	signal(SIGPIPE, SIG_IGN);
@@ -61,7 +58,7 @@ int xdag_init(int argc, char **argv, int isGui)
 	char *filename = xdag_filename(argv[0]);
 
 	g_progname = strdup(filename);
-	g_coinname = strdup(filename);
+	g_coinname = "XDAG";
 	free(filename);
 
 	xdag_str_toupper(g_coinname);
@@ -88,9 +85,7 @@ int xdag_init(int argc, char **argv, int isGui)
 			continue;
 		}
 		
-		if (ARG_EQUAL(argv[i], "-a", "")) { /* miner address */
-			if (++i < argc) miner_address = argv[i];
-		} else if(ARG_EQUAL(argv[i], "-d", "")) { /* daemon mode */
+		if(ARG_EQUAL(argv[i], "-d", "")) { /* daemon mode */
 #if !defined(_WIN32) && !defined(_WIN64)
 			deamon_flags |= 0x1;
 #endif
@@ -99,8 +94,6 @@ int xdag_init(int argc, char **argv, int isGui)
 			return 0;
 		} else if(ARG_EQUAL(argv[i], "-i", "")) { /* interactive mode */
 			return terminal();
-		} else if(ARG_EQUAL(argv[i], "-l", "")) { /* list balance */
-			return out_balances();
 		} else if(ARG_EQUAL(argv[i], "-t", "")) { /* connect test net */
 			g_xdag_testnet = 1;
 		} else if(ARG_EQUAL(argv[i], "-v", "")) { /* log level */
@@ -142,7 +135,7 @@ int xdag_init(int argc, char **argv, int isGui)
 	xdag_mess("Starting %s, version %s", g_progname, XDAG_VERSION);
 	xdag_mess("Starting dnet transport...");
 	printf("Transport module: ");
-	if (xdag_transport_start(deamon_flags, bindto, n_addrports, addrports)) return -1;
+	if (xdag_transport_start(deamon_flags)) return -1;
 
 	if (xdag_log_init()) return -1;
 
@@ -189,11 +182,9 @@ void printUsage(char* appName)
 	printf("Usage: %s flags [pool_ip:port]\n"
 		"If pool_ip:port argument is given, then the node operates as a miner.\n"
 		"Flags:\n"
-		"  -a address     - specify your address to use in the miner\n"
 		"  -d             - run as daemon (default is interactive mode)\n"
 		"  -h             - print this help\n"
 		"  -i             - run as interactive terminal for daemon running in this folder\n"
-		"  -l             - output non zero balances of all accounts\n"
 		"  -t             - connect to test net (default is main net)\n"
 		"  -v N           - set loglevel to N\n"
 		"  -rpc-enable    - enable JSON-RPC service\n"

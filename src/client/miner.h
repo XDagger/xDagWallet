@@ -24,7 +24,7 @@ extern "C" {
 	/* a number of mining threads */
 	extern int g_xdag_mining_threads;
 
-	extern void *miner_net_thread(void *arg);
+	extern void *main_thread(void *arg);
 
 	/* send block to network via pool */
 	extern int xdag_send_block_via_pool(struct xdag_block *block);

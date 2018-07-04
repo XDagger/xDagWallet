@@ -29,11 +29,6 @@ struct account_callback_data {
 	int count;
 };
 
-struct out_balances_data {
-	struct xdag_field *blocks;
-	unsigned blocksCount, maxBlocksCount;
-};
-
 typedef int (*xdag_com_func_t)(char*, FILE *);
 typedef struct {
 	char *name;				/* command name */
@@ -420,59 +415,6 @@ void xdag_log_xfer(xdag_hash_t from, xdag_hash_t to, xdag_amount_t amount)
 	xdag_hash2address(from, address_from);
 	xdag_hash2address(to, address_to);
 	xdag_mess("Xfer : from %s to %s xfer %.9Lf %s", address_from, address_to, amount2xdags(amount), g_coinname);
-}
-
-static int out_balances_callback(void *data, xdag_hash_t hash, xdag_amount_t amount, xdag_time_t time)
-{
-	struct out_balances_data *d = (struct out_balances_data *)data;
-	struct xdag_field f;
-	memcpy(f.hash, hash, sizeof(xdag_hashlow_t));
-	f.amount = amount;
-	if(!f.amount) {
-		return 0;
-	}
-	if(d->blocksCount == d->maxBlocksCount) {
-		d->maxBlocksCount = (d->maxBlocksCount ? d->maxBlocksCount * 2 : 0x100000);
-		d->blocks = realloc(d->blocks, d->maxBlocksCount * sizeof(struct xdag_field));
-	}
-	memcpy(d->blocks + d->blocksCount, &f, sizeof(struct xdag_field));
-	d->blocksCount++;
-	return 0;
-}
-
-static int out_sort_callback(const void *l, const void *r)
-{
-	char address_l[33], address_r[33];
-	xdag_hash2address(((struct xdag_field *)l)->data, address_l);
-	xdag_hash2address(((struct xdag_field *)r)->data, address_r);
-	return strcmp(address_l, address_r);
-}
-
-static void *add_block_callback(void *block, void *data)
-{
-	unsigned *i = (unsigned *)data;
-	xdag_add_block((struct xdag_block *)block);
-	if(!(++*i % 10000)) printf("blocks: %u\n", *i);
-	return 0;
-}
-
-int out_balances()
-{
-	char address[33];
-	struct out_balances_data d;
-	unsigned i = 0;
-	xdag_set_log_level(0);
-	xdag_mem_init((xdag_main_time() - xdag_start_main_time()) << 17);
-	xdag_crypt_init(0);
-	memset(&d, 0, sizeof(struct out_balances_data));
-	xdag_load_blocks(xdag_start_main_time() << 16, xdag_main_time() << 16, &i, &add_block_callback);
-	xdag_traverse_all_blocks(&d, out_balances_callback);
-	qsort(d.blocks, d.blocksCount, sizeof(struct xdag_field), out_sort_callback);
-	for(i = 0; i < d.blocksCount; ++i) {
-		xdag_hash2address(d.blocks[i].data, address);
-		printf("%s  %20.9Lf\n", address, amount2xdags(d.blocks[i].amount));
-	}
-	return 0;
 }
 
 void processHelpCommand(FILE *out)

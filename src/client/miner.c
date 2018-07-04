@@ -111,15 +111,15 @@ int xdag_initialize_mining(const char *pool_arg)
 	if(crypt_start()) return -1;
 
 	pthread_t th;
-	int err = pthread_create(&th, 0, miner_net_thread, (void*)pool_arg);
+	int err = pthread_create(&th, 0, main_thread, (void*)pool_arg);
 	if(err != 0) {
-		printf("create miner_net_thread failed, error : %s\n", strerror(err));
+		printf("create main_thread failed, error : %s\n", strerror(err));
 		return -1;
 	}
 
 	err = pthread_detach(th);
 	if(err != 0) {
-		printf("detach miner_net_thread failed, error : %s\n", strerror(err));
+		printf("detach main_thread failed, error : %s\n", strerror(err));
 		//return -1; //fixme: not sure why pthread_detach return 3
 	}
 
@@ -201,7 +201,7 @@ static int send_to_pool(struct xdag_field *fld, int nfld)
 	return 0;
 }
 
-void *miner_net_thread(void *arg)
+void *main_thread(void *arg)
 {
 	xdag_mess("initialize miner...");
 	struct xdag_block b;

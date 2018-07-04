@@ -11,26 +11,15 @@
 #include "version.h"
 #include "./dnet_main.h"
 
-#define NEW_BLOCK_TTL   5
-#define REQUEST_WAIT    64
-#define N_CONNS         4096
-
-//static void **connections = 0;
-
 struct xdag_send_data {
 	struct xdag_block b;
 	void *connection;
 };
 
-/* external interface */
-
-/* starts the transport system; bindto - ip:port for a socket for external connections
-* addr-port_pairs - array of pointers to strings with parameters of other host for connection (ip:port),
-* npairs - count of the strings
-*/
-int xdag_transport_start(int flags, const char *bindto, int npairs, const char **addr_port_pairs)
+/* starts the transport system */
+int xdag_transport_start(int flags)
 {
-	const char **argv = malloc((npairs + 5) * sizeof(char *));
+const char **argv = malloc((0 + 5) * sizeof(char *));
 	int argc = 0, i, res;
 
 	if (!argv) return -1;
@@ -41,28 +30,9 @@ int xdag_transport_start(int flags, const char *bindto, int npairs, const char *
 		argv[argc++] = "-d";
 	}
 #endif
-	
-	if (bindto) {
-		argv[argc++] = "-s"; argv[argc++] = bindto;
-	}
-
-	for (i = 0; i < npairs; ++i) {
-		argv[argc++] = addr_port_pairs[i];
-	}
 	argv[argc] = 0;
-	
-//	dnet_set_xdag_callback(NULL);
-//	dnet_connection_open_check = NULL;
-//	dnet_connection_close_notify = NULL;
-//
-//	connections = (void**)malloc(N_CONNS * sizeof(void *));
-//	if (!connections) return -1;
 
 	res = dnet_init(argc, (char**)argv);
-//	if (!res) {
-//		version = strchr(XDAG_VERSION, '-');
-//		if (version) dnet_set_self_version(version + 1);
-//	}
 
 	return res;
 }
