@@ -21,8 +21,36 @@
 #include "miner.h"
 #include "storage.h"
 #include "utils/log.h"
-#include "common.h"
+#include "commands.h"
 #include "./dnet_main.h"
+#include "./utils/utils.h"
+
+#if defined(_WIN32) || defined(_WIN64)
+#if defined(_WIN64)
+#define poll WSAPoll
+#else
+#define poll(a, b, c) ((a)->revents = (a)->events, (b))
+#endif
+#else
+#include <poll.h>
+#endif
+
+#define MINERS_PWD             "minersgonnamine"
+#define SECTOR0_BASE           0x1947f3acu
+#define SECTOR0_OFFSET         0x82e9d1b5u
+
+#define DATA_SIZE          (sizeof(struct xdag_field) / sizeof(uint32_t))
+#define BLOCK_HEADER_WORD  0x3fca9e2bu
+
+/* 1 - program works as a pool */
+//int g_xdag_pool = 0;
+pthread_mutex_t g_transport_mutex = PTHREAD_MUTEX_INITIALIZER;
+time_t g_xdag_last_received = 0;
+
+struct xdag_pool_task g_xdag_pool_task[2];
+uint64_t g_xdag_pool_task_index;
+
+struct dfslib_crypt *g_crypt;
 
 #define MINERS_PWD             "minersgonnamine"
 #define SECTOR0_BASE           0x1947f3acu
@@ -43,26 +71,47 @@ int g_xdag_mining_threads = 0;
 
 static int g_socket = -1;
 
-static int can_send_share(time_t current_time, time_t task_time, time_t share_time)
+
+static int crypt_start(void)
 {
-	int can_send = current_time - share_time >= SEND_PERIOD && current_time - task_time <= 64;
-	if(g_xdag_mining_threads == 0 && share_time >= task_time) {
-		can_send = 0;  //we send only one share per task if mining is turned off
+	struct dfslib_string str;
+	uint32_t sector0[128];
+	int i;
+
+	g_crypt = malloc(sizeof(struct dfslib_crypt));
+	if(!g_crypt) return -1;
+	dfslib_crypt_set_password(g_crypt, dfslib_utf8_string(&str, MINERS_PWD, strlen(MINERS_PWD)));
+
+	for(i = 0; i < 128; ++i) {
+		sector0[i] = SECTOR0_BASE + i * SECTOR0_OFFSET;
 	}
-	return can_send;
+
+	for(i = 0; i < 128; ++i) {
+		dfslib_crypt_set_sector0(g_crypt, sector0);
+		dfslib_encrypt_sector(g_crypt, sector0, SECTOR0_BASE + i * SECTOR0_OFFSET);
+	}
+
+	return 0;
 }
 
-/* initialization of connection the miner to pool */
-extern int xdag_initialize_miner(const char *pool_address)
+/* pool_arg - pool parameters ip:port[:CFG] */
+int xdag_initialize_mining(const char *pool_arg)
 {
+	for(int i = 0; i < 2; ++i) {
+		g_xdag_pool_task[i].ctx0 = malloc(xdag_hash_ctx_size());
+		g_xdag_pool_task[i].ctx = malloc(xdag_hash_ctx_size());
+
+		if(!g_xdag_pool_task[i].ctx0 || !g_xdag_pool_task[i].ctx) {
+			return -1;
+		}
+	}
+
+	if(!pool_arg) return -1; // need pool parameters here!
+
+	if(crypt_start()) return -1;
+
 	pthread_t th;
-
-	memset(&g_local_miner, 0, sizeof(struct miner));
-	xdag_get_our_block(g_local_miner.id.data);
-
-	xdag_mess("initialize miner...");
-
-	int err = pthread_create(&th, 0, miner_net_thread, (void*)pool_address);
+	int err = pthread_create(&th, 0, miner_net_thread, (void*)pool_arg);
 	if(err != 0) {
 		printf("create miner_net_thread failed, error : %s\n", strerror(err));
 		return -1;
@@ -75,6 +124,21 @@ extern int xdag_initialize_miner(const char *pool_address)
 	}
 
 	return 0;
+}
+
+/* see dnet_user_crypt_action */
+int xdag_user_crypt_action(unsigned *data, unsigned long long data_id, unsigned size, int action)
+{
+	return dnet_user_crypt_action(data, data_id, size, action);
+}
+
+static int can_send_share(time_t current_time, time_t task_time, time_t share_time)
+{
+	int can_send = current_time - share_time >= SEND_PERIOD && current_time - task_time <= 64;
+	if(g_xdag_mining_threads == 0 && share_time >= task_time) {
+		can_send = 0;  //we send only one share per task if mining is turned off
+	}
+	return can_send;
 }
 
 static int send_to_pool(struct xdag_field *fld, int nfld)
@@ -139,7 +203,7 @@ static int send_to_pool(struct xdag_field *fld, int nfld)
 
 void *miner_net_thread(void *arg)
 {
-	xdag_mess("create miner net threadf...");
+	xdag_mess("initialize miner...");
 	struct xdag_block b;
 	struct xdag_field data[2];
 	xdag_hash_t hash;
@@ -151,32 +215,25 @@ void *miner_net_thread(void *arg)
 	int res = 0, reuseaddr = 1;
 	struct linger linger_opt = { 1, 0 }; // Linger active, timeout 0
 	xdag_time_t t;
-	struct miner *m = &g_local_miner;
 
-	while(!g_xdag_sync_on) {
-		sleep(1);
-	}
+	// periodic generation of blocks and determination of the main block
+	xdag_mess("Entering main cycle...");
 
 begin:
+	memset(&g_local_miner, 0, sizeof(struct miner));
+	xdag_get_our_block(g_local_miner.id.data);
+
+	struct miner *m = &g_local_miner;
 	m->nfield_in = m->nfield_out = 0;
+
+	memcpy(hash, g_local_miner.id.data, sizeof(xdag_hash_t));
 
 	int ndata = 0;
 	int maxndata = sizeof(struct xdag_field);
 	time_t share_time = 0;
 	time_t task_time = 0;
 
-	if(g_miner_address) {
-		if(xdag_address2hash(g_miner_address, hash)) {
-			mess = "incorrect miner address";
-			goto err;
-		}
-	} else if(xdag_get_our_block(hash)) {
-		mess = "can't create a block";
-		goto err;
-	}
-
 	const int64_t pos = xdag_get_block_pos(hash, &t);
-
 	if(pos < 0) {
 		mess = "can't find the block";
 		goto err;
@@ -257,7 +314,26 @@ begin:
 	}
 	pthread_mutex_unlock(&g_miner_mutex);
 
+//	t = XDAG_ERA;
 	for(;;) {
+
+		if(get_timestamp() - t > 1024) {
+			t = get_timestamp();
+			if (g_xdag_state == XDAG_STATE_REST) {
+				xdag_err("block reset!!!");
+			} else {
+				if (t > (g_xdag_last_received << 10) && t - (g_xdag_last_received << 10) > 3 * MAIN_CHAIN_PERIOD) {
+					g_xdag_state = g_xdag_testnet ? XDAG_STATE_TTST : XDAG_STATE_TRYP;
+				} else {
+					if (t - (g_xdag_xfer_last << 10) <= 2 * MAIN_CHAIN_PERIOD + 4) {
+						g_xdag_state = XDAG_STATE_XFER;
+					} else {
+						g_xdag_state = g_xdag_testnet ? XDAG_STATE_PTST : XDAG_STATE_POOL;
+					}
+				}
+			}
+		}
+
 		struct pollfd p;
 
 		pthread_mutex_lock(&g_miner_mutex);
@@ -271,6 +347,7 @@ begin:
 		p.fd = g_socket;
 		time_t current_time = time(0);
 		p.events = POLLIN | (can_send_share(current_time, task_time, share_time) ? POLLOUT : 0);
+//		p.events = POLLIN;
 
 		if(!poll(&p, 1, 0)) {
 			pthread_mutex_unlock(&g_miner_mutex);
@@ -340,6 +417,8 @@ begin:
 				}
 			}
 		}
+
+		pthread_mutex_unlock(&g_miner_mutex);
 
 		if(p.revents & POLLOUT) {
 			const uint64_t task_index = g_xdag_pool_task_index;

@@ -11,7 +11,7 @@
 //#include "transport.h"
 #include "memory.h"
 #include "crypt.h"
-#include "common.h"
+#include "miner.h"
 #include "storage.h"
 #if !defined(_WIN32) && !defined(_WIN64)
 #include "utils/linenoise.h"

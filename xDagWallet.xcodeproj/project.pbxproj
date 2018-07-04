@@ -31,7 +31,6 @@
 		38CF260420E7E6DE0058B19B /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25A220E7E6DE0058B19B /* main.c */; };
 		38CF260620E7E6DE0058B19B /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25A420E7E6DE0058B19B /* memory.c */; };
 		38CF260720E7E6DE0058B19B /* miner.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25A620E7E6DE0058B19B /* miner.c */; };
-		38CF260820E7E6DE0058B19B /* common.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25A820E7E6DE0058B19B /* common.c */; };
 		38CF260D20E7E6DE0058B19B /* sha256.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25B420E7E6DE0058B19B /* sha256.c */; };
 		38CF260F20E7E6DE0058B19B /* storage.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25B820E7E6DE0058B19B /* storage.c */; };
 		38CF261120E7E6DE0058B19B /* terminal.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25BD20E7E6DE0058B19B /* terminal.c */; };
@@ -109,8 +108,6 @@
 		38CF25A520E7E6DE0058B19B /* memory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = memory.h; sourceTree = "<group>"; };
 		38CF25A620E7E6DE0058B19B /* miner.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = miner.c; sourceTree = "<group>"; };
 		38CF25A720E7E6DE0058B19B /* miner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = miner.h; sourceTree = "<group>"; };
-		38CF25A820E7E6DE0058B19B /* common.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = common.c; sourceTree = "<group>"; };
-		38CF25A920E7E6DE0058B19B /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
 		38CF25B420E7E6DE0058B19B /* sha256.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sha256.c; sourceTree = "<group>"; };
 		38CF25B520E7E6DE0058B19B /* sha256.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sha256.h; sourceTree = "<group>"; };
 		38CF25B620E7E6DE0058B19B /* state.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = state.h; sourceTree = "<group>"; };
@@ -235,8 +232,6 @@
 				38CF25A520E7E6DE0058B19B /* memory.h */,
 				38CF25A620E7E6DE0058B19B /* miner.c */,
 				38CF25A720E7E6DE0058B19B /* miner.h */,
-				38CF25A820E7E6DE0058B19B /* common.c */,
-				38CF25A920E7E6DE0058B19B /* common.h */,
 				38CF25B420E7E6DE0058B19B /* sha256.c */,
 				38CF25B520E7E6DE0058B19B /* sha256.h */,
 				38CF25B620E7E6DE0058B19B /* state.h */,
@@ -392,7 +387,6 @@
 				384C360420EBB98C002A7B52 /* dnet_crypt.c in Sources */,
 				38CF25FC20E7E6DE0058B19B /* url.c in Sources */,
 				38CF25F920E7E6DE0058B19B /* crypt.c in Sources */,
-				38CF260820E7E6DE0058B19B /* common.c in Sources */,
 				38CF25F320E7E6DE0058B19B /* dfsrsa.c in Sources */,
 				38CF260D20E7E6DE0058B19B /* sha256.c in Sources */,
 				38CF25F020E7E6DE0058B19B /* dfslib_crypt.c in Sources */,

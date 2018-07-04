@@ -9,7 +9,21 @@
 #include "system.h"
 #include "types.h"
 
-extern int g_xdag_sync_on;
+//extern int g_xdag_sync_on;
+extern xdag_time_t g_xdag_era;
+
+#define MAIN_CHAIN_PERIOD       (64 << 10)
+#define MAX_WAITING_MAIN        1
+#define DEF_TIME_LIMIT          0 // (MAIN_CHAIN_PERIOD / 2)
+#define XDAG_TEST_ERA           0x16900000000ll
+#define XDAG_MAIN_ERA           0x16940000000ll
+#define XDAG_ERA                g_xdag_era
+#define MAIN_START_AMOUNT       (1ll << 42)
+#define MAIN_BIG_PERIOD_LOG     21
+#define MAIN_TIME(t)            ((t) >> 16)
+#define MAX_LINKS               15
+#define MAKE_BLOCK_PERIOD       13
+#define QUERY_RETRIES           2
 
 enum xdag_field_type {
 	XDAG_FIELD_NONCE,        //0
@@ -72,7 +86,7 @@ extern long double amount2xdags(xdag_amount_t amount);
 extern xdag_amount_t xdags2amount(const char *str);
 
 // start of regular block processing
-extern int xdag_blocks_start(int is_pool, int mining_threads_count, int miner_address);
+extern int xdag_blocks_start();
 
 // checks and adds block to the storage. Returns non-zero value in case of error.
 extern int xdag_add_block(struct xdag_block *b);

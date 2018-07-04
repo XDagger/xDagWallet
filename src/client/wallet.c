@@ -8,7 +8,7 @@
 #include "wallet.h"
 #include "init.h"
 //#include "transport.h"
-#include "common.h"
+#include "miner.h"
 #include "utils/log.h"
 #include "utils/utils.h"
 

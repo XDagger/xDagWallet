@@ -10,7 +10,6 @@
 #include "miner.h"
 #include "version.h"
 #include "./dnet_main.h"
-//#include "common.h"
 
 #define NEW_BLOCK_TTL   5
 #define REQUEST_WAIT    64

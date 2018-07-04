@@ -13,15 +13,13 @@
 #include "commands.h"
 #include "init.h"
 #include "transport.h"
-#include "common.h"
+#include "miner.h"
 #include "utils/log.h"
 #include "utils/utils.h"
 
 #if defined (__MACOS__) || defined (__APPLE__)
 #include <string.h>
 #endif
-
-//#include "../dnet/system.h"
 
 #if defined(_WIN32) || defined(_WIN64)
 #define poll WSAPoll

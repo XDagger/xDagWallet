@@ -14,11 +14,10 @@
 #include "crypt.h"
 #include "transport.h"
 #include "./dnet_main.h"
-//#include "../dnet/dnet_history.h"
 #include "version.h"
 #include "wallet.h"
 #include "init.h"
-#include "common.h"
+#include "miner.h"
 #include "commands.h"
 #include "terminal.h"
 #include "memory.h"
@@ -131,7 +130,6 @@ int xdag_init(int argc, char **argv, int isGui)
 		xdag_mem_tempfile_path("RAM");
 	}
 
-	g_xdag_pool = !is_miner; // move to here to avoid Data Race
 	g_is_miner = is_miner;
 
 	if(g_xdag_testnet) {
@@ -145,10 +143,6 @@ int xdag_init(int argc, char **argv, int isGui)
 	xdag_mess("Starting dnet transport...");
 	printf("Transport module: ");
 	if (xdag_transport_start(deamon_flags, bindto, n_addrports, addrports)) return -1;
-//	if(dnet_crypt_init(DNET_VERSION)) {
-//		xdag_err("dnet crypt init failed...");
-//		return -1;
-//	}
 
 	if (xdag_log_init()) return -1;
 
@@ -163,10 +157,10 @@ int xdag_init(int argc, char **argv, int isGui)
 		if(!!xdag_rpc_service_init(rpc_port)) return -1;
 	}
 	xdag_mess("Starting blocks engine...");
-	if (xdag_blocks_start(!g_is_miner, 0, !!miner_address)) return -1;
+	if (xdag_blocks_start()) return -1;
 
 	xdag_mess("Starting engine...");
-	if(xdag_initialize_mining(pool_arg, miner_address)) return -1;
+	if(xdag_initialize_mining(pool_arg)) return -1;
 
 	if (!isGui) {
 		if (!is_miner || (deamon_flags & 0x1) > 0) {
