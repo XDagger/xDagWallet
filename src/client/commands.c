@@ -36,8 +36,11 @@ typedef struct {
 
 // Function declarations
 int account_callback(void *data, xdag_hash_t hash, xdag_amount_t amount, xdag_time_t time, int n_our_key);
-//long double hashrate(xdag_diff_t *diff);
 const char *get_state(void);
+int read_command(char* cmd);
+int xdag_command(char *cmd, FILE *out);
+void xdag_init_commands(void);
+
 
 void processAccountCommand(char *nextParam, FILE *out);
 void processBalanceCommand(char *nextParam, FILE *out);
@@ -424,11 +427,6 @@ void processHelpCommand(FILE *out)
 		"  terminate           - terminate both daemon and this program\n"
 		"  xfer S A            - transfer S our %s to the address A\n"
 		, COINNAME);
-}
-
-double xdagGetHashRate(void)
-{
-	return g_xdag_extstats.hashrate_s / (1024 * 1024);
 }
 
 int read_command(char *cmd)
