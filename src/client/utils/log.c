@@ -15,14 +15,9 @@
 #include "../init.h"
 #include "utils.h"
 
-#define ASYNC_LOG 0
-
 //#define LOG_PRINT // print log to stdout
 
 #define XDAG_LOG_FILE "%s.log"
-#define RING_BUFFER_SIZE 2048
-#define MAX_POLL_SIZE (RING_BUFFER_SIZE - 4)
-#define SEM_LOG_WRITER "/xdaglogwritersem"
 
 typedef unsigned char boolean;
 #ifndef FALSE
@@ -35,169 +30,8 @@ typedef unsigned char boolean;
 static pthread_mutex_t log_mutex = PTHREAD_MUTEX_INITIALIZER;
 static int log_level = XDAG_INFO;
 
-static char g_ring_buffer[RING_BUFFER_SIZE] = {0};
-static size_t g_write_index = 0;
-static size_t g_read_index = 0;
-static boolean g_buffer_full = FALSE;
-
-#if ASYNC_LOG && (!defined _WIN32 && !defined _WIN64)
-static sem_t *writer_notice_sem = NULL;
-static char log_file_path[1024] = {0};
-#endif
-
-size_t get_used_size(void);
-size_t get_free_size(void);
-size_t put_log(const char*, size_t);
-size_t get_log(char*, size_t);
-
-size_t get_used_size(void)
-{
-	if(g_write_index > g_read_index) {
-		return g_write_index - g_read_index;
-	} else if(g_write_index < g_read_index) {
-		return g_write_index + RING_BUFFER_SIZE - g_read_index;
-	} else {
-		return g_buffer_full ? RING_BUFFER_SIZE : 0;
-	}
-}
-
-size_t get_free_size(void)
-{
-	return RING_BUFFER_SIZE - get_used_size();
-}
-
-size_t put_log(const char* log, size_t size)
-{
-	size_t freesize = get_free_size();
-	if(!freesize) {
-		size = 0;
-		g_buffer_full = TRUE;
-	}
-
-	if(freesize < size) {
-		size = freesize;
-		g_buffer_full = TRUE;
-	}
-	
-	if(size > 0) {
-		if(g_write_index + size < RING_BUFFER_SIZE) {
-			memcpy(g_ring_buffer + g_write_index, log, size);
-			g_write_index += size;
-		} else {
-			memcpy(g_ring_buffer + g_write_index, log, RING_BUFFER_SIZE - g_write_index);
-			memcpy(g_ring_buffer, log + RING_BUFFER_SIZE - g_write_index, size + g_write_index - RING_BUFFER_SIZE);
-			g_write_index += size - RING_BUFFER_SIZE;
-		}
-	}
-	
-	return size;
-}
-
-size_t get_log(char* log, size_t size)
-{
-	size_t used = get_used_size();
-	if (!used) {
-		size = 0;
-	}
-	
-	if(used < size) {
-		size = used;
-	}
-	
-	if(size > 0) {
-		if(g_read_index + size < RING_BUFFER_SIZE) {
-			memcpy(log, (const char*)g_ring_buffer + g_read_index, size);
-			g_read_index += size;
-		} else {
-			memcpy(log, (const char*)g_ring_buffer + g_read_index, RING_BUFFER_SIZE - g_read_index);
-			memcpy(log + RING_BUFFER_SIZE - g_read_index, (const char*)g_ring_buffer, size + g_read_index - RING_BUFFER_SIZE);
-			g_read_index += size - RING_BUFFER_SIZE;
-		}
-	}
-	
-	g_buffer_full = FALSE;
-	return size;
-}
-
-#if ASYNC_LOG && (!defined _WIN32 && !defined _WIN64)
-static void *xdag_log_writer_thread(void* data)
-{
-	char *poll_get_buf = (char*)malloc(MAX_POLL_SIZE);
-
-	size_t pollsize = 0;
-	while (1) {
-		sem_wait(writer_notice_sem);
-		
-		pthread_mutex_lock(&log_mutex);
-		memset(poll_get_buf, 0, MAX_POLL_SIZE);
-		pollsize = get_log(poll_get_buf, MAX_POLL_SIZE);
-		if (pollsize>0) {
-			FILE *f = xdag_open_file(log_file_path, "a");
-			if (!f) {
-				// open file failed use stderr instead.
-				printf("[ERROR] open file %s failed, use stderr\n", log_file_path);
-				f = stderr;
-			}
-			
-			fwrite(poll_get_buf, 1, pollsize, f);
-			
-			if(f != stderr) {
-				xdag_close_file(f);
-			}
-			
-		} else {
-			// ring buffer empty
-		}
-		pthread_mutex_unlock(&log_mutex);
-	}
-
-	return 0;
-}
-#endif
-
 int xdag_log(int level, const char *format, ...)
-{	
-#if ASYNC_LOG && (!defined _WIN32 && !defined _WIN64)
-	if (level < 0 || level > XDAG_TRACE) {
-		level = XDAG_INTERNAL;
-	}
-	
-	if (level > log_level) {
-		return 0;
-	}
-	
-	static const char lvl[] = "NONEFATACRITINTEERROWARNMESSINFODBUGTRAC";
-	char timebuf[64];
-	struct tm tm;
-	struct timeval tv;
-	int done = 0;
-	time_t t;
-	
-	gettimeofday(&tv, 0);
-	t = tv.tv_sec;
-	localtime_r(&t, &tm);
-	strftime(timebuf, 64, "%Y-%m-%d %H:%M:%S", &tm);
-	
-	char buffer[RING_BUFFER_SIZE] = {0};
-	char buf[RING_BUFFER_SIZE] = {0};
-	va_list arg;
-	va_start(arg, format);
-	done = vsprintf(buf, format, arg);
-	va_end(arg);
-	
-	sprintf(buffer, "%s.%03d [%012llx:%.4s]  %s\n", timebuf, (int)(tv.tv_usec / 1000), (long long)pthread_self_ptr(), lvl + 4 * level, buf);
-	
-#ifdef LOG_PRINT
-	printf("%s", buffer);
-#endif
-	pthread_mutex_lock(&log_mutex);
-	size_t putsize = put_log(buffer, strlen(buffer));
-	pthread_mutex_unlock(&log_mutex);
-	if(putsize>0) {
-		sem_post(writer_notice_sem);
-	}
-	
-#else
+{
 	static const char lvl[] = "NONEFATACRITINTEERROWARNMESSINFODBUGTRAC";
 	char tbuf[64] = {0}, buf[64] = {0};
 	struct tm tm;
@@ -255,8 +89,6 @@ int xdag_log(int level, const char *format, ...)
 
  end:
 	pthread_mutex_unlock(&log_mutex);
-#endif
-
 	return done;
 }
 
@@ -355,10 +187,6 @@ static void sigCatch(int signum, siginfo_t *info, void *context)
 	signal(signum, SIG_DFL);
 	kill(getpid(), signum);
 	
-#if ASYNC_LOG && (!defined _WIN32 && !defined _WIN64)
-	sem_unlink(SEM_LOG_WRITER);
-#endif
-	
 	exit(-1);
 }
 
@@ -376,23 +204,6 @@ int xdag_log_init(void)
 			sigaction(i, &sa, 0);
 		}
 	}
-	
-#if ASYNC_LOG && (!defined _WIN32 && !defined _WIN64)
-	sprintf(log_file_path, XDAG_LOG_FILE, g_progname);
-	
-	writer_notice_sem = sem_open(SEM_LOG_WRITER, O_CREAT, 0644, 0);
-	pthread_t writer_thread;
-	int err = pthread_create(&writer_thread, NULL, xdag_log_writer_thread, NULL);
-	if(err != 0) {
-		printf("create xdag_log_writer_thread failed, error : %s\n", strerror(err));
-		return -1;
-	}
-	err = pthread_detach(writer_thread);
-	if (err != 0) {
-		printf("detach xdag_log_writer_thread failed, error : %s\n", strerror(err));
-		return -1;
-	}
-#endif
 	
 	xdag_mess("Initializing log system...");
 	
