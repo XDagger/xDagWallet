@@ -7,9 +7,9 @@
 #include "address.h"
 #include "wallet.h"
 #include "utils/log.h"
-#include "miner.h"
+#include "client.h"
 #include "crypt.h"
-#include "miner.h"
+#include "client.h"
 #include "storage.h"
 #if !defined(_WIN32) && !defined(_WIN64)
 #include "utils/linenoise.h"

@@ -14,7 +14,7 @@
 #include "storage.h"
 #include "utils/log.h"
 #include "init.h"
-#include "miner.h"
+#include "client.h"
 #include "address.h"
 #include "commands.h"
 #include "utils/utils.h"

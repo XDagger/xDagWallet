@@ -18,7 +18,7 @@
 #include "address.h"
 #include "block.h"
 #include "init.h"
-#include "miner.h"
+#include "client.h"
 #include "storage.h"
 #include "utils/log.h"
 #include "commands.h"
@@ -35,15 +35,9 @@
 #include <poll.h>
 #endif
 
-#define MINERS_PWD             "minersgonnamine"
-#define SECTOR0_BASE           0x1947f3acu
-#define SECTOR0_OFFSET         0x82e9d1b5u
-
 #define DATA_SIZE          (sizeof(struct xdag_field) / sizeof(uint32_t))
 #define BLOCK_HEADER_WORD  0x3fca9e2bu
 
-/* 1 - program works as a pool */
-//int g_xdag_pool = 0;
 pthread_mutex_t g_transport_mutex = PTHREAD_MUTEX_INITIALIZER;
 time_t g_xdag_last_received = 0;
 
@@ -55,7 +49,7 @@ struct dfslib_crypt *g_crypt;
 #define MINERS_PWD             "minersgonnamine"
 #define SECTOR0_BASE           0x1947f3acu
 #define SECTOR0_OFFSET         0x82e9d1b5u
-#define SEND_PERIOD            10                                  /* share period of sending shares */
+#define SEND_PERIOD            5                                  /* share period of sending shares */
 
 struct miner {
 	struct xdag_field id;
@@ -64,7 +58,6 @@ struct miner {
 };
 
 static struct miner g_local_miner;
-//static pthread_mutex_t g_miner_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 /* a number of mining threads */
 int g_xdag_mining_threads = 0;
@@ -97,19 +90,6 @@ static int crypt_start(void)
 /* pool_arg - pool parameters ip:port[:CFG] */
 int xdag_initialize_mining(const char *pool_arg)
 {
-	for(int i = 0; i < 2; ++i) {
-		g_xdag_pool_task[i].ctx0 = malloc(xdag_hash_ctx_size());
-		g_xdag_pool_task[i].ctx = malloc(xdag_hash_ctx_size());
-
-		if(!g_xdag_pool_task[i].ctx0 || !g_xdag_pool_task[i].ctx) {
-			return -1;
-		}
-	}
-
-	if(!pool_arg) return -1; // need pool parameters here!
-
-	if(crypt_start()) return -1;
-
 	pthread_t th;
 	int err = pthread_create(&th, 0, main_thread, (void*)pool_arg);
 	if(err != 0) {
@@ -134,10 +114,7 @@ int xdag_user_crypt_action(unsigned *data, unsigned long long data_id, unsigned 
 
 static int can_send_share(time_t current_time, time_t task_time, time_t share_time)
 {
-	int can_send = current_time - share_time >= SEND_PERIOD && current_time - task_time <= 64;
-	if(g_xdag_mining_threads == 0 && share_time >= task_time) {
-		can_send = 0;  //we send only one share per task if mining is turned off
-	}
+	int can_send = (current_time - share_time >= SEND_PERIOD) && (current_time - task_time <= 64) && (share_time >= task_time);
 	return can_send;
 }
 
@@ -203,20 +180,44 @@ static int send_to_pool(struct xdag_field *fld, int nfld)
 
 void *main_thread(void *arg)
 {
-	xdag_mess("initialize miner...");
+	xdag_mess("Initialize miner...");
+
+	if(!arg) {
+		xdag_err("need pool arguments!");
+		return 0;
+	}
+
+	const char *str = (const char*)arg;
+	char pool_arg[0x100];
+	strcpy(pool_arg, str);
+
+	const char *mess = "", *mess1 = "";
+
+	for(int i = 0; i < 2; ++i) {
+		g_xdag_pool_task[i].ctx0 = malloc(xdag_hash_ctx_size());
+		g_xdag_pool_task[i].ctx = malloc(xdag_hash_ctx_size());
+
+		if(!g_xdag_pool_task[i].ctx0 || !g_xdag_pool_task[i].ctx) {
+			mess = "init task failed.";
+			return 0;
+		}
+	}
+
+	if(crypt_start()) {
+		mess = "crypt start failed.";
+		return 0;
+	}
+
 	struct xdag_block b;
 	struct xdag_field data[2];
 	xdag_hash_t hash;
-	const char *str = (const char*)arg;
-	char buf[0x100];
-	const char *mess, *mess1 = "";
+	xdag_time_t t;
+
 	struct sockaddr_in peeraddr;
 	char *lasts;
 	int res = 0, reuseaddr = 1;
 	struct linger linger_opt = { 1, 0 }; // Linger active, timeout 0
-	xdag_time_t t;
 
-	// periodic generation of blocks and determination of the main block
 	xdag_mess("Entering main cycle...");
 
 begin:
@@ -242,15 +243,17 @@ begin:
 	struct xdag_block *blk = xdag_storage_load(hash, t, pos, &b);
 	if(!blk) {
 		mess = "can't load the block";
-		goto err;
+		goto end;
 	}
-	if(blk != &b) memcpy(&b, blk, sizeof(struct xdag_block));
+	if(blk != &b) {
+		memcpy(&b, blk, sizeof(struct xdag_block));
+	}
 
 	// Create a socket
 	g_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if(g_socket == INVALID_SOCKET) {
 		mess = "cannot create a socket";
-		goto err;
+		goto end;
 	}
 	if(fcntl(g_socket, F_SETFD, FD_CLOEXEC) == -1) {
 		xdag_err("pool  : can't set FD_CLOEXEC flag on socket %d, %s\n", g_socket, strerror(errno));
@@ -261,11 +264,10 @@ begin:
 	peeraddr.sin_family = AF_INET;
 
 	// Resolve the server address (convert from symbolic name to IP number)
-	strcpy(buf, str);
-	const char *s = strtok_r(buf, " \t\r\n:", &lasts);
+	const char *s = strtok_r(pool_arg, " \t\r\n:", &lasts);
 	if(!s) {
 		mess = "host is not given";
-		goto err;
+		goto end;
 	}
 	if(!strcmp(s, "any")) {
 		peeraddr.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -275,7 +277,7 @@ begin:
 			mess = "cannot resolve host ";
 			mess1 = s;
 			res = h_errno;
-			goto err;
+			goto end;
 		}
 		// Write resolved IP address of a server to the address structure
 		memmove(&peeraddr.sin_addr.s_addr, host->h_addr_list[0], 4);
@@ -285,7 +287,7 @@ begin:
 	s = strtok_r(0, " \t\r\n:", &lasts);
 	if(!s) {
 		mess = "port is not given";
-		goto err;
+		goto end;
 	}
 	peeraddr.sin_port = htons(atoi(s));
 
@@ -432,10 +434,16 @@ err:
 		close(g_socket);
 		g_socket = INVALID_SOCKET;
 	}
-
 	sleep(5);
-
 	goto begin;
+
+end:
+	xdag_err("Miner : %s %s (error %d)", mess, mess1, res);
+	if(g_socket != INVALID_SOCKET) {
+		close(g_socket);
+		g_socket = INVALID_SOCKET;
+	}
+	return 0;
 }
 
 /* send block to network via pool */

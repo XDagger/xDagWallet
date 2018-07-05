@@ -29,7 +29,7 @@
 		38CF260220E7E6DE0058B19B /* rpc_service.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF259E20E7E6DE0058B19B /* rpc_service.c */; };
 		38CF260320E7E6DE0058B19B /* rpc_wrapper.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25A020E7E6DE0058B19B /* rpc_wrapper.c */; };
 		38CF260420E7E6DE0058B19B /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25A220E7E6DE0058B19B /* main.c */; };
-		38CF260720E7E6DE0058B19B /* miner.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25A620E7E6DE0058B19B /* miner.c */; };
+		38CF260720E7E6DE0058B19B /* client.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25A620E7E6DE0058B19B /* client.c */; };
 		38CF260D20E7E6DE0058B19B /* sha256.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25B420E7E6DE0058B19B /* sha256.c */; };
 		38CF260F20E7E6DE0058B19B /* storage.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25B820E7E6DE0058B19B /* storage.c */; };
 		38CF261320E7E6DE0058B19B /* linenoise.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25C620E7E6DE0058B19B /* linenoise.c */; };
@@ -101,8 +101,8 @@
 		38CF25A020E7E6DE0058B19B /* rpc_wrapper.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = rpc_wrapper.c; sourceTree = "<group>"; };
 		38CF25A120E7E6DE0058B19B /* rpc_wrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rpc_wrapper.h; sourceTree = "<group>"; };
 		38CF25A220E7E6DE0058B19B /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
-		38CF25A620E7E6DE0058B19B /* miner.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = miner.c; sourceTree = "<group>"; };
-		38CF25A720E7E6DE0058B19B /* miner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = miner.h; sourceTree = "<group>"; };
+		38CF25A620E7E6DE0058B19B /* client.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = client.c; sourceTree = "<group>"; };
+		38CF25A720E7E6DE0058B19B /* client.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = client.h; sourceTree = "<group>"; };
 		38CF25B420E7E6DE0058B19B /* sha256.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sha256.c; sourceTree = "<group>"; };
 		38CF25B520E7E6DE0058B19B /* sha256.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sha256.h; sourceTree = "<group>"; };
 		38CF25B620E7E6DE0058B19B /* state.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = state.h; sourceTree = "<group>"; };
@@ -217,8 +217,8 @@
 				38CF259420E7E6DE0058B19B /* init.h */,
 				38CF259520E7E6DE0058B19B /* json-rpc */,
 				38CF25A220E7E6DE0058B19B /* main.c */,
-				38CF25A620E7E6DE0058B19B /* miner.c */,
-				38CF25A720E7E6DE0058B19B /* miner.h */,
+				38CF25A620E7E6DE0058B19B /* client.c */,
+				38CF25A720E7E6DE0058B19B /* client.h */,
 				38CF25B420E7E6DE0058B19B /* sha256.c */,
 				38CF25B520E7E6DE0058B19B /* sha256.h */,
 				38CF25B620E7E6DE0058B19B /* state.h */,
@@ -363,7 +363,7 @@
 				38CF261620E7E6DE0058B19B /* utils.c in Sources */,
 				38CF261320E7E6DE0058B19B /* linenoise.c in Sources */,
 				3833516420EA849D0070E5A9 /* block.c in Sources */,
-				38CF260720E7E6DE0058B19B /* miner.c in Sources */,
+				38CF260720E7E6DE0058B19B /* client.c in Sources */,
 				38CF25F420E7E6DE0058B19B /* address.c in Sources */,
 				38CF25F820E7E6DE0058B19B /* commands.c in Sources */,
 				384C360420EBB98C002A7B52 /* dnet_crypt.c in Sources */,

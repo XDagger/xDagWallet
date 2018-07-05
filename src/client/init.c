@@ -16,7 +16,7 @@
 #include "version.h"
 #include "wallet.h"
 #include "init.h"
-#include "miner.h"
+#include "client.h"
 #include "commands.h"
 #include "utils/log.h"
 #include "utils/utils.h"
