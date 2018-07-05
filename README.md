@@ -1,2 +1,4 @@
 # xDagWallet
-xDagWallet lib for XDAG
+XDAG wallet C library, can be used to build desktop and mobile wallets.
+
+To be continue.
