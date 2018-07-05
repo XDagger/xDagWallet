@@ -13,7 +13,6 @@
 #include "crypt.h"
 #include "utils/log.h"
 #include "system.h"
-#include "./dnet_main.h"
 
 static EC_GROUP *group;
 

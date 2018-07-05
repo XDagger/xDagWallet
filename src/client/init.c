@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include <pthread.h>
 #include <ctype.h>
 #if !defined(_WIN32) && !defined(_WIN64)
@@ -12,12 +13,12 @@
 #include "address.h"
 #include "block.h"
 #include "crypt.h"
-#include "./dnet_main.h"
 #include "version.h"
 #include "wallet.h"
 #include "init.h"
 #include "client.h"
 #include "commands.h"
+#include "dnet_crypt.h"
 #include "utils/log.h"
 #include "utils/utils.h"
 #include "json-rpc/rpc_service.h"
@@ -119,7 +120,11 @@ int xdag_init(int argc, char **argv, int isGui)
 	xdag_mess("Starting %s, version %s", g_progname, XDAG_VERSION);
 	xdag_mess("Starting dnet transport...");
 	printf("Init...\n");
-	if (dnet_init()) return -1;
+	if (dnet_crypt_init(DNET_VERSION)) {
+		sleep(3);
+		printf("Password incorrect.\n");
+		return -1;
+	}
 
 	if (xdag_log_init()) return -1;
 

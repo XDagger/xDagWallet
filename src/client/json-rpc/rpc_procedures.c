@@ -36,7 +36,6 @@
 #include "../../dus/dfslib_random.h"
 #include "../../dus/dfslib_crypt.h"
 #include "../../dus/dfslib_string.h"
-#include "../dnet_main.h"
 #include "../utils/log.h"
 
 #define rpc_register_func(command) xdag_rpc_service_register_procedure(&method_##command, #command, NULL);

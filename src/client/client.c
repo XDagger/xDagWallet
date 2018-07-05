@@ -22,7 +22,7 @@
 #include "storage.h"
 #include "utils/log.h"
 #include "commands.h"
-#include "./dnet_main.h"
+#include "dnet_crypt.h"
 #include "./utils/utils.h"
 
 #if defined(_WIN32) || defined(_WIN64)

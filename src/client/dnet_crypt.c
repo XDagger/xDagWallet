@@ -11,7 +11,6 @@
 #include "../dus/dfslib_string.h"
 #include "../dus/crc.h"
 #include "dnet_crypt.h"
-#include "dnet_main.h"
 #include "../client/utils/utils.h"
 
 #define KEYFILE	    "dnet_key.dat"
