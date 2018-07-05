@@ -145,7 +145,7 @@ cJSON * method_xdag_get_account(struct xdag_rpc_context *ctx, cJSON *params, cJS
 {
 	xdag_debug("rpc call method get_account, version %s",version);
 	struct rpc_account_callback_data cbdata;
-	cbdata.count = (g_is_miner ? 1 : 20);
+	cbdata.count = 1;
 	if (params) {
 		if (cJSON_IsArray(params)) {
 			size_t size = cJSON_GetArraySize(params);

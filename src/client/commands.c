@@ -170,7 +170,7 @@ int xdag_command(char *cmd, FILE *out)
 
 	XDAG_COMMAND *command = find_xdag_command(cmd);
 
-	if(!command || (command->avaibility == 1 && !g_is_miner) || (command->avaibility == 2 && g_is_miner)) {
+	if(!command) {
 		fprintf(out, "Illegal command.\n");
 	} else {
 		if(!strcmp(command->name, "xfer")) {
@@ -186,7 +186,7 @@ void processAccountCommand(char *nextParam, FILE *out)
 {
 	struct account_callback_data d;
 	d.out = out;
-	d.count = (g_is_miner ? 1 : 20);
+	d.count = 1;
 	char *cmd = strtok_r(nextParam, " \t\r\n", &nextParam);
 	if(cmd) {
 		sscanf(cmd, "%d", &d.count);
@@ -366,9 +366,6 @@ int xfer_callback(void *data, xdag_hash_t hash, xdag_amount_t amount, xdag_time_
 	int i;
 	if(!amount) {
 		return -1;
-	}
-	if(!g_is_miner && xdag_main_time() < (time >> 16) + 2 * 16) {
-		return 0;
 	}
 	for(i = 0; i < xferData->keysCount; ++i) {
 		if(n_our_key == xferData->keys[i]) {

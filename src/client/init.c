@@ -29,7 +29,6 @@ char *g_progname;
 
 int g_xdag_state = XDAG_STATE_INIT;
 int g_xdag_testnet = 0;
-int g_is_miner = 0;
 time_t g_xdag_xfer_last = 0;
 enum xdag_field_type g_block_header_type = XDAG_FIELD_HEAD;
 struct xdag_stats g_xdag_stats;
@@ -112,11 +111,8 @@ int xdag_init(int argc, char **argv, int isGui)
 	}
 
 	// use RAM as default config for miner
-	if(is_miner) {
-		xdag_mem_tempfile_path("RAM");
-	}
 
-	g_is_miner = is_miner;
+	xdag_mem_tempfile_path("RAM");
 
 	if(g_xdag_testnet) {
 		g_block_header_type = XDAG_FIELD_HEAD_TEST; //block header has the different type in the test network
