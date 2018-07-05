@@ -17,7 +17,7 @@
 
 //#define LOG_PRINT // print log to stdout
 
-#define XDAG_LOG_FILE "%s.log"
+#define XDAG_LOG_FILE "xdag.log"
 
 typedef unsigned char boolean;
 #ifndef FALSE
@@ -55,7 +55,7 @@ int xdag_log(int level, const char *format, ...)
 	strftime(tbuf, 64, "%Y-%m-%d %H:%M:%S", &tm);
 	
 	pthread_mutex_lock(&log_mutex);
-	sprintf(buf, XDAG_LOG_FILE, g_progname);
+	sprintf(buf, XDAG_LOG_FILE);
 	
 	f = xdag_open_file(buf, "a");
 	if (!f) {

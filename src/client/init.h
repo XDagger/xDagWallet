@@ -53,9 +53,6 @@ extern "C" {
 	/* 1 - the program works in a test network */
 	extern int g_xdag_testnet;
 
-	/* coin token and program name */
-	extern char *g_progname;
-
 	//Default type of the block header
 	//Test network and main network have different types of the block headers, so blocks from different networks are incompatible
 	extern enum xdag_field_type g_block_header_type;

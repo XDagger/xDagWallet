@@ -12,7 +12,7 @@ extern "C" {
 
 #define XFER_MAX_IN		11
 
-	extern void startCommandProcessing(int transportFlags);
+	extern void startCommandProcessing(void);
 
 	struct xfer_callback_data {
 		struct xdag_field fields[XFER_MAX_IN + 1];

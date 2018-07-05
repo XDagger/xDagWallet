@@ -134,23 +134,19 @@ XDAG_COMMAND* find_xdag_command(char *name)
 	return (XDAG_COMMAND *)NULL;
 }
 
-void startCommandProcessing(int deamonFlags)
+void startCommandProcessing(void)
 {
 	char cmd[XDAG_COMMAND_MAX];
-	if(!(deamonFlags & 0x1)) printf("Type command, help for example.\n");
+	printf("Type command, help for example.\n");
 
 	xdag_init_commands();
 
 	for(;;) {
-		if(deamonFlags & 0x1) {
-			sleep(100);
-		} else {
-			read_command(cmd);
-			if(strlen(cmd) > 0) {
-				int ret = xdag_command(cmd, stdout);
-				if(ret < 0) {
-					break;
-				}
+		read_command(cmd);
+		if(strlen(cmd) > 0) {
+			int ret = xdag_command(cmd, stdout);
+			if(ret < 0) {
+				break;
 			}
 		}
 	}
@@ -449,7 +445,7 @@ int read_command(char *cmd)
 		linenoiseHistorySave(COMMAND_HISTORY);
 	}
 #else
-	printf("%s> ", g_progname);
+	printf("xdag> ");
 	fflush(stdout);
 	fgets(cmd, XDAG_COMMAND_MAX, stdin);
 #endif

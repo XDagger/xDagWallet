@@ -23,8 +23,6 @@
 #include "utils/utils.h"
 #include "json-rpc/rpc_service.h"
 
-char *g_progname;
-
 #define ARG_EQUAL(a,b,c) strcmp(c, "") == 0 ? strcmp(a, b) == 0 : (strcmp(a, b) == 0 || strcmp(a, c) == 0)
 
 int g_xdag_state = XDAG_STATE_INIT;
@@ -41,7 +39,7 @@ int xdag_init(int argc, char **argv, int isGui)
 	xdag_init_path(argv[0]);
 
 	const char *pool_arg = 0;
-	int deamon_flags = 0, is_miner = 1, level, is_rpc = 0, rpc_port = 0;
+	int level, is_rpc = 0, rpc_port = 0;
 
 //#if !defined(_WIN32) && !defined(_WIN64)
 //	signal(SIGHUP, SIG_IGN);
@@ -51,15 +49,8 @@ int xdag_init(int argc, char **argv, int isGui)
 //	signal(SIGTERM, SIG_IGN);
 //#endif
 
-	char *filename = xdag_filename(argv[0]);
-
-	g_progname = strdup(filename);
-	free(filename);
-
-	xdag_str_tolower(g_progname);
-
 	if (!isGui) {
-		printf("%s client/server, version %s.\n", g_progname, XDAG_VERSION);
+		printf("xdag client/server, version %s.\n", XDAG_VERSION);
 	}
 
 	if (argc <= 1) {
@@ -70,7 +61,6 @@ int xdag_init(int argc, char **argv, int isGui)
 	for (int i = 1; i < argc; ++i) {
 		if (argv[i][0] != '-') {
 			if ((!argv[i][1] || argv[i][2]) && strchr(argv[i], ':')) {
-				is_miner = 1;
 				pool_arg = argv[i];
 			} else {
 				printUsage(argv[0]);
@@ -79,11 +69,7 @@ int xdag_init(int argc, char **argv, int isGui)
 			continue;
 		}
 		
-		if(ARG_EQUAL(argv[i], "-d", "")) { /* daemon mode */
-#if !defined(_WIN32) && !defined(_WIN64)
-			deamon_flags |= 0x1;
-#endif
-		} else if(ARG_EQUAL(argv[i], "-h", "")) { /* help */
+		if(ARG_EQUAL(argv[i], "-h", "")) { /* help */
 			printUsage(argv[0]);
 			return 0;
 		} else if(ARG_EQUAL(argv[i], "-t", "")) { /* connect test net */
@@ -117,9 +103,9 @@ int xdag_init(int argc, char **argv, int isGui)
 	memset(&g_xdag_stats, 0, sizeof(g_xdag_stats));
 	memset(&g_xdag_extstats, 0, sizeof(g_xdag_extstats));
 
-	xdag_mess("Starting %s, version %s", g_progname, XDAG_VERSION);
+	xdag_mess("Starting xdag, version %s", XDAG_VERSION);
 	xdag_mess("Starting dnet transport...");
-	printf("Init...\n");
+	printf("Initialize...\n");
 	if (dnet_crypt_init(DNET_VERSION)) {
 		sleep(3);
 		printf("Password incorrect.\n");
@@ -134,18 +120,20 @@ int xdag_init(int argc, char **argv, int isGui)
 	if (xdag_wallet_init()) return -1;
 	xdag_mess("Initializing addresses...");
 	if (xdag_address_init()) return -1;
-	if(is_rpc) {
-		xdag_mess("Initializing RPC service...");
-		if(!!xdag_rpc_service_init(rpc_port)) return -1;
-	}
+
 	xdag_mess("Starting blocks engine...");
 	if (xdag_blocks_start()) return -1;
 
 	xdag_mess("Starting engine...");
 	if(xdag_initialize_mining(pool_arg)) return -1;
 
+	if(is_rpc) {
+		xdag_mess("Initializing RPC service...");
+		if(!!xdag_rpc_service_init(rpc_port)) return -1;
+	}
+
 	if (!isGui) {
-		startCommandProcessing(deamon_flags);
+		startCommandProcessing();
 	}
 
 	return 0;
