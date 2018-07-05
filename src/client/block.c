@@ -15,7 +15,6 @@
 #include "utils/log.h"
 #include "init.h"
 #include "miner.h"
-#include "memory.h"
 #include "address.h"
 #include "commands.h"
 #include "utils/utils.h"
@@ -566,7 +565,7 @@ static int add_block_nolock(struct xdag_block *newBlock, xdag_time_t limit)
 		goto end;
 	}
 
-	struct block_internal *nodeBlock = xdag_malloc(sizeof(struct block_internal));
+	struct block_internal *nodeBlock = malloc(sizeof(struct block_internal));
 	if(!nodeBlock) {
 		err = 0xC;
 		goto end;
@@ -641,7 +640,7 @@ static int add_block_nolock(struct xdag_block *newBlock, xdag_time_t limit)
 		if(tmpNodeBlock.linkamount[i]) {
 			blockRef = tmpNodeBlock.link[i];
 			if(!blockRef->backrefs || blockRef->backrefs->backrefs[N_BACKREFS - 1]) {
-				struct block_backrefs *back = xdag_malloc(sizeof(struct block_backrefs));
+				struct block_backrefs *back = malloc(sizeof(struct block_backrefs));
 				if(!back) continue;
 				memset(back, 0, sizeof(struct block_backrefs));
 				back->next = blockRef->backrefs;
@@ -859,10 +858,6 @@ int xdag_blocks_start(void)
 	}
 
 	g_light_mode = 1;
-
-	if (xdag_mem_init(0)) {
-		return -1;
-	}
 
 	pthread_mutexattr_init(&attr);
 	pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);

@@ -18,7 +18,6 @@
 #include "init.h"
 #include "miner.h"
 #include "commands.h"
-#include "memory.h"
 #include "utils/log.h"
 #include "utils/utils.h"
 #include "json-rpc/rpc_service.h"
@@ -109,11 +108,7 @@ int xdag_init(int argc, char **argv, int isGui)
 			return 0;
 		}
 	}
-
-	// use RAM as default config for miner
-
-	xdag_mem_tempfile_path("RAM");
-
+	
 	if(g_xdag_testnet) {
 		g_block_header_type = XDAG_FIELD_HEAD_TEST; //block header has the different type in the test network
 	}

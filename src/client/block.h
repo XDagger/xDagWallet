@@ -22,8 +22,6 @@ extern xdag_time_t g_xdag_era;
 #define MAIN_BIG_PERIOD_LOG     21
 #define MAIN_TIME(t)            ((t) >> 16)
 #define MAX_LINKS               15
-#define MAKE_BLOCK_PERIOD       13
-#define QUERY_RETRIES           2
 
 enum xdag_field_type {
 	XDAG_FIELD_NONCE,        //0
@@ -35,16 +33,6 @@ enum xdag_field_type {
 	XDAG_FIELD_PUBLIC_KEY_0, //6
 	XDAG_FIELD_PUBLIC_KEY_1, //7
 	XDAG_FIELD_HEAD_TEST     //8
-};
-
-enum xdag_message_type {
-	XDAG_MESSAGE_BLOCKS_REQUEST,
-	XDAG_MESSAGE_BLOCKS_REPLY,
-	XDAG_MESSAGE_SUMS_REQUEST,
-	XDAG_MESSAGE_SUMS_REPLY,
-	XDAG_MESSAGE_BLOCKEXT_REQUEST,
-	XDAG_MESSAGE_BLOCKEXT_REPLY,
-	XDAG_MESSAGE_BLOCK_REQUEST,
 };
 
 #define XDAG_BLOCK_FIELDS 16
@@ -79,63 +67,61 @@ struct xdag_block {
 extern "C" {
 #endif
 	
-// convert cheato to xdag
-extern long double amount2xdags(xdag_amount_t amount);
+	// convert cheato to xdag
+	extern long double amount2xdags(xdag_amount_t amount);
 
-// contert xdag to cheato
-extern xdag_amount_t xdags2amount(const char *str);
+	// contert xdag to cheato
+	extern xdag_amount_t xdags2amount(const char *str);
 
-// start of regular block processing
-extern int xdag_blocks_start(void);
+	// start of regular block processing
+	extern int xdag_blocks_start(void);
 
-// checks and adds block to the storage. Returns non-zero value in case of error.
-extern int xdag_add_block(struct xdag_block *b);
+	// checks and adds block to the storage. Returns non-zero value in case of error.
+	extern int xdag_add_block(struct xdag_block *b);
 
-// returns our first block. If there is no blocks yet - the first block is created.
-extern int xdag_get_our_block(xdag_hash_t hash);
+	// returns our first block. If there is no blocks yet - the first block is created.
+	extern int xdag_get_our_block(xdag_hash_t hash);
 
-// calls callback for each own block
-extern int xdag_traverse_our_blocks(void *data,
-	int (*callback)(void*, xdag_hash_t, xdag_amount_t, xdag_time_t, int));
+	// calls callback for each own block
+	extern int xdag_traverse_our_blocks(void *data, int (*callback)(void*, xdag_hash_t, xdag_amount_t, xdag_time_t, int));
 
-// calls callback for each block
-extern int xdag_traverse_all_blocks(void *data, int (*callback)(void *data, xdag_hash_t hash,
-	xdag_amount_t amount, xdag_time_t time));
+	// calls callback for each block
+	extern int xdag_traverse_all_blocks(void *data,int (*callback)(void *data, xdag_hash_t hash, xdag_amount_t amount, xdag_time_t time));
 
-// create and publish a block
-extern int xdag_create_block(struct xdag_field *fields, int inputsCount, int outputsCount, xdag_amount_t fee, 
-	xdag_time_t send_time, xdag_hash_t newBlockHashResult);
+	// create and publish a block
+	extern int xdag_create_block(struct xdag_field *fields, int inputsCount, int outputsCount, xdag_amount_t fee,
+		xdag_time_t send_time, xdag_hash_t newBlockHashResult);
 
-// returns current balance for specified address or balance for all addresses if hash == 0
-extern xdag_amount_t xdag_get_balance(xdag_hash_t hash);
+	// returns current balance for specified address or balance for all addresses if hash == 0
+	extern xdag_amount_t xdag_get_balance(xdag_hash_t hash);
 
-// sets current balance for the specified address
-extern int xdag_set_balance(xdag_hash_t hash, xdag_amount_t balance);
+	// sets current balance for the specified address
+	extern int xdag_set_balance(xdag_hash_t hash, xdag_amount_t balance);
 
-// calculates current supply by specified count of main blocks
-extern xdag_amount_t xdag_get_supply(uint64_t nmain);
+	// calculates current supply by specified count of main blocks
+	extern xdag_amount_t xdag_get_supply(uint64_t nmain);
 
-// returns position and time of block by hash
-extern int64_t xdag_get_block_pos(const xdag_hash_t hash, xdag_time_t *time);
+	// returns position and time of block by hash
+	extern int64_t xdag_get_block_pos(const xdag_hash_t hash, xdag_time_t *time);
 
-// returns a number of the current period, period is 64 seconds
-extern xdag_time_t xdag_main_time(void);
+	// returns a number of the current period, period is 64 seconds
+	extern xdag_time_t xdag_main_time(void);
 
-// returns the number of the time period corresponding to the start of the network
-extern xdag_time_t xdag_start_main_time(void);
+	// returns the number of the time period corresponding to the start of the network
+	extern xdag_time_t xdag_start_main_time(void);
 
-// returns a number of key by hash of block or -1 if block is not ours
-extern int xdag_get_key(xdag_hash_t hash);
+	// returns a number of key by hash of block or -1 if block is not ours
+	extern int xdag_get_key(xdag_hash_t hash);
 
-// reinitialization of block processing
-extern int xdag_blocks_reset(void);
+	// reinitialization of block processing
+	extern int xdag_blocks_reset(void);
 
-// calculate difficulty from hash
-xdag_diff_t xdag_hash_difficulty(xdag_hash_t hash);
+	// calculate difficulty from hash
+	xdag_diff_t xdag_hash_difficulty(xdag_hash_t hash);
 
-// get all transactions of specified address, and return total number of transactions
-extern int xdag_get_transactions(xdag_hash_t hash, void *data, int (*callback)(void*, int, xdag_hash_t, xdag_amount_t, xdag_time_t));
-	
+	// get all transactions of specified address, and return total number of transactions
+	extern int xdag_get_transactions(xdag_hash_t hash, void *data, int (*callback)(void*, int, xdag_hash_t, xdag_amount_t, xdag_time_t));
+
 #ifdef __cplusplus
 };
 #endif

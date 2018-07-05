@@ -8,8 +8,6 @@
 #include "wallet.h"
 #include "utils/log.h"
 #include "miner.h"
-//#include "transport.h"
-#include "memory.h"
 #include "crypt.h"
 #include "miner.h"
 #include "storage.h"
@@ -244,7 +242,6 @@ void processExitCommand()
 	xdag_wallet_finish();
 //	xdag_netdb_finish();
 	xdag_storage_finish();
-	xdag_mem_finish();
 }
 
 void processXferCommand(char *nextParam, FILE *out, int ispwd, uint32_t* pwd)

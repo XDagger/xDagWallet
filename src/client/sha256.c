@@ -14,7 +14,6 @@
 
 /*************************** HEADER FILES ***************************/
 #include <stdlib.h>
-#include <memory.h>
 #include <openssl/sha.h>
 #include "sha256.h"
 
