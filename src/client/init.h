@@ -7,15 +7,14 @@
 #include "block.h"
 #include "system.h"
 
+#define COINNAME "XDAG"
+
 enum xdag_states
 {
 #define xdag_state(n,s) XDAG_STATE_##n ,
 #include "state.h"
 #undef xdag_state
 };
-
-/* the maximum period of time for which blocks are requested, not their amounts */
-#define REQUEST_BLOCKS_MAX_TIME	(1 << 20)
 
 extern struct xdag_stats
 {
@@ -55,7 +54,7 @@ extern "C" {
 	extern int g_xdag_testnet;
 
 	/* coin token and program name */
-	extern char *g_coinname, *g_progname;
+	extern char *g_progname;
 
 	//defines if client runs as miner or pool
 	extern int g_is_miner;

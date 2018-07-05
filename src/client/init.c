@@ -25,8 +25,7 @@
 #include "utils/utils.h"
 #include "json-rpc/rpc_service.h"
 
-char *g_coinname, *g_progname;
-#define coinname   g_coinname
+char *g_progname;
 
 #define ARG_EQUAL(a,b,c) strcmp(c, "") == 0 ? strcmp(a, b) == 0 : (strcmp(a, b) == 0 || strcmp(a, c) == 0)
 
@@ -47,21 +46,19 @@ int xdag_init(int argc, char **argv, int isGui)
 	const char *pool_arg = 0;
 	int deamon_flags = 0, is_miner = 1, level, is_rpc = 0, rpc_port = 0;
 
-#if !defined(_WIN32) && !defined(_WIN64)
-	signal(SIGHUP, SIG_IGN);
-	signal(SIGPIPE, SIG_IGN);
-	signal(SIGWINCH, SIG_IGN);
-	signal(SIGINT, SIG_IGN);
-	signal(SIGTERM, SIG_IGN);
-#endif
+//#if !defined(_WIN32) && !defined(_WIN64)
+//	signal(SIGHUP, SIG_IGN);
+//	signal(SIGPIPE, SIG_IGN);
+//	signal(SIGWINCH, SIG_IGN);
+//	signal(SIGINT, SIG_IGN);
+//	signal(SIGTERM, SIG_IGN);
+//#endif
 
 	char *filename = xdag_filename(argv[0]);
 
 	g_progname = strdup(filename);
-	g_coinname = "XDAG";
 	free(filename);
 
-	xdag_str_toupper(g_coinname);
 	xdag_str_tolower(g_progname);
 
 	if (!isGui) {
