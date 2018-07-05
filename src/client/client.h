@@ -34,7 +34,7 @@ extern "C" {
 
 	/* initialization of the pool (g_xdag_pool = 1) or connecting the miner to pool (g_xdag_pool = 0; pool_arg - pool parameters ip:port[:CFG];
 	 miner_addr - address of the miner, if specified */
-	extern int xdag_initialize_mining(const char *pool_arg);
+	extern int xdag_client_init(const char *pool_arg);
 
 	/* see dnet_user_crypt_action */
 	extern int xdag_user_crypt_action(unsigned *data, unsigned long long data_id, unsigned size, int action);

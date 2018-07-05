@@ -124,13 +124,13 @@ int xdag_init(int argc, char **argv, int isGui)
 	xdag_mess("Starting blocks engine...");
 	if (xdag_blocks_start()) return -1;
 
-	xdag_mess("Starting engine...");
-	if(xdag_initialize_mining(pool_arg)) return -1;
-
 	if(is_rpc) {
 		xdag_mess("Initializing RPC service...");
 		if(!!xdag_rpc_service_init(rpc_port)) return -1;
 	}
+
+	xdag_mess("Starting engine...");
+	if(xdag_client_init(pool_arg)) return -1;
 
 	if (!isGui) {
 		startCommandProcessing();
@@ -149,9 +149,7 @@ void printUsage(char* appName)
 	printf("Usage: %s flags [pool_ip:port]\n"
 		"If pool_ip:port argument is given, then the node operates as a miner.\n"
 		"Flags:\n"
-		"  -d             - run as daemon (default is interactive mode)\n"
 		"  -h             - print this help\n"
-		"  -i             - run as interactive terminal for daemon running in this folder\n"
 		"  -t             - connect to test net (default is main net)\n"
 		"  -v N           - set loglevel to N\n"
 		"  -rpc-enable    - enable JSON-RPC service\n"

@@ -88,7 +88,7 @@ static int crypt_start(void)
 }
 
 /* pool_arg - pool parameters ip:port[:CFG] */
-int xdag_initialize_mining(const char *pool_arg)
+int xdag_client_init(const char *pool_arg)
 {
 	pthread_t th;
 	int err = pthread_create(&th, 0, main_thread, (void*)pool_arg);
