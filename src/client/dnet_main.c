@@ -14,7 +14,7 @@
 #include "dnet_main.h"
 #include "./utils/log.h"
 
-int dnet_init(int argc, char **argv) {
+int dnet_init(void) {
 	int err = 0, res = 0;
 	if ((err = dnet_crypt_init(DNET_VERSION))) {
 		sleep(3); printf("Password incorrect.\n");

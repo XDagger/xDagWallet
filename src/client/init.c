@@ -12,14 +12,12 @@
 #include "address.h"
 #include "block.h"
 #include "crypt.h"
-#include "transport.h"
 #include "./dnet_main.h"
 #include "version.h"
 #include "wallet.h"
 #include "init.h"
 #include "miner.h"
 #include "commands.h"
-#include "terminal.h"
 #include "memory.h"
 #include "utils/log.h"
 #include "utils/utils.h"
@@ -89,8 +87,6 @@ int xdag_init(int argc, char **argv, int isGui)
 		} else if(ARG_EQUAL(argv[i], "-h", "")) { /* help */
 			printUsage(argv[0]);
 			return 0;
-		} else if(ARG_EQUAL(argv[i], "-i", "")) { /* interactive mode */
-			return terminal();
 		} else if(ARG_EQUAL(argv[i], "-t", "")) { /* connect test net */
 			g_xdag_testnet = 1;
 		} else if(ARG_EQUAL(argv[i], "-v", "")) { /* log level */
@@ -131,8 +127,8 @@ int xdag_init(int argc, char **argv, int isGui)
 
 	xdag_mess("Starting %s, version %s", g_progname, XDAG_VERSION);
 	xdag_mess("Starting dnet transport...");
-	printf("Transport module: ");
-	if (xdag_transport_start(deamon_flags)) return -1;
+	printf("Init...\n");
+	if (dnet_init()) return -1;
 
 	if (xdag_log_init()) return -1;
 
@@ -153,16 +149,6 @@ int xdag_init(int argc, char **argv, int isGui)
 	if(xdag_initialize_mining(pool_arg)) return -1;
 
 	if (!isGui) {
-		if (!is_miner || (deamon_flags & 0x1) > 0) {
-			xdag_mess("Starting terminal server...");
-			pthread_t th;
-			const int err = pthread_create(&th, 0, &terminal_thread, 0);
-			if(err != 0) {
-				printf("create terminal_thread failed, error : %s\n", strerror(err));
-				return -1;
-			}
-		}
-
 		startCommandProcessing(deamon_flags);
 	}
 
