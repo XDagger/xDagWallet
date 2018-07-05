@@ -211,7 +211,7 @@ void processBalanceCommand(char *nextParam, FILE *out)
 		} else {
 			balance = xdag_get_balance(0);
 		}
-		fprintf(out, "Balance: %.9Lf %s\n", amount2xdags(balance), g_coinname);
+		fprintf(out, "Balance: %.9Lf %s\n", amount2xdags(balance), COINNAME);
 	}
 }
 
@@ -303,7 +303,7 @@ static int make_transaction_block(struct xfer_callback_data *xferData)
 	if(res) {
 		xdag_hash2address(xferData->fields[xferData->fieldsCount].hash, address);
 		xdag_err("FAILED: to %s xfer %.9Lf %s, error %d",
-			address, amount2xdags(xferData->todo), g_coinname, res);
+			address, amount2xdags(xferData->todo), COINNAME, res);
 		return -1;
 	}
 	xferData->done += xferData->todo;
@@ -352,7 +352,7 @@ int xdag_do_xfer(void *outv, const char *amount, const char *address, int isGui)
 	xdag_traverse_our_blocks(&xfer, &xfer_callback);
 	if(out) {
 		xdag_hash2address(xfer.fields[XFER_MAX_IN].hash, address_buf);
-		fprintf(out, "Xfer: transferred %.9Lf %s to the address %s.\n", amount2xdags(xfer.done), g_coinname, address_buf);
+		fprintf(out, "Xfer: transferred %.9Lf %s to the address %s.\n", amount2xdags(xfer.done), COINNAME, address_buf);
 		xdag_hash2address(xfer.transactionBlockHash, address_buf);
 		fprintf(out, "Transaction address is %s, it will take several minutes to complete the transaction.\n", address_buf);
 	}
@@ -414,7 +414,7 @@ void xdag_log_xfer(xdag_hash_t from, xdag_hash_t to, xdag_amount_t amount)
 	char address_from[33], address_to[33];
 	xdag_hash2address(from, address_from);
 	xdag_hash2address(to, address_to);
-	xdag_mess("Xfer : from %s to %s xfer %.9Lf %s", address_from, address_to, amount2xdags(amount), g_coinname);
+	xdag_mess("Xfer : from %s to %s xfer %.9Lf %s", address_from, address_to, amount2xdags(amount), COINNAME);
 }
 
 void processHelpCommand(FILE *out)
@@ -429,7 +429,7 @@ void processHelpCommand(FILE *out)
 		"  state               - print the program state\n"
 		"  terminate           - terminate both daemon and this program\n"
 		"  xfer S A            - transfer S our %s to the address A\n"
-		, g_coinname);
+		, COINNAME);
 }
 
 double xdagGetHashRate(void)
