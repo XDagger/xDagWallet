@@ -86,7 +86,7 @@ extern long double amount2xdags(xdag_amount_t amount);
 extern xdag_amount_t xdags2amount(const char *str);
 
 // start of regular block processing
-extern int xdag_blocks_start();
+extern int xdag_blocks_start(void);
 
 // checks and adds block to the storage. Returns non-zero value in case of error.
 extern int xdag_add_block(struct xdag_block *b);

@@ -848,7 +848,7 @@ int xdag_create_block(struct xdag_field *fields, int inputsCount, int outputsCou
 }
 
 /* start of regular block processing */
-int xdag_blocks_start()
+int xdag_blocks_start(void)
 {
 	pthread_mutexattr_t attr;
 
