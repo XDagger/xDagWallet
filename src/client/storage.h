@@ -1,5 +1,3 @@
-/* локальное хранилище, T13.663-T13.788 $DVS:time$ */
-
 #ifndef XDAG_STORAGE_H
 #define XDAG_STORAGE_H
 

@@ -1,5 +1,3 @@
-/* basic variables, T13.714-T13.895 $DVS:time$ */
-
 #ifndef XDAG_MAIN_H
 #define XDAG_MAIN_H
 
@@ -35,28 +33,11 @@ extern struct xdag_ext_stats
 	uint64_t nhashes;
 	double hashrate_s;
 	uint32_t nwaitsync;
-//	uint32_t cache_size;
-//	uint32_t cache_usage;
-//	double cache_hitrate;
 } g_xdag_extstats;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-	/* the program state */
-	extern int g_xdag_state;
-
-	/* is there command 'run' */
-	extern int g_xdag_run;
-
-	/* 1 - the program works in a test network */
-	extern int g_xdag_testnet;
-
-	//Default type of the block header
-	//Test network and main network have different types of the block headers, so blocks from different networks are incompatible
-	extern enum xdag_field_type g_block_header_type;
-
 	extern int xdag_init(int argc, char **argv, int isGui);
 
 	extern int xdag_set_password_callback(int(*callback)(const char *prompt, char *buf, unsigned size));

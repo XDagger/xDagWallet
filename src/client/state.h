@@ -1,5 +1,3 @@
-/* состояние программы, T13.788-T13.841; $DVS:time$ */
-
 xdag_state(INIT, "Initializing.")
 xdag_state(KEYS, "Generating keys...")
 xdag_state(REST, "The local storage is corrupted. Resetting blocks engine.")

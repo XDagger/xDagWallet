@@ -1,5 +1,3 @@
-/* addresses, T13.692-T13.720 $DVS:time$ */
-
 #include <stdint.h>
 #include <string.h>
 #include "address.h"

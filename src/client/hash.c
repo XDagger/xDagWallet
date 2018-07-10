@@ -1,5 +1,3 @@
-/* hash-function, T13.654-T13.864 $DVS:time$ */
-
 #include <string.h>
 #ifdef SHA256_OPENSSL_MBLOCK
 #include <arpa/inet.h>

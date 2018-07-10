@@ -22,8 +22,6 @@ extern "C" {
 		xdag_hash_t transactionBlockHash;
 	};
 
-	/* time of last transfer */
-	extern time_t g_xdag_xfer_last;
 	extern int xdag_do_xfer(void *outv, const char *amount, const char *address, int isGui);
 	extern int xfer_callback(void *data, xdag_hash_t hash, xdag_amount_t amount, xdag_time_t time, int n_our_key);
 

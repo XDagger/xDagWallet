@@ -1,5 +1,3 @@
-/* кошелёк, T13.681-T13.788 $DVS:time$ */
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -7,7 +5,6 @@
 #include "crypt.h"
 #include "wallet.h"
 #include "init.h"
-//#include "transport.h"
 #include "client.h"
 #include "utils/log.h"
 #include "utils/utils.h"

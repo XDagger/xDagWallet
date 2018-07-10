@@ -1,5 +1,3 @@
-/* dnet: crypt; T11.231-T13.806; $DVS:time$ */
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>

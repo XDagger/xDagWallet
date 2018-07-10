@@ -1,5 +1,3 @@
-/* block processing, T13.654-T13.836 $DVS:time$ */
-
 #ifndef XDAG_BLOCK_H
 #define XDAG_BLOCK_H
 
@@ -9,7 +7,6 @@
 #include "system.h"
 #include "types.h"
 
-//extern int g_xdag_sync_on;
 extern xdag_time_t g_xdag_era;
 
 #define MAIN_CHAIN_PERIOD       (64 << 10)
@@ -66,6 +63,22 @@ struct xdag_block {
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+	//Default type of the block header
+	//Test network and main network have different types of the block headers, so blocks from different networks are incompatible
+	extern enum xdag_field_type g_block_header_type;
+
+	/* the program state */
+	extern int g_xdag_state;
+
+	/* is there command 'run' */
+	extern int g_xdag_run;
+
+	/* 1 - the program works in a test network */
+	extern int g_xdag_testnet;
+
+	/* time of last transfer */
+	extern time_t g_xdag_xfer_last;
 	
 	// convert cheato to xdag
 	extern long double amount2xdags(xdag_amount_t amount);

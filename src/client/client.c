@@ -1,5 +1,3 @@
-/* пул и майнер, T13.744-T13.895 $DVS:time$ */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -15,6 +13,8 @@
 #include "system.h"
 #include "../dus/dfslib_crypt.h"
 #include "../dus/crc.h"
+#include "crypt.h"
+#include "wallet.h"
 #include "address.h"
 #include "block.h"
 #include "init.h"
@@ -24,6 +24,9 @@
 #include "commands.h"
 #include "dnet_crypt.h"
 #include "./utils/utils.h"
+#include "version.h"
+
+//#define __stand_alone_lib__ // if run as stand alone library
 
 #if defined(_WIN32) || defined(_WIN64)
 #if defined(_WIN64)
@@ -90,17 +93,22 @@ static int crypt_start(void)
 /* pool_arg - pool parameters ip:port[:CFG] */
 int xdag_client_init(const char *pool_arg)
 {
-	pthread_t th;
-	int err = pthread_create(&th, 0, main_thread, (void*)pool_arg);
-	if(err != 0) {
-		printf("create main_thread failed, error : %s\n", strerror(err));
+
+#if (defined __android__) || (defined __ios__) || (defined__stand_alone_lib__)
+
+#else
+	if(!!client_init()) {
 		return -1;
 	}
+#endif
 
-	err = pthread_detach(th);
+	printf(pool_arg);
+
+	pthread_t th;
+	int err = pthread_create(&th, 0, client_main_thread, (void*)pool_arg);
 	if(err != 0) {
-		printf("detach main_thread failed, error : %s\n", strerror(err));
-		//return -1; //fixme: not sure why pthread_detach return 3
+		printf("create client_main_thread failed, error : %s\n", strerror(err));
+		return -1;
 	}
 
 	return 0;
@@ -178,9 +186,72 @@ static int send_to_pool(struct xdag_field *fld, int nfld)
 	return 0;
 }
 
-void *main_thread(void *arg)
+int client_init(void)
 {
+	memset(&g_xdag_stats, 0, sizeof(g_xdag_stats));
+	memset(&g_xdag_extstats, 0, sizeof(g_xdag_extstats));
+
+	xdag_mess("Starting xdag, version %s", XDAG_VERSION);
+	xdag_mess("Starting dnet transport...");
+	printf("Initialize...\n");
+	if (dnet_crypt_init(DNET_VERSION)) {
+		sleep(3);
+		printf("Password incorrect.\n");
+		return -1;
+	}
+
+	if (xdag_log_init()) return -1;
+
+	xdag_mess("Initializing cryptography...");
+	if (xdag_crypt_init(1)) return -1;
+	xdag_mess("Reading wallet...");
+	if (xdag_wallet_init()) return -1;
+	xdag_mess("Initializing addresses...");
+	if (xdag_address_init()) return -1;
+
+	xdag_mess("Starting blocks engine...");
+	if (xdag_blocks_start()) return -1;
+
+	//	if(is_rpc) {
+	//		xdag_mess("Initializing RPC service...");
+	//		if(!!xdag_rpc_service_init(rpc_port)) return -1;
+	//	}
+
+	for(int i = 0; i < 2; ++i) {
+		g_xdag_pool_task[i].ctx0 = malloc(xdag_hash_ctx_size());
+		g_xdag_pool_task[i].ctx = malloc(xdag_hash_ctx_size());
+
+		if(!g_xdag_pool_task[i].ctx0 || !g_xdag_pool_task[i].ctx) {
+			xdag_err("init task failed.");
+			return -1;
+		}
+	}
+
+	if(crypt_start()) {
+		xdag_err("crypt start failed.");
+		return -1;
+	}
+
+	return 0;
+}
+
+void *client_main_thread(void *arg)
+{
+	int err = pthread_detach(pthread_self());
+	if(err != 0) {
+		printf("detach client_main_thread failed, error : %s\n", strerror(err));
+		return 0;
+	}
 	xdag_mess("Initialize miner...");
+
+#if (defined __android__) || (defined __ios__) || (defined __stand_alone_lib__)
+	if(!!client_init()) {
+		return (void *)1;
+	}
+#else
+
+#endif
+
 
 	if(!arg) {
 		xdag_err("need pool arguments!");
@@ -192,21 +263,6 @@ void *main_thread(void *arg)
 	strcpy(pool_arg, str);
 
 	const char *mess = "", *mess1 = "";
-
-	for(int i = 0; i < 2; ++i) {
-		g_xdag_pool_task[i].ctx0 = malloc(xdag_hash_ctx_size());
-		g_xdag_pool_task[i].ctx = malloc(xdag_hash_ctx_size());
-
-		if(!g_xdag_pool_task[i].ctx0 || !g_xdag_pool_task[i].ctx) {
-			mess = "init task failed.";
-			return 0;
-		}
-	}
-
-	if(crypt_start()) {
-		mess = "crypt start failed.";
-		return 0;
-	}
 
 	struct xdag_block b;
 	struct xdag_field data[2];

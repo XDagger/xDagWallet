@@ -1,5 +1,3 @@
-/* локальное хранилище, T13.663-T13.825 $DVS:time$ */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

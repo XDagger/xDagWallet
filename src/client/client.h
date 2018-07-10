@@ -1,5 +1,3 @@
-/* pool and miner logic o_O, T13.744-T13.836 $DVS:time$ */
-
 #ifndef XDAG_MINER_H
 #define XDAG_MINER_H
 
@@ -24,7 +22,11 @@ extern "C" {
 	/* a number of mining threads */
 	extern int g_xdag_mining_threads;
 
-	extern void *main_thread(void *arg);
+	/* init client */
+	extern int client_init(void);
+
+	/* client main thread */
+	extern void *client_main_thread(void *arg);
 
 	/* send block to network via pool */
 	extern int xdag_send_block_via_pool(struct xdag_block *block);

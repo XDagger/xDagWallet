@@ -1,5 +1,3 @@
-/* block processing, T13.654-T13.895 $DVS:time$ */
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -19,7 +17,12 @@
 #include "commands.h"
 #include "utils/utils.h"
 
-//int g_xdag_sync_on = 0;
+enum xdag_field_type g_block_header_type = XDAG_FIELD_HEAD;
+int g_xdag_state = XDAG_STATE_INIT;
+int g_xdag_testnet = 0;
+time_t g_xdag_xfer_last = 0;
+struct xdag_stats g_xdag_stats;
+struct xdag_ext_stats g_xdag_extstats;
 
 enum bi_flags {
 	BI_MAIN       = 0x01,

@@ -1,5 +1,3 @@
-/* addresses, T13.692-T13.692 $DVS:time$ */
-
 #ifndef XDAG_ADDRESS_H
 #define XDAG_ADDRESS_H
 
