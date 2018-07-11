@@ -72,6 +72,9 @@ extern "C" {
 	// contert xdag to cheato
 	extern xdag_amount_t xdags2amount(const char *str);
 
+	/* see dnet_user_crypt_action */
+	extern int xdag_user_crypt_action(unsigned *data, unsigned long long data_id, unsigned size, int action);
+
 	extern int xdag_set_password_callback(int(*callback)(const char *prompt, char *buf, unsigned size));
 #ifdef __cplusplus
 }

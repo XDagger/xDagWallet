@@ -8,6 +8,7 @@
 
 #include "common.h"
 #include <math.h>
+#include "dnet_crypt.h"
 
 enum xdag_field_type g_block_header_type = XDAG_FIELD_HEAD;
 int g_xdag_state = XDAG_STATE_INIT;
@@ -35,6 +36,12 @@ xdag_amount_t xdags2amount(const char *str)
 long double amount2xdags(xdag_amount_t amount)
 {
 	return xdag_amount2xdag(amount) + (long double)xdag_amount2cheato(amount) / 1000000000;
+}
+
+/* see dnet_user_crypt_action */
+int xdag_user_crypt_action(unsigned *data, unsigned long long data_id, unsigned size, int action)
+{
+	return dnet_user_crypt_action(data, data_id, size, action);
 }
 
 int xdag_set_password_callback(int(*callback)(const char *prompt, char *buf, unsigned size))

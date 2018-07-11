@@ -17,10 +17,6 @@ extern "C" {
 /* Saves the block to local storage, returns its number or -1 in case of error */
 extern int64_t xdag_storage_save(const struct xdag_block *b);
 
-/* init storage from hard disk with two threads, one is for preload all blocks, the other one to add blocks to rbtree */
-extern void xdag_init_storage(xdag_time_t start_time, xdag_time_t end_time, void *data,
-								 void *(*callback)(void *block, void *data));
-
 /* reads a block and its number from the local repository; writes it to the buffer or returns a permanent reference, 0 in case of error */
 extern struct xdag_block *xdag_storage_load(xdag_hash_t hash, xdag_time_t time, uint64_t pos,
 	struct xdag_block *buf);

@@ -114,12 +114,6 @@ int xdag_client_init(const char *pool_arg)
 	return 0;
 }
 
-/* see dnet_user_crypt_action */
-int xdag_user_crypt_action(unsigned *data, unsigned long long data_id, unsigned size, int action)
-{
-	return dnet_user_crypt_action(data, data_id, size, action);
-}
-
 static int can_send_share(time_t current_time, time_t task_time, time_t share_time)
 {
 	int can_send = (current_time - share_time >= SEND_PERIOD) && (current_time - task_time <= 64) && (share_time >= task_time);
