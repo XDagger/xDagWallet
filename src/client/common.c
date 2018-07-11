@@ -36,3 +36,8 @@ long double amount2xdags(xdag_amount_t amount)
 {
 	return xdag_amount2xdag(amount) + (long double)xdag_amount2cheato(amount) / 1000000000;
 }
+
+int xdag_set_password_callback(int(*callback)(const char *prompt, char *buf, unsigned size))
+{
+	return xdag_user_crypt_action((uint32_t *)(void *)callback, 0, 0, 6);
+}

@@ -1,24 +1,24 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <pthread.h>
+//#include <stdlib.h>
+//#include <string.h>
+//#include <unistd.h>
+//#include <pthread.h>
 #include <ctype.h>
-#if !defined(_WIN32) && !defined(_WIN64)
-#include <signal.h>
-#endif
-#include "system.h"
-#include "address.h"
-#include "block.h"
-#include "crypt.h"
+//#if !defined(_WIN32) && !defined(_WIN64)
+//#include <signal.h>
+//#endif
+//#include "system.h"
+//#include "address.h"
+//#include "block.h"
+//#include "crypt.h"
 #include "version.h"
-#include "wallet.h"
+//#include "wallet.h"
 #include "init.h"
 #include "common.h"
 #include "client.h"
 #include "commands.h"
-#include "dnet_crypt.h"
-#include "utils/log.h"
+//#include "dnet_crypt.h"
+//#include "utils/log.h"
 #include "utils/utils.h"
 //#include "json-rpc/rpc_service.h"
 
@@ -86,7 +86,7 @@ int xdag_init(int argc, char **argv, int isGui)
 //		g_block_header_type = XDAG_FIELD_HEAD_TEST; //block header has the different type in the test network
 //	}
 
-	xdag_mess("Starting engine...");
+	printf("Starting engine...");
 	if(xdag_client_init(pool_arg)) return -1;
 
 	if (!isGui) {
@@ -96,10 +96,6 @@ int xdag_init(int argc, char **argv, int isGui)
 	return 0;
 }
 
-int xdag_set_password_callback(int(*callback)(const char *prompt, char *buf, unsigned size))
-{
-    return xdag_user_crypt_action((uint32_t *)(void *)callback, 0, 0, 6);
-}
 
 void printUsage(char* appName)
 {

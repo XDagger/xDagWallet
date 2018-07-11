@@ -72,6 +72,7 @@ extern "C" {
 	// contert xdag to cheato
 	extern xdag_amount_t xdags2amount(const char *str);
 
+	extern int xdag_set_password_callback(int(*callback)(const char *prompt, char *buf, unsigned size));
 #ifdef __cplusplus
 }
 #endif
