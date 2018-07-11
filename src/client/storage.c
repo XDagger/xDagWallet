@@ -4,7 +4,7 @@
 #include <pthread.h>
 #include <unistd.h>
 #include "storage.h"
-#include "init.h"
+#include "common.h"
 #include "hash.h"
 #include "utils/log.h"
 #include "utils/utils.h"

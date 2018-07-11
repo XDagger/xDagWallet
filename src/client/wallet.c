@@ -4,7 +4,7 @@
 #include <pthread.h>
 #include "crypt.h"
 #include "wallet.h"
-#include "init.h"
+#include "common.h"
 #include "client.h"
 #include "utils/log.h"
 #include "utils/utils.h"

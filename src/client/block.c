@@ -11,18 +11,11 @@
 #include "wallet.h"
 #include "storage.h"
 #include "utils/log.h"
-#include "init.h"
+#include "common.h"
 #include "client.h"
 #include "address.h"
 #include "commands.h"
 #include "utils/utils.h"
-
-enum xdag_field_type g_block_header_type = XDAG_FIELD_HEAD;
-int g_xdag_state = XDAG_STATE_INIT;
-int g_xdag_testnet = 0;
-time_t g_xdag_xfer_last = 0;
-struct xdag_stats g_xdag_stats;
-struct xdag_ext_stats g_xdag_extstats;
 
 enum bi_flags {
 	BI_MAIN       = 0x01,
@@ -73,26 +66,6 @@ static int g_light_mode = 0;
 int32_t check_signature_out_cached(struct block_internal*, struct xdag_public_key*, const int, int32_t*, int32_t*);
 int32_t check_signature_out(struct block_internal*, struct xdag_public_key*, const int);
 static int32_t find_and_verify_signature_out(struct xdag_block*, struct xdag_public_key*, const int);
-
-// convert xdag_amount_t to long double
-long double amount2xdags(xdag_amount_t amount)
-{
-	return xdag_amount2xdag(amount) + (long double)xdag_amount2cheato(amount) / 1000000000;
-}
-
-xdag_amount_t xdags2amount(const char *str)
-{
-	long double sum;
-	if(sscanf(str, "%Lf", &sum) != 1 || sum <= 0) {
-		return 0;
-	}
-	long double flr = floorl(sum);
-	xdag_amount_t res = (xdag_amount_t)flr << 32;
-	sum -= flr;
-	sum = ldexpl(sum, 32);
-	flr = ceill(sum);
-	return res + (xdag_amount_t)flr;
-}
 
 // returns a time period index, where a period is 64 seconds long
 xdag_time_t xdag_main_time(void)
@@ -1069,22 +1042,6 @@ static int bi_compar(const void *l, const void *r)
 	xdag_time_t tl = (*(struct block_internal **)l)->time, tr = (*(struct block_internal **)r)->time;
 
 	return (tl < tr) - (tl > tr);
-}
-
-// returns string representation for the block state. Ignores BI_OURS flag
-static const char* get_block_state_info(struct block_internal *block)
-{
-	const uint8_t flag = block->flags & ~BI_OURS;
-	if(flag == (BI_REF | BI_MAIN_REF | BI_APPLIED | BI_MAIN | BI_MAIN_CHAIN)) { //1F
-		return "Main";
-	}
-	if(flag == (BI_REF | BI_MAIN_REF | BI_APPLIED)) { //1C
-		return "Accepted";
-	}
-	if(flag == (BI_REF | BI_MAIN_REF)) { //18
-		return "Rejected";
-	}
-	return "Pending";
 }
 
 int32_t check_signature_out(struct block_internal* blockRef, struct xdag_public_key *public_keys, const int keysCount)

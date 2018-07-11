@@ -28,7 +28,7 @@
 #include "rpc_wrapper.h"
 #include "rpc_procedure.h"
 #include "../version.h"
-#include "../init.h"
+#include "../common.h"
 #include "../block.h"
 #include "../address.h"
 #include "../commands.h"

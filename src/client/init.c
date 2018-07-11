@@ -14,14 +14,13 @@
 #include "version.h"
 #include "wallet.h"
 #include "init.h"
+#include "common.h"
 #include "client.h"
 #include "commands.h"
 #include "dnet_crypt.h"
 #include "utils/log.h"
 #include "utils/utils.h"
-#include "json-rpc/rpc_service.h"
-
-#define ARG_EQUAL(a,b,c) strcmp(c, "") == 0 ? strcmp(a, b) == 0 : (strcmp(a, b) == 0 || strcmp(a, c) == 0)
+//#include "json-rpc/rpc_service.h"
 
 void printUsage(char* appName);
 
@@ -78,7 +77,11 @@ int xdag_init(int argc, char **argv, int isGui)
 			return 0;
 		}
 	}
-	
+
+//	if(level>0) {
+//		xdag_set_log_level(level);
+//	}
+
 //	if(g_xdag_testnet) {
 //		g_block_header_type = XDAG_FIELD_HEAD_TEST; //block header has the different type in the test network
 //	}

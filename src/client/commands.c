@@ -3,7 +3,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <ctype.h>
-#include "init.h"
+#include "common.h"
 #include "address.h"
 #include "wallet.h"
 #include "utils/log.h"

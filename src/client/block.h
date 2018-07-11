@@ -64,28 +64,6 @@ struct xdag_block {
 extern "C" {
 #endif
 
-	//Default type of the block header
-	//Test network and main network have different types of the block headers, so blocks from different networks are incompatible
-	extern enum xdag_field_type g_block_header_type;
-
-	/* the program state */
-	extern int g_xdag_state;
-
-	/* is there command 'run' */
-	extern int g_xdag_run;
-
-	/* 1 - the program works in a test network */
-	extern int g_xdag_testnet;
-
-	/* time of last transfer */
-	extern time_t g_xdag_xfer_last;
-	
-	// convert cheato to xdag
-	extern long double amount2xdags(xdag_amount_t amount);
-
-	// contert xdag to cheato
-	extern xdag_amount_t xdags2amount(const char *str);
-
 	// start of regular block processing
 	extern int xdag_blocks_start(void);
 

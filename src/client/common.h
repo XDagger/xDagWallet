@@ -1,0 +1,79 @@
+//
+//  common.h
+//  xDagWallet
+//
+//  Created by Rui Xie on 7/11/18.
+//  Copyright © 2018 xrdavies. All rights reserved.
+//
+
+#ifndef common_h
+#define common_h
+
+#include <time.h>
+#include "block.h"
+#include "system.h"
+
+#define COINNAME "XDAG"
+
+enum xdag_states
+{
+#define xdag_state(n,s) XDAG_STATE_##n ,
+#include "state.h"
+#undef xdag_state
+};
+
+extern struct xdag_stats
+{
+	xdag_diff_t difficulty, max_difficulty;
+	uint64_t nblocks, total_nblocks;
+	uint64_t nmain, total_nmain;
+	uint32_t nhosts, total_nhosts, reserved1, reserved2;
+} g_xdag_stats;
+
+#define HASHRATE_LAST_MAX_TIME	(64 * 4) // numbers of main blocks in about 4H, to calculate the pool and network mean hashrate
+
+extern struct xdag_ext_stats
+{
+	xdag_diff_t hashrate_total[HASHRATE_LAST_MAX_TIME];
+	xdag_diff_t hashrate_ours[HASHRATE_LAST_MAX_TIME];
+	xdag_time_t hashrate_last_time;
+	uint64_t nnoref;
+	uint64_t nhashes;
+	double hashrate_s;
+	uint32_t nwaitsync;
+} g_xdag_extstats;
+
+#define xdag_amount2xdag(amount) ((unsigned)((amount) >> 32))
+#define xdag_amount2cheato(amount) ((unsigned)(((uint64_t)(unsigned)(amount) * 1000000000) >> 32))
+#define ARG_EQUAL(a,b,c) strcmp(c, "") == 0 ? strcmp(a, b) == 0 : (strcmp(a, b) == 0 || strcmp(a, c) == 0)
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+	//Default type of the block header
+	//Test network and main network have different types of the block headers, so blocks from different networks are incompatible
+	extern enum xdag_field_type g_block_header_type;
+
+	/* the program state */
+	extern int g_xdag_state;
+
+	/* is there command 'run' */
+	extern int g_xdag_run;
+
+	/* 1 - the program works in a test network */
+	extern int g_xdag_testnet;
+
+	/* time of last transfer */
+	extern time_t g_xdag_xfer_last;
+
+	// convert cheato to xdag
+	extern long double amount2xdags(xdag_amount_t amount);
+
+	// contert xdag to cheato
+	extern xdag_amount_t xdags2amount(const char *str);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* common_h */

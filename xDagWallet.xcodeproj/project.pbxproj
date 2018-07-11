@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		3833516420EA849D0070E5A9 /* block.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF258520E7E6DE0058B19B /* block.c */; };
 		384C360420EBB98C002A7B52 /* dnet_crypt.c in Sources */ = {isa = PBXBuildFile; fileRef = 384C360220EBB98C002A7B52 /* dnet_crypt.c */; };
+		38A7BBF520F650E20042ACFD /* common.c in Sources */ = {isa = PBXBuildFile; fileRef = 38A7BBF420F650E20042ACFD /* common.c */; };
 		38CF25EF20E7E6DE0058B19B /* crc_c.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF257320E7E6DE0058B19B /* crc_c.c */; };
 		38CF25F020E7E6DE0058B19B /* dfslib_crypt.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF257420E7E6DE0058B19B /* dfslib_crypt.c */; };
 		38CF25F120E7E6DE0058B19B /* dfslib_random.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF257620E7E6DE0058B19B /* dfslib_random.c */; };
@@ -54,6 +55,8 @@
 /* Begin PBXFileReference section */
 		384C360220EBB98C002A7B52 /* dnet_crypt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dnet_crypt.c; sourceTree = "<group>"; };
 		384C360320EBB98C002A7B52 /* dnet_crypt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dnet_crypt.h; sourceTree = "<group>"; };
+		38A7BBF320F650E20042ACFD /* common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
+		38A7BBF420F650E20042ACFD /* common.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = common.c; sourceTree = "<group>"; };
 		38CF256720E7E61C0058B19B /* xDagWallet */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = xDagWallet; sourceTree = BUILT_PRODUCTS_DIR; };
 		38CF257220E7E6DE0058B19B /* crc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crc.h; sourceTree = "<group>"; };
 		38CF257320E7E6DE0058B19B /* crc_c.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = crc_c.c; sourceTree = "<group>"; };
@@ -226,6 +229,8 @@
 				38CF25CF20E7E6DE0058B19B /* version.h */,
 				38CF25D020E7E6DE0058B19B /* wallet.c */,
 				38CF25D120E7E6DE0058B19B /* wallet.h */,
+				38A7BBF320F650E20042ACFD /* common.h */,
+				38A7BBF420F650E20042ACFD /* common.c */,
 			);
 			path = client;
 			sourceTree = "<group>";
@@ -352,6 +357,7 @@
 				38CF25FA20E7E6DE0058B19B /* hash.c in Sources */,
 				38CF260F20E7E6DE0058B19B /* storage.c in Sources */,
 				38CF260020E7E6DE0058B19B /* rpc_procedure.c in Sources */,
+				38A7BBF520F650E20042ACFD /* common.c in Sources */,
 				38CF25F220E7E6DE0058B19B /* dfslib_string.c in Sources */,
 				38CF260420E7E6DE0058B19B /* main.c in Sources */,
 				38CF25F120E7E6DE0058B19B /* dfslib_random.c in Sources */,

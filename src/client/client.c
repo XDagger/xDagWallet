@@ -17,7 +17,7 @@
 #include "wallet.h"
 #include "address.h"
 #include "block.h"
-#include "init.h"
+#include "common.h"
 #include "client.h"
 #include "storage.h"
 #include "utils/log.h"
@@ -102,7 +102,7 @@ int xdag_client_init(const char *pool_arg)
 	}
 #endif
 
-	printf(pool_arg);
+	printf("%s\n", pool_arg);
 
 	pthread_t th;
 	int err = pthread_create(&th, 0, client_main_thread, (void*)pool_arg);
@@ -237,30 +237,28 @@ int client_init(void)
 
 void *client_main_thread(void *arg)
 {
-	int err = pthread_detach(pthread_self());
-	if(err != 0) {
-		printf("detach client_main_thread failed, error : %s\n", strerror(err));
-		return 0;
-	}
-	xdag_mess("Initialize miner...");
-
-#if (defined __android__) || (defined __ios__) || (defined __stand_alone_lib__)
-	if(!!client_init()) {
-		return (void *)1;
-	}
-#else
-
-#endif
-
-
 	if(!arg) {
 		xdag_err("need pool arguments!");
 		return 0;
 	}
 
 	const char *str = (const char*)arg;
-	char pool_arg[0x100];
-	strcpy(pool_arg, str);
+	char pool_param[0x100];
+	strcpy(pool_param, str);
+
+#if (defined __android__) || (defined __ios__) || (defined __stand_alone_lib__)
+	if(!!client_init()) {
+		return (void *)1;
+	}
+#else
+	int err = pthread_detach(pthread_self());
+	if(err != 0) {
+		printf("detach client_main_thread failed, error : %s\n", strerror(err));
+		return 0;
+	}
+#endif
+
+	xdag_mess("Initialize miner...");
 
 	const char *mess = "", *mess1 = "";
 
@@ -275,8 +273,10 @@ void *client_main_thread(void *arg)
 	struct linger linger_opt = { 1, 0 }; // Linger active, timeout 0
 
 	xdag_mess("Entering main cycle...");
+	char pool_arg[0x100];
 
 begin:
+	strcpy(pool_arg, pool_param);
 	memset(&g_local_miner, 0, sizeof(struct miner));
 	xdag_get_our_block(g_local_miner.id.data);
 
@@ -366,7 +366,6 @@ begin:
 		goto err;
 	}
 
-//	t = XDAG_ERA;
 	for(;;) {
 		if(get_timestamp() - t > 1024) {
 			t = get_timestamp();
