@@ -216,13 +216,13 @@ int client_init(void)
 		g_xdag_pool_task[i].ctx = malloc(xdag_hash_ctx_size());
 
 		if(!g_xdag_pool_task[i].ctx0 || !g_xdag_pool_task[i].ctx) {
-			xdag_err("init task failed.");
+			xdag_err(error_init_task_failed,"init task failed.");
 			return -1;
 		}
 	}
 
 	if(crypt_start()) {
-		xdag_err("crypt start failed.");
+		xdag_err(error_init_crypt_failed,"crypt start failed.");
 		return -1;
 	}
 
@@ -232,7 +232,7 @@ int client_init(void)
 void *client_main_thread(void *arg)
 {
 	if(!arg) {
-		xdag_err("need pool arguments!");
+		xdag_err(error_missing_param, "need pool arguments!");
 		return 0;
 	}
 
@@ -254,7 +254,7 @@ void *client_main_thread(void *arg)
 
 	xdag_mess("Initialize miner...");
 
-	const char *mess = "", *mess1 = "";
+//	const char *mess = "", *mess1 = "";
 
 	struct xdag_block b;
 	struct xdag_field data[2];
@@ -286,13 +286,13 @@ begin:
 
 	const int64_t pos = xdag_get_block_pos(hash, &t);
 	if(pos < 0) {
-		mess = "can't find the block";
+		xdag_err(error_block_not_found, "can't find the block");
 		goto err;
 	}
 
 	struct xdag_block *blk = xdag_storage_load(hash, t, pos, &b);
 	if(!blk) {
-		mess = "can't load the block";
+		xdag_err(error_block_load_failed, "can't load the block");
 		goto end;
 	}
 	if(blk != &b) {
@@ -302,11 +302,11 @@ begin:
 	// Create a socket
 	g_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if(g_socket == INVALID_SOCKET) {
-		mess = "cannot create a socket";
+		xdag_err(error_socket_create, "cannot create a socket");
 		goto end;
 	}
 	if(fcntl(g_socket, F_SETFD, FD_CLOEXEC) == -1) {
-		xdag_err("pool  : can't set FD_CLOEXEC flag on socket %d, %s\n", g_socket, strerror(errno));
+		xdag_err(error_socket_create, "pool  : can't set FD_CLOEXEC flag on socket %d, %s\n", g_socket, strerror(errno));
 	}
 
 	// Fill in the address of server
@@ -316,7 +316,7 @@ begin:
 	// Resolve the server address (convert from symbolic name to IP number)
 	const char *s = strtok_r(pool_arg, " \t\r\n:", &lasts);
 	if(!s) {
-		mess = "host is not given";
+		xdag_err(error_missing_param, "host is not given");
 		goto end;
 	}
 	if(!strcmp(s, "any")) {
@@ -324,8 +324,7 @@ begin:
 	} else if(!inet_aton(s, &peeraddr.sin_addr)) {
 		struct hostent *host = gethostbyname(s);
 		if(host == NULL || host->h_addr_list[0] == NULL) {
-			mess = "cannot resolve host ";
-			mess1 = s;
+			xdag_err(error_socket_resolve_host, "cannot resolve host %s", s);
 			res = h_errno;
 			goto end;
 		}
@@ -336,7 +335,7 @@ begin:
 	// Resolve port
 	s = strtok_r(0, " \t\r\n:", &lasts);
 	if(!s) {
-		mess = "port is not given";
+		xdag_err(error_missing_param, "port is not given");
 		goto end;
 	}
 	peeraddr.sin_port = htons(atoi(s));
@@ -349,13 +348,13 @@ begin:
 	// Now, connect to a pool
 	res = connect(g_socket, (struct sockaddr*)&peeraddr, sizeof(peeraddr));
 	if(res) {
-		mess = "cannot connect to the pool";
+		xdag_err(error_socket_connect, "cannot connect to the pool");
 		g_xdag_state = g_xdag_testnet ? XDAG_STATE_TTST : XDAG_STATE_TRYP;
 		goto err;
 	}
 
 	if(send_to_pool(b.field, XDAG_BLOCK_FIELDS) < 0) {
-		mess = "socket is closed";
+		xdag_err(error_socket_closed, "socket is closed");
 		g_xdag_state = g_xdag_testnet ? XDAG_STATE_TTST : XDAG_STATE_TRYP;
 		goto err;
 	}
@@ -364,7 +363,7 @@ begin:
 		if(get_timestamp() - t > 1024) {
 			t = get_timestamp();
 			if (g_xdag_state == XDAG_STATE_REST) {
-				xdag_err("block reset!!!");
+				xdag_err(error_block_load_failed, "block reset!!!");
 			} else {
 				if (t > (g_xdag_last_received << 10) && t - (g_xdag_last_received << 10) > 3 * MAIN_CHAIN_PERIOD) {
 					g_xdag_state = g_xdag_testnet ? XDAG_STATE_TTST : XDAG_STATE_TRYP;
@@ -381,7 +380,7 @@ begin:
 		struct pollfd p;
 
 		if(g_socket < 0) {
-			mess = "socket is closed";
+			xdag_err(error_socket_closed, "socket is closed");
 			goto err;
 		}
 
@@ -395,19 +394,19 @@ begin:
 		}
 
 		if(p.revents & POLLHUP) {
-			mess = "socket hangup";
+			xdag_err(error_socket_hangup, "socket hangup");
 			goto err;
 		}
 
 		if(p.revents & POLLERR) {
-			mess = "socket error";
+			xdag_err(error_socket_err, "socket error");
 			goto err;
 		}
 
 		if(p.revents & POLLIN) {
 			res = (int)read(g_socket, (uint8_t*)data + ndata, maxndata - ndata);
 			if(res < 0) {
-				mess = "read error on socket";
+				xdag_err(error_socket_read, "read error on socket");
 				goto err;
 			}
 			ndata += res;
@@ -468,7 +467,7 @@ begin:
 				h[3], h[2], h[1], h[0], task->task_time << 16 | 0xffff, res);
 
 			if(res) {
-				mess = "write error on socket";
+				xdag_err(error_socket_write, "write error on socket");
 				goto err;
 			}
 		}
@@ -477,8 +476,6 @@ begin:
 	return 0;
 
 err:
-	xdag_err("Miner : %s %s (error %d)", mess, mess1, res);
-
 	if(g_socket != INVALID_SOCKET) {
 		close(g_socket);
 		g_socket = INVALID_SOCKET;
@@ -487,7 +484,6 @@ err:
 	goto begin;
 
 end:
-	xdag_err("Miner : %s %s (error %d)", mess, mess1, res);
 	if(g_socket != INVALID_SOCKET) {
 		close(g_socket);
 		g_socket = INVALID_SOCKET;

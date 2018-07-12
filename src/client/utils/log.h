@@ -4,7 +4,7 @@
 #define XDAG_LOG_H
 
 enum xdag_debug_levels {
-	XDAG_NOERROR,
+	XDAG_NOERROR = 1,
 	XDAG_FATAL,
 	XDAG_CRITICAL,
 	XDAG_INTERNAL,
@@ -20,7 +20,7 @@ enum xdag_debug_levels {
 extern "C" {
 #endif
 	
-extern int xdag_log(int level, const char *format, ...);
+extern int xdag_log(int level, int err, const char* file, int line, const char *format, ...);
 
 extern char *xdag_log_array(const void *arr, unsigned size);
 
@@ -35,14 +35,14 @@ extern int xdag_set_log_level(int level);
 };
 #endif
 
-#define xdag_fatal(...) xdag_log(XDAG_FATAL   , __VA_ARGS__)
-#define xdag_crit(...)  xdag_log(XDAG_CRITICAL, __VA_ARGS__)
-#define xdag_err(...)   xdag_log(XDAG_ERROR   , __VA_ARGS__)
-#define xdag_warn(...)  xdag_log(XDAG_WARNING , __VA_ARGS__)
-#define xdag_mess(...)  xdag_log(XDAG_MESSAGE , __VA_ARGS__)
-#define xdag_info(...)  xdag_log(XDAG_INFO    , __VA_ARGS__)
+#define xdag_fatal(err, ...) xdag_log(XDAG_FATAL, err, __FILE__, __LINE__, __VA_ARGS__)
+#define xdag_crit(err, ...)  xdag_log(XDAG_CRITICAL, err, __FILE__, __LINE__, __VA_ARGS__)
+#define xdag_err(err, ...)   xdag_log(XDAG_ERROR , err, __FILE__, __LINE__, __VA_ARGS__)
+#define xdag_warn(...)  xdag_log(XDAG_WARNING , 0, __FILE__, __LINE__, __VA_ARGS__)
+#define xdag_mess(...)  xdag_log(XDAG_MESSAGE , 0, __FILE__, __LINE__, __VA_ARGS__)
+#define xdag_info(...)  xdag_log(XDAG_INFO, 0, __FILE__, __LINE__, __VA_ARGS__)
 #ifndef NDEBUG
-#define xdag_debug(...) xdag_log(XDAG_DEBUG   , __VA_ARGS__)
+#define xdag_debug(...) xdag_log(XDAG_DEBUG, 0, __FILE__, __LINE__, __VA_ARGS__)
 #else
 #define xdag_debug(...)
 #endif

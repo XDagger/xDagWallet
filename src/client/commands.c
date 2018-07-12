@@ -11,6 +11,7 @@
 #include "crypt.h"
 #include "client.h"
 #include "storage.h"
+#include "errno.h"
 #if !defined(_WIN32) && !defined(_WIN64)
 #include "utils/linenoise.h"
 #endif
@@ -30,7 +31,6 @@ struct account_callback_data {
 typedef int (*xdag_com_func_t)(char*, FILE *);
 typedef struct {
 	char *name;				/* command name */
-	int avaibility;         /* 0 - both miner and pool, 1 - only miner, 2 - only pool */
 	xdag_com_func_t func;	/* command function */
 } XDAG_COMMAND;
 
@@ -64,16 +64,16 @@ int xdag_com_exit(char *, FILE*);
 XDAG_COMMAND* find_xdag_command(char*);
 
 XDAG_COMMAND commands[] = {
-	{ "account"    , 0, xdag_com_account },
-	{ "balance"    , 0, xdag_com_balance },
-	{ "keyGen"     , 0, xdag_com_keyGen },
-	{ "level"      , 0, xdag_com_level },
-	{ "state"      , 0, xdag_com_state },
-	{ "terminate"  , 0, xdag_com_terminate },
-	{ "exit"       , 0, xdag_com_exit },
-	{ "xfer"       , 0, (xdag_com_func_t)NULL},
-	{ "help"       , 0, xdag_com_help},
-	{ (char *)NULL , 0, (xdag_com_func_t)NULL}
+	{ "account"    , xdag_com_account },
+	{ "balance"    , xdag_com_balance },
+	{ "keyGen"     , xdag_com_keyGen },
+	{ "level"      , xdag_com_level },
+	{ "state"      , xdag_com_state },
+	{ "terminate"  , xdag_com_terminate },
+	{ "exit"       , xdag_com_exit },
+	{ "xfer"       , (xdag_com_func_t)NULL},
+	{ "help"       , xdag_com_help},
+	{ (char *)NULL , (xdag_com_func_t)NULL}
 };
 
 int xdag_com_account(char* args, FILE* out)
@@ -298,7 +298,7 @@ static int make_transaction_block(struct xfer_callback_data *xferData)
 	int res = xdag_create_block(xferData->fields, xferData->fieldsCount, 1, 0, 0, xferData->transactionBlockHash);
 	if(res) {
 		xdag_hash2address(xferData->fields[xferData->fieldsCount].hash, address);
-		xdag_err("FAILED: to %s xfer %.9Lf %s, error %d",
+		xdag_err(error_block_create, "FAILED: to %s xfer %.9Lf %s, error %d",
 			address, amount2xdags(xferData->todo), COINNAME, res);
 		return -1;
 	}

@@ -14,6 +14,7 @@
 #include "log.h"
 #include "../init.h"
 #include "utils.h"
+#include "errno.h"
 
 //#define LOG_PRINT // print log to stdout
 
@@ -30,7 +31,7 @@ typedef unsigned char boolean;
 static pthread_mutex_t log_mutex = PTHREAD_MUTEX_INITIALIZER;
 static int log_level = XDAG_INFO;
 
-int xdag_log(int level, const char *format, ...)
+int xdag_log(int level, int err, const char* file, int line, const char *format, ...)
 {
 	static const char lvl[] = "NONEFATACRITINTEERROWARNMESSINFODBUGTRAC";
 	char tbuf[64] = {0}, buf[64] = {0};
@@ -54,41 +55,31 @@ int xdag_log(int level, const char *format, ...)
 	localtime_r(&t, &tm);
 	strftime(tbuf, 64, "%Y-%m-%d %H:%M:%S", &tm);
 	
+
+	int pos = 0;
+	char buffer[4096] = {0};
+
+	pos = sprintf(buffer, "%s.%03d [%012llx:%.4s]  ", tbuf, (int)(tv.tv_usec / 1000), (long long)pthread_self_ptr(), lvl + 4 * level);
+	va_start(arg, format);
+	pos = vsprintf(buffer + pos, format, arg);
+	va_end(arg);
+
+#ifdef LOG_PRINT
+	printf(buffer, "\n");
+#else
 	pthread_mutex_lock(&log_mutex);
 	sprintf(buf, XDAG_LOG_FILE);
-	
 	f = xdag_open_file(buf, "a");
 	if (!f) {
 		done = -1; goto end;
 	}
-	
-#ifdef LOG_PRINT
-	printf("%s.%03d [%012llx:%.4s]  ", tbuf, (int)(tv.tv_usec / 1000), (long long)pthread_self_ptr(), lvl + 4 * level);
-#else
-	fprintf(f, "%s.%03d [%012llx:%.4s]  ", tbuf, (int)(tv.tv_usec / 1000), (long long)pthread_self_ptr(), lvl + 4 * level);
-#endif
-	
-	va_start(arg, format);
-	
-	
-#ifdef LOG_PRINT
-	vprintf(format, arg);
-#else
-	done = vfprintf(f, format, arg);
-#endif
-
-	va_end(arg);
-
-#ifdef LOG_PRINT
-	printf("\n");
-#else
-	fprintf(f, "\n");
-#endif
-	
+	fprintf(f, "%s\n", buffer);
 	xdag_close_file(f);
+	pthread_mutex_unlock(&log_mutex);
+#endif
+	
 
  end:
-	pthread_mutex_unlock(&log_mutex);
 	return done;
 }
 
@@ -165,24 +156,24 @@ static void sigCatch(int signum, siginfo_t *info, void *context)
 	int frames, i;
 	char **strs;
 
-	xdag_fatal("Signal %d delivered", signum);
+	xdag_fatal(error_fatal,"Signal %d delivered", signum);
 #ifdef __x86_64__
 	{
 		static char buf[0x100]; *buf = 0;
 		ucontext_t *uc = (ucontext_t*)context;
 		REG_(RIP); REG_(EFL); REG_(ERR); REG_(CR2);
-		xdag_fatal("%s", buf); *buf = 0;
+		xdag_fatal(error_fatal,"%s", buf); *buf = 0;
 		REG_(RAX); REG_(RBX); REG_(RCX); REG_(RDX); REG_(RSI); REG_(RDI); REG_(RBP); REG_(RSP);
-		xdag_fatal("%s", buf); *buf = 0;
+		xdag_fatal(error_fatal,"%s", buf); *buf = 0;
 		REG_(R8); REG_(R9); REG_(R10); REG_(R11); REG_(R12); REG_(R13); REG_(R14); REG_(R15);
-		xdag_fatal("%s", buf);
+		xdag_fatal(error_fatal,"%s", buf);
 	}
 #endif
 	frames = backtrace(callstack, 100);
 	strs = backtrace_symbols(callstack, frames);
 
 	for (i = 0; i < frames; ++i) {
-		xdag_fatal("%s", strs[i]);
+		xdag_fatal(error_fatal,"%s", strs[i]);
 	}
 	signal(signum, SIG_DFL);
 	kill(getpid(), signum);

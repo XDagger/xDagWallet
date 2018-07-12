@@ -12,6 +12,7 @@
 #include <time.h>
 #include "block.h"
 #include "system.h"
+#include "errno.h"
 
 #define COINNAME "XDAG"
 

@@ -1027,7 +1027,7 @@ int xdag_blocks_reset(void)
 {
 	pthread_mutex_lock(&block_mutex);
 	if (g_xdag_state != XDAG_STATE_REST) {
-		xdag_crit("The local storage is corrupted. Resetting blocks engine.");
+		xdag_crit(error_storage_corrupted, "The local storage is corrupted. Resetting blocks engine.");
 		g_xdag_state = XDAG_STATE_REST;
 	}
 	pthread_mutex_unlock(&block_mutex);

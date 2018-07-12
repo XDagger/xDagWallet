@@ -217,7 +217,6 @@ int dnet_user_crypt_action(unsigned *data, unsigned long long data_id, unsigned 
 int dnet_crypt_init(const char *version) {
     FILE *f;
     struct dnet_keys *keys;
-//    struct dnet_host *host;
 	int i;
     g_dnet_keys = malloc(sizeof(struct dnet_keys));
     if (!g_dnet_keys) return 1;
