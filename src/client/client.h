@@ -10,7 +10,6 @@ struct xdag_pool_task {
 	void *ctx0, *ctx;
 };
 
-extern pthread_mutex_t g_transport_mutex;
 extern time_t g_xdag_last_received;
 
 #ifdef __cplusplus

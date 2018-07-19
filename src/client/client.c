@@ -41,7 +41,6 @@
 #define DATA_SIZE          (sizeof(struct xdag_field) / sizeof(uint32_t))
 #define BLOCK_HEADER_WORD  0x3fca9e2bu
 
-pthread_mutex_t g_transport_mutex = PTHREAD_MUTEX_INITIALIZER;
 time_t g_xdag_last_received = 0;
 
 struct xdag_pool_task g_xdag_pool_task[2];
@@ -116,7 +115,7 @@ int xdag_client_init(const char *pool_arg)
 
 static int can_send_share(time_t current_time, time_t task_time, time_t share_time)
 {
-	int can_send = (current_time - share_time >= SEND_PERIOD) && (current_time - task_time <= 64) && (share_time >= task_time);
+	int can_send = (current_time - share_time >= SEND_PERIOD) && (current_time - task_time <= 64) && (share_time < task_time);
 	return can_send;
 }
 
@@ -184,6 +183,11 @@ int client_init(void)
 {
 	memset(&g_xdag_stats, 0, sizeof(g_xdag_stats));
 	memset(&g_xdag_extstats, 0, sizeof(g_xdag_extstats));
+
+//	g_xdag_testnet = 1;
+//	if(g_xdag_testnet) {
+//		g_block_header_type = XDAG_FIELD_HEAD_TEST; //block header has the different type in the test network
+//	}
 
 	xdag_mess("Starting xdag, version %s", XDAG_VERSION);
 	xdag_mess("Starting dnet transport...");
@@ -414,14 +418,12 @@ begin:
 				struct xdag_field *last = data + (ndata / sizeof(struct xdag_field) - 1);
 
 				dfslib_uncrypt_array(g_crypt, (uint32_t*)last->data, DATA_SIZE, m->nfield_in++);
+				xdag_info("My Hash  : %016llx%016llx%016llx%016llx", hash[3], hash[2], hash[1], hash[0]);
+				xdag_info("Received Hash  : %016llx%016llx%016llx%016llx", last->data[3], last->data[2], last->data[1], last->data[0]);
 
 				if(!memcmp(last->data, hash, sizeof(xdag_hashlow_t))) {
 					xdag_set_balance(hash, last->amount);
-
-					pthread_mutex_lock(&g_transport_mutex);
 					g_xdag_last_received = current_time;
-					pthread_mutex_unlock(&g_transport_mutex);
-
 					ndata = 0;
 
 					maxndata = sizeof(struct xdag_field);

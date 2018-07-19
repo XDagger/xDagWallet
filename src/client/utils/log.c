@@ -14,31 +14,17 @@
 #include "log.h"
 #include "../init.h"
 #include "utils.h"
-#include "errno.h"
+#include "xdag_wrapper.h"
 
-//#define LOG_PRINT // print log to stdout
-
-#define XDAG_LOG_FILE "xdag.log"
-
-typedef unsigned char boolean;
-#ifndef FALSE
-#   define FALSE (0x0)
-#endif
-#ifndef TRUE
-#   define TRUE (0x1)
-#endif
-
-static pthread_mutex_t log_mutex = PTHREAD_MUTEX_INITIALIZER;
 static int log_level = XDAG_INFO;
 
-int xdag_log(int level, int err, const char* file, int line, const char *format, ...)
+int xdag_log(int level, int err, char* file, int line, const char *format, ...)
 {
 	static const char lvl[] = "NONEFATACRITINTEERROWARNMESSINFODBUGTRAC";
-	char tbuf[64] = {0}, buf[64] = {0};
+	char tbuf[64] = {0};
 	struct tm tm;
 	va_list arg;
 	struct timeval tv;
-	FILE *f;
 	int done = 0;
 	time_t t;
 	
@@ -59,31 +45,19 @@ int xdag_log(int level, int err, const char* file, int line, const char *format,
 	int pos = 0;
 	char buffer[4096] = {0};
 
-	pos = sprintf(buffer, "%s.%03d [%012llx:%.4s]  ", tbuf, (int)(tv.tv_usec / 1000), (long long)pthread_self_ptr(), lvl + 4 * level);
+//	pos = sprintf(buffer, "%s.%03d [%012llx:%.4s]  ", tbuf, (int)(tv.tv_usec / 1000), (long long)pthread_self_ptr(), lvl + 4 * level);
+	pos += sprintf(buffer, "[%012llx][%.4s][%s] %s:%d  ",  (long long)pthread_self(), lvl + 4 * level, tbuf, xdag_filename(file), line);
 	va_start(arg, format);
 	pos = vsprintf(buffer + pos, format, arg);
 	va_end(arg);
 
-#ifdef LOG_PRINT
-	printf(buffer, "\n");
-#else
-	pthread_mutex_lock(&log_mutex);
-	sprintf(buf, XDAG_LOG_FILE);
-	f = xdag_open_file(buf, "a");
-	if (!f) {
-		done = -1; goto end;
-	}
-	fprintf(f, "%s\n", buffer);
-	xdag_close_file(f);
-	pthread_mutex_unlock(&log_mutex);
-#endif
-	
+	xdag_wrapper_log(level, err, buffer);
 
  end:
 	return done;
 }
 
-extern char *xdag_log_array(const void *arr, unsigned size)
+char *xdag_log_array(const void *arr, unsigned size)
 {
 	static int k = 0;
 	static char buf[4][0x1000];
@@ -108,7 +82,6 @@ extern int xdag_set_log_level(int level)
 
 	return level0;
 }
-
 
 #if !defined(_WIN32) && !defined(_WIN64)
 #define __USE_GNU

@@ -43,8 +43,3 @@ int xdag_user_crypt_action(unsigned *data, unsigned long long data_id, unsigned 
 {
 	return dnet_user_crypt_action(data, data_id, size, action);
 }
-
-int xdag_set_password_callback(int(*callback)(const char *prompt, char *buf, unsigned size))
-{
-	return xdag_user_crypt_action((uint32_t *)(void *)callback, 0, 0, 6);
-}

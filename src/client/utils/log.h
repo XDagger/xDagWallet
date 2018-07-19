@@ -4,7 +4,7 @@
 #define XDAG_LOG_H
 
 enum xdag_debug_levels {
-	XDAG_NOERROR = 1,
+	XDAG_NOERROR,
 	XDAG_FATAL,
 	XDAG_CRITICAL,
 	XDAG_INTERNAL,
@@ -14,23 +14,23 @@ enum xdag_debug_levels {
 	XDAG_INFO,
 	XDAG_DEBUG,
 	XDAG_TRACE,
+	XDAG_MAX_LEVEL
 };
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 	
-extern int xdag_log(int level, int err, const char* file, int line, const char *format, ...);
+	extern int xdag_log(int level, int err, char* file, int line, const char *format, ...);
 
-extern char *xdag_log_array(const void *arr, unsigned size);
+	extern char *xdag_log_array(const void *arr, unsigned size);
 
-extern int xdag_log_init(void);
+	extern int xdag_log_init(void);
 
 #define xdag_log_hash(hash) xdag_log_array(hash, sizeof(xdag_hash_t))
 
-// sets the maximum error level for output to the log, returns the previous level (0 - do not log anything, 9 - all)
-extern int xdag_set_log_level(int level);
-	
+	// sets the maximum error level for output to the log, returns the previous level (0 - do not log anything, 9 - all)
+	extern int xdag_set_log_level(int level);
 #ifdef __cplusplus
 };
 #endif

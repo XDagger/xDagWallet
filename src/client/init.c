@@ -1,28 +1,20 @@
 #include <stdio.h>
-//#include <stdlib.h>
 #include <string.h>
-//#include <unistd.h>
-//#include <pthread.h>
 #include <ctype.h>
-//#if !defined(_WIN32) && !defined(_WIN64)
-//#include <signal.h>
-//#endif
-//#include "system.h"
-//#include "address.h"
-//#include "block.h"
-//#include "crypt.h"
 #include "version.h"
-//#include "wallet.h"
 #include "init.h"
 #include "common.h"
 #include "client.h"
 #include "commands.h"
-//#include "dnet_crypt.h"
-//#include "utils/log.h"
 #include "utils/utils.h"
-//#include "json-rpc/rpc_service.h"
+#include "utils/log.h"
+#include <sys/termios.h>
+#include "xdag_wrapper.h"
 
 void printUsage(char* appName);
+int log_callback(int level, xdag_error_no err, char *buffer);
+int event_callback(void* thisObj, xdag_event *event);
+int password_callback(const char *prompt, char *buf, unsigned len);
 
 int xdag_init(int argc, char **argv, int isGui)
 {
@@ -54,39 +46,16 @@ int xdag_init(int argc, char **argv, int isGui)
 		if(ARG_EQUAL(argv[i], "-h", "")) { /* help */
 			printUsage(argv[0]);
 			return 0;
-//		} else if(ARG_EQUAL(argv[i], "-t", "")) { /* connect test net */
-//			g_xdag_testnet = 1;
-//		} else if(ARG_EQUAL(argv[i], "-v", "")) { /* log level */
-//			if (++i < argc && sscanf(argv[i], "%d", &level) == 1) {
-//
-//			} else {
-//				printf("Illevel use of option -v\n");
-//				return -1;
-//			}
-//		} else if(ARG_EQUAL(argv[i], "", "-rpc-enable")) { /* enable JSON-RPC service */
-//			is_rpc = 1;
-//		} else if(ARG_EQUAL(argv[i], "", "-rpc-port")) { /* set JSON-RPC service port */
-//			if(++i < argc && sscanf(argv[i], "%d", &rpc_port) == 1) {
-//				if(rpc_port < 0 || rpc_port > 65535) {
-//					printf("RPC port is invalid, set to default.\n");
-//					rpc_port = 0;
-//				}
-//			}
 		} else {
 			printUsage(argv[0]);
 			return 0;
 		}
 	}
 
-//	if(level>0) {
-//		xdag_set_log_level(level);
-//	}
+	printf("Set log callback...\n");
+	xdag_wrapper_init(NULL, &password_callback, &event_callback, &log_callback);
 
-//	if(g_xdag_testnet) {
-//		g_block_header_type = XDAG_FIELD_HEAD_TEST; //block header has the different type in the test network
-//	}
-
-	printf("Starting engine...");
+	printf("Starting...\n");
 	if(xdag_client_init(pool_arg)) return -1;
 
 	if (!isGui) {
@@ -96,6 +65,69 @@ int xdag_init(int argc, char **argv, int isGui)
 	return 0;
 }
 
+#define XDAG_LOG_FILE "xdag.log"
+int log_callback(int level, xdag_error_no err, char *buffer)
+{
+	FILE *f;
+	char buf[64] = {0};
+	sprintf(buf, XDAG_LOG_FILE);
+	f = xdag_open_file(buf, "a");
+	if (f) {
+		fprintf(f, "%s\n", buffer);
+	}
+
+	xdag_close_file(f);
+	return 0;
+}
+
+int event_callback(void* thisObj, xdag_event *event)
+{
+	if(!event) {
+		return -1;
+	}
+
+	switch (event->event_id) {
+		case event_id_log:
+		{
+			printf("%s\n", event->event_data);
+			FILE *f;
+			char buf[64] = {0};
+			sprintf(buf, XDAG_LOG_FILE);
+			f = xdag_open_file(buf, "a");
+			if (f) {
+				fprintf(f, "%s\n", event->event_data);
+			}
+
+			xdag_close_file(f);
+			break;
+		}
+
+		default:
+			break;
+	}
+	return 0;
+}
+
+int password_callback(const char *prompt, char *buf, unsigned len)
+{
+	struct termios t[1];
+	int noecho = !!strstr(prompt, "assword");
+	printf("%s: ", prompt); fflush(stdout);
+	if (noecho) {
+		tcgetattr(0, t);
+		t->c_lflag &= ~ECHO;
+		tcsetattr(0, TCSANOW, t);
+	}
+	fgets(buf, len, stdin);
+	if (noecho) {
+		t->c_lflag |= ECHO;
+		tcsetattr(0, TCSANOW, t);
+		printf("\n");
+	}
+	len = (int)strlen(buf);
+	if (len && buf[len - 1] == '\n') buf[len - 1] = 0;
+	return 0;
+}
 
 void printUsage(char* appName)
 {

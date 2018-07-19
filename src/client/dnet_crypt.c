@@ -9,7 +9,9 @@
 #include "../dus/dfslib_string.h"
 #include "../dus/crc.h"
 #include "dnet_crypt.h"
-#include "../client/utils/utils.h"
+#include "./utils/utils.h"
+#include "./utils/log.h"
+#include "errno.h"
 
 #define KEYFILE	    "dnet_key.dat"
 #define PWDLEN	    64
@@ -257,7 +259,9 @@ int dnet_crypt_init(const char *version) {
 			(*g_input_password)("Re-type password", pwd1, 256);
 			dfslib_utf8_string(&str1, pwd1, strlen(pwd1));
 			if (str.len != str1.len || memcmp(str.utf8, str1.utf8, str.len)) {
-				printf("Passwords differ.\n"); return 4;
+				xdag_err(error_pwd_inconsistent, "Passwords differ.");
+				printf("Passwords differ.\n");
+				return 4;
 			}
 			if (str.len) set_user_crypt(&str);
 			(*g_input_password)("Type random keys", buf, 256);

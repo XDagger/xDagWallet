@@ -13,6 +13,7 @@
 #include "block.h"
 #include "system.h"
 #include "errno.h"
+#include "events.h"
 
 #define COINNAME "XDAG"
 
@@ -76,7 +77,8 @@ extern "C" {
 	/* see dnet_user_crypt_action */
 	extern int xdag_user_crypt_action(unsigned *data, unsigned long long data_id, unsigned size, int action);
 
-	extern int xdag_set_password_callback(int(*callback)(const char *prompt, char *buf, unsigned size));
+	extern int xdag_wrapper_log(int level, xdag_error_no err, char *data);
+	extern int xdag_wrapper_event(xdag_event_id event_id, xdag_error_no err, char *data);
 #ifdef __cplusplus
 }
 #endif

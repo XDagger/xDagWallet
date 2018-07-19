@@ -11,6 +11,9 @@
 
 #include <stdio.h>
 typedef enum {
+	// no error
+	error_none						= 0x0000,
+
 	// init errors
 	error_pwd_inconsistent			= 0x1001,
 	error_pwd_incorrect				= 0x1002,
