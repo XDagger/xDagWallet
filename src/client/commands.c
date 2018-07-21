@@ -39,7 +39,6 @@ int account_callback(void *data, xdag_hash_t hash, xdag_amount_t amount, xdag_ti
 const char *get_state(void);
 int read_command(char* cmd);
 int xdag_command(char *cmd, FILE *out);
-void xdag_init_commands(void);
 
 
 void processAccountCommand(char *nextParam, FILE *out);
@@ -138,8 +137,6 @@ void startCommandProcessing(void)
 {
 	char cmd[XDAG_COMMAND_MAX];
 	printf("Type command, help for example.\n");
-
-	xdag_init_commands();
 
 	for(;;) {
 		read_command(cmd);
@@ -427,48 +424,8 @@ void processHelpCommand(FILE *out)
 
 int read_command(char *cmd)
 {
-#if !defined(_WIN32) && !defined(_WIN64)
-	char* line = linenoise("xdag> ");
-	if(line == NULL) return 0;
-
-	if(strlen(line) > XDAG_COMMAND_MAX) {
-		printf("exceed max length\n");
-		strncpy(cmd, line, XDAG_COMMAND_MAX - 1);
-		cmd[XDAG_COMMAND_MAX - 1] = '\0';
-	} else {
-		strcpy(cmd, line);
-	}
-	free(line);
-
-	if(strlen(cmd) > 0) {
-		linenoiseHistoryAdd(cmd);
-		linenoiseHistorySave(COMMAND_HISTORY);
-	}
-#else
 	printf("xdag> ");
 	fflush(stdout);
 	fgets(cmd, XDAG_COMMAND_MAX, stdin);
-#endif
-
 	return 0;
-}
-
-#if !defined(_WIN32) && !defined(_WIN64)
-static void xdag_com_completion(const char *buf, linenoiseCompletions *lc)
-{
-	for(int index = 0; commands[index].name; index++) {
-		if(!strncmp(buf, commands[index].name, strlen(buf))) {
-			linenoiseAddCompletion(lc, commands[index].name);
-		}
-	}
-}
-#endif
-
-void xdag_init_commands(void)
-{
-#if !defined(_WIN32) && !defined(_WIN64)
-	linenoiseSetCompletionCallback(xdag_com_completion); //set completion
-	linenoiseHistorySetMaxLen(50); //set max line for history
-	linenoiseHistoryLoad(COMMAND_HISTORY); //load history
-#endif
 }

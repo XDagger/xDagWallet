@@ -102,8 +102,19 @@ int event_callback(void* thisObj, xdag_event *event)
 			break;
 		}
 
-		default:
+		case event_id_interact:
+		{
+			printf("%s\n", event->event_data);
 			break;
+		}
+
+		default:
+		{
+			if(event->event_data) {
+				printf("%s\n", event->event_data);
+			}
+			break;
+		}
 	}
 	return 0;
 }

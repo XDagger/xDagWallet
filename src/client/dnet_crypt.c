@@ -43,27 +43,30 @@ struct dnet_session {
 
 static int g_keylen = 0;
 
-static int input_password(const char *prompt, char *buf, unsigned len) {
-	struct termios t[1];
-	int noecho = !!strstr(prompt, "assword");
-	printf("%s: ", prompt); fflush(stdout);
-	if (noecho) {
-		tcgetattr(0, t);
-		t->c_lflag &= ~ECHO;
-		tcsetattr(0, TCSANOW, t);
-	}
-	fgets(buf, len, stdin);
-	if (noecho) {
-		t->c_lflag |= ECHO;
-		tcsetattr(0, TCSANOW, t);
-		printf("\n");
-	}
-	len = (int)strlen(buf);
-	if (len && buf[len - 1] == '\n') buf[len - 1] = 0;
-	return 0;
-}
+//static int input_password(const char *prompt, char *buf, unsigned len) {
+//	struct termios t[1];
+//	int noecho = !!strstr(prompt, "assword");
+//	printf("%s: ", prompt); fflush(stdout);
+//	if (noecho) {
+//		tcgetattr(0, t);
+//		t->c_lflag &= ~ECHO;
+//		tcsetattr(0, TCSANOW, t);
+//	}
+//	fgets(buf, len, stdin);
+//	if (noecho) {
+//		t->c_lflag |= ECHO;
+//		tcsetattr(0, TCSANOW, t);
+//		printf("\n");
+//	}
+//	len = (int)strlen(buf);
+//	if (len && buf[len - 1] == '\n') buf[len - 1] = 0;
+//	return 0;
+//}
 
-static int(*g_input_password)(const char *prompt, char *buf, unsigned size) = &input_password;
+//static int(*g_input_password)(const char *prompt, char *buf, unsigned size) = &input_password;
+
+static int(*g_input_password)(const char *prompt, char *buf, unsigned size) = NULL;
+
 
 static void dnet_make_key(dfsrsa_t *key, int keylen) {
 	unsigned i;

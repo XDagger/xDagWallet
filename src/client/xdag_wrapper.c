@@ -64,6 +64,13 @@ int xdag_wrapper_log(int level, xdag_error_no err, char *data)
 	return 0;
 }
 
+int xdag_wrapper_interact(char *data)
+{
+	xdag_wrapper_event(event_id_interact, 8, data);
+
+	return 0;
+}
+
 int xdag_wrapper_event(xdag_event_id event_id, xdag_error_no err, char *data)
 {
 	if(!g_wrapper_event_callback) {
