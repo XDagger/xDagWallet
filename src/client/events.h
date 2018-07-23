@@ -48,7 +48,7 @@ typedef enum {
 	// block
 	event_id_error_block_create				= 0x4001,
 	event_id_error_block_not_found			= 0x4002,
-	event_id_error_block_load_failed			= 0x4003,
+	event_id_error_block_load_failed		= 0x4003,
 
 	// network
 	event_id_error_socket_create			= 0x5001,

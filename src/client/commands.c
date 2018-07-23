@@ -24,7 +24,7 @@
 #define COMMAND_HISTORY ".cmd.history"
 
 struct account_callback_data {
-	FILE *out;
+	char out[128];
 	int count;
 };
 
@@ -40,22 +40,19 @@ const char *get_state(void);
 int read_command(char* cmd);
 int xdag_command(char *cmd, FILE *out);
 
-
-void processAccountCommand(char *nextParam, FILE *out);
-void processBalanceCommand(char *nextParam, FILE *out);
-void processKeyGenCommand(FILE *out);
-void processLevelCommand(char *nextParam, FILE *out);
+void processAccountCommand(int count, char **out);
+void processBalanceCommand(char *address, char **out);
+void processLevelCommand(char *level, char **out);
 void processExitCommand(void);
-void processXferCommand(char *nextParam, FILE *out, int ispwd, uint32_t* pwd);
+void processXferCommand(char *address, char *amount, char **out);
 void processHelpCommand(FILE *out);
 
 int xdag_com_account(char *, FILE*);
 int xdag_com_balance(char *, FILE*);
-int xdag_com_keyGen(char *, FILE*);
 int xdag_com_level(char *, FILE*);
+int xdag_com_xfer(char *, FILE*);
 int xdag_com_stats(char *, FILE*);
 int xdag_com_state(char *, FILE*);
-int xdag_com_cache(char *, FILE*);
 int xdag_com_help(char *, FILE*);
 int xdag_com_terminate(char *, FILE*);
 int xdag_com_exit(char *, FILE*);
@@ -65,50 +62,82 @@ XDAG_COMMAND* find_xdag_command(char*);
 XDAG_COMMAND commands[] = {
 	{ "account"    , xdag_com_account },
 	{ "balance"    , xdag_com_balance },
-	{ "keyGen"     , xdag_com_keyGen },
 	{ "level"      , xdag_com_level },
+	{ "xfer"       , xdag_com_xfer },
 	{ "state"      , xdag_com_state },
-	{ "terminate"  , xdag_com_terminate },
 	{ "exit"       , xdag_com_exit },
 	{ "xfer"       , (xdag_com_func_t)NULL},
 	{ "help"       , xdag_com_help},
 	{ (char *)NULL , (xdag_com_func_t)NULL}
 };
 
-int xdag_com_account(char* args, FILE* out)
+int xdag_com_account(char *args, FILE* out)
 {
-	processAccountCommand(args, out);
+	int count = 1;
+	char *result = NULL;
+	char *cmd = strtok_r(args, " \t\r\n", &args);
+	if(cmd) {
+		sscanf(cmd, "%d", &count);
+	}
+
+	processAccountCommand(count, &result);
+
+	if(result) {
+		fprintf(out, "%s", result);
+		free(result);
+	}
+
 	return 0;
 }
 
-int xdag_com_balance(char * args, FILE* out)
+int xdag_com_balance(char *args, FILE* out)
 {
-	processBalanceCommand(args, out);
+	char *address = strtok_r(args, " \t\r\n", &args);
+	char *result = NULL;
+
+	processBalanceCommand(address, &result);
+
+	if(result) {
+		fprintf(out, "%s", result);
+		free(result);
+	}
+
 	return 0;
 }
 
-int xdag_com_keyGen(char * args, FILE* out)
+int xdag_com_xfer(char *args, FILE* out)
 {
-	processKeyGenCommand(out);
+	char *result = NULL;
+	char *amount = strtok_r(args, " \t\r\n", &args);
+	char *address = strtok_r(0, " \t\r\n", &args);
+
+	processXferCommand(amount, address, &result);
+
+	if(result) {
+		fprintf(out, "%s", result);
+		free(result);
+	}
+
 	return 0;
 }
 
-int xdag_com_level(char * args, FILE* out)
+int xdag_com_level(char *args, FILE* out)
 {
-	processLevelCommand(args, out);
+	char *cmd = strtok_r(args, " \t\r\n", &args);
+	char *result = NULL;
+	processLevelCommand(cmd, &result);
+
+	if(result) {
+		fprintf(out, "%s", result);
+		free(result);
+	}
 	return 0;
 }
 
-int xdag_com_state(char * args, FILE* out)
+int xdag_com_state(char *args, FILE* out)
 {
 	fprintf(out, "%s\n", get_state());
 	return 0;
-}
-
-int xdag_com_terminate(char * args, FILE* out)
-{
-	processExitCommand();
-	return -1;
 }
 
 int xdag_com_exit(char * args, FILE* out)
@@ -151,112 +180,99 @@ void startCommandProcessing(void)
 
 int xdag_command(char *cmd, FILE *out)
 {
-	uint32_t pwd[4];
 	char *nextParam;
-	int ispwd = 0;
 
 	cmd = strtok_r(cmd, " \t\r\n", &nextParam);
 	if(!cmd) return 0;
-	if(sscanf(cmd, "pwd=%8x%8x%8x%8x", pwd, pwd + 1, pwd + 2, pwd + 3) == 4) {
-		ispwd = 1;
-		cmd = strtok_r(0, " \t\r\n", &nextParam);
-	}
 
 	XDAG_COMMAND *command = find_xdag_command(cmd);
 
 	if(!command) {
 		fprintf(out, "Illegal command.\n");
 	} else {
-		if(!strcmp(command->name, "xfer")) {
-			processXferCommand(nextParam, out, ispwd, pwd);
-		} else {
-			return (*(command->func))(nextParam, out);
-		}
+		return (*(command->func))(nextParam, out);
 	}
 	return 0;
 }
 
-void processAccountCommand(char *nextParam, FILE *out)
+int account_callback(void *data, xdag_hash_t hash, xdag_amount_t amount, xdag_time_t time, int n_our_key)
 {
-	struct account_callback_data d;
-	d.out = out;
-	d.count = 1;
-	char *cmd = strtok_r(nextParam, " \t\r\n", &nextParam);
-	if(cmd) {
-		sscanf(cmd, "%d", &d.count);
+	char address[33];
+	struct account_callback_data *d = (struct account_callback_data *)data;
+	if(!d->count--) {
+		return -1;
 	}
-	if(g_xdag_state < XDAG_STATE_XFER) {
-		fprintf(out, "Not ready to show balances. Type 'state' command to see the reason.\n");
-	}
-	xdag_traverse_our_blocks(&d, &account_callback);
+	xdag_hash2address(hash, address);
+
+	if(g_xdag_state < XDAG_STATE_XFER)
+		sprintf(d->out, "%s  key %d\n", address, n_our_key);
+	else
+		sprintf(d->out, "%s %20.9Lf  key %d\n", address, amount2xdags(amount), n_our_key);
+	return 0;
 }
 
-void processBalanceCommand(char *nextParam, FILE *out)
+void processAccountCommand(int count, char **out)
+{
+	struct account_callback_data d;
+	d.count = count;
+
+	char tmp[128] = {0};
+	if(g_xdag_state < XDAG_STATE_XFER) {
+		sprintf(tmp, "Not ready to show balances. Type 'state' command to see the reason.\n");
+	}
+	xdag_traverse_our_blocks(&d, &account_callback);
+
+	*out = strdup(strcat(tmp, d.out));
+}
+
+void processBalanceCommand(char *address, char **out)
 {
 	if(g_xdag_state < XDAG_STATE_XFER) {
-		fprintf(out, "Not ready to show a balance. Type 'state' command to see the reason.\n");
+		*out = strdup("Not ready to show a balance. Type 'state' command to see the reason.\n");
 	} else {
 		xdag_hash_t hash;
 		xdag_amount_t balance;
-		char *cmd = strtok_r(nextParam, " \t\r\n", &nextParam);
-		if(cmd) {
-			xdag_address2hash(cmd, hash);
+		if(address) {
+			xdag_address2hash(address, hash);
 			balance = xdag_get_balance(hash);
 		} else {
 			balance = xdag_get_balance(0);
 		}
-		fprintf(out, "Balance: %.9Lf %s\n", amount2xdags(balance), COINNAME);
+		char result[128] = {0};
+		sprintf(result, "Balance: %.9Lf\n", amount2xdags(balance));
+		*out = strdup(result);
 	}
 }
 
-
-void processKeyGenCommand(FILE *out)
+void processLevelCommand(char *level, char **out)
 {
-	const int res = xdag_wallet_new_key();
-	if(res < 0) {
-		fprintf(out, "Can't generate new key pair.\n");
+	unsigned lv;
+	if(!level) {
+		char tmp[16];
+		sprintf(tmp, "%d\n", xdag_set_log_level(-1));
+		*out = strdup(tmp);
+	} else if(sscanf(level, "%u", &lv) != 1 || lv > XDAG_TRACE) {
+		*out = strdup("Illegal level.\n");
 	} else {
-		fprintf(out, "Key %d generated and set as default.\n", res);
+		xdag_set_log_level(lv);
 	}
 }
 
-void processLevelCommand(char *nextParam, FILE *out)
+void processXferCommand(char *amount, char *address, char **out)
 {
-	unsigned level;
-	char *cmd = strtok_r(nextParam, " \t\r\n", &nextParam);
-	if(!cmd) {
-		fprintf(out, "%d\n", xdag_set_log_level(-1));
-	} else if(sscanf(cmd, "%u", &level) != 1 || level > XDAG_TRACE) {
-		fprintf(out, "Illegal level.\n");
-	} else {
-		xdag_set_log_level(level);
-	}
-}
-
-void processExitCommand()
-{
-	xdag_wallet_finish();
-//	xdag_netdb_finish();
-	xdag_storage_finish();
-}
-
-void processXferCommand(char *nextParam, FILE *out, int ispwd, uint32_t* pwd)
-{
-	char *amount = strtok_r(nextParam, " \t\r\n", &nextParam);
 	if(!amount) {
-		fprintf(out, "Xfer: amount not given.\n");
+		*out = strdup("Xfer: amount not given.\n");
 		return;
 	}
-	char *address = strtok_r(0, " \t\r\n", &nextParam);
 	if(!address) {
-		fprintf(out, "Xfer: destination address not given.\n");
+		*out = strdup("Xfer: destination address not given.\n");
 		return;
 	}
-	if(out == stdout ? xdag_user_crypt_action(0, 0, 0, 3) : (ispwd ? xdag_user_crypt_action(pwd, 0, 4, 5) : 1)) {
+	if(xdag_user_crypt_action(0, 0, 0, 3)) {
 		sleep(3);
-		fprintf(out, "Password incorrect.\n");
+		*out = strdup("Password incorrect.\n");
 	} else {
-		xdag_do_xfer(out, amount, address, 0);
+		xdag_do_xfer(amount, address, out);
 	}
 }
 
@@ -268,21 +284,6 @@ const char *get_state()
 #undef xdag_state
 	};
 	return states[g_xdag_state];
-}
-
-int account_callback(void *data, xdag_hash_t hash, xdag_amount_t amount, xdag_time_t time, int n_our_key)
-{
-	char address[33];
-	struct account_callback_data *d = (struct account_callback_data *)data;
-	if(!d->count--) {
-		return -1;
-	}
-	xdag_hash2address(hash, address);
-	if(g_xdag_state < XDAG_STATE_XFER)
-		fprintf(d->out, "%s  key %d\n", address, n_our_key);
-	else
-		fprintf(d->out, "%s %20.9Lf  key %d\n", address, amount2xdags(amount), n_our_key);
-	return 0;
 }
 
 static int make_transaction_block(struct xfer_callback_data *xferData)
@@ -307,35 +308,24 @@ static int make_transaction_block(struct xfer_callback_data *xferData)
 	return 0;
 }
 
-int xdag_do_xfer(void *outv, const char *amount, const char *address, int isGui)
+int xdag_do_xfer(const char *amount, const char *address, char **out)
 {
 	char address_buf[33];
+	char result[256] = {0};
 	struct xfer_callback_data xfer;
-	FILE *out = (FILE *)outv;
-
-	if(isGui && xdag_user_crypt_action(0, 0, 0, 3)) {
-		sleep(3);
-		return 1;
-	}
 
 	memset(&xfer, 0, sizeof(xfer));
 	xfer.remains = xdags2amount(amount);
 	if(!xfer.remains) {
-		if(out) {
-			fprintf(out, "Xfer: nothing to transfer.\n");
-		}
+		*out = strdup("Xfer: nothing to transfer.\n");
 		return 1;
 	}
 	if(xfer.remains > xdag_get_balance(0)) {
-		if(out) {
-			fprintf(out, "Xfer: balance too small.\n");
-		}
+		*out = strdup("Xfer: balance too small.\n");
 		return 1;
 	}
 	if(xdag_address2hash(address, xfer.fields[XFER_MAX_IN].hash)) {
-		if(out) {
-			fprintf(out, "Xfer: incorrect address.\n");
-		}
+		*out = strdup("Xfer: incorrect address.\n");
 		return 1;
 	}
 	xdag_wallet_default_key(&xfer.keys[XFER_MAX_IN]);
@@ -343,12 +333,11 @@ int xdag_do_xfer(void *outv, const char *amount, const char *address, int isGui)
 	g_xdag_state = XDAG_STATE_XFER;
 	g_xdag_xfer_last = time(0);
 	xdag_traverse_our_blocks(&xfer, &xfer_callback);
-	if(out) {
-		xdag_hash2address(xfer.fields[XFER_MAX_IN].hash, address_buf);
-		fprintf(out, "Xfer: transferred %.9Lf %s to the address %s.\n", amount2xdags(xfer.done), COINNAME, address_buf);
-		xdag_hash2address(xfer.transactionBlockHash, address_buf);
-		fprintf(out, "Transaction address is %s, it will take several minutes to complete the transaction.\n", address_buf);
-	}
+//	xdag_hash2address(xfer.fields[XFER_MAX_IN].hash, address_buf);
+	xdag_hash2address(xfer.transactionBlockHash, address_buf);
+	sprintf(result, "Xfer: transferred %.9Lf %s to the address %s\nTx block address is %s\n", amount2xdags(xfer.done), COINNAME, address, address_buf);
+
+	*out = strdup(result);
 	return 0;
 }
 
@@ -405,6 +394,12 @@ void xdag_log_xfer(xdag_hash_t from, xdag_hash_t to, xdag_amount_t amount)
 	xdag_hash2address(from, address_from);
 	xdag_hash2address(to, address_to);
 	xdag_mess("Xfer : from %s to %s xfer %.9Lf %s", address_from, address_to, amount2xdags(amount), COINNAME);
+}
+
+void processExitCommand()
+{
+	xdag_wallet_finish();
+	xdag_storage_finish();
 }
 
 void processHelpCommand(FILE *out)

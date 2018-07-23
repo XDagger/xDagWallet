@@ -22,7 +22,7 @@ extern "C" {
 		xdag_hash_t transactionBlockHash;
 	};
 
-	extern int xdag_do_xfer(void *outv, const char *amount, const char *address, int isGui);
+	extern int xdag_do_xfer(const char *amount, const char *address, char **out);
 	extern int xfer_callback(void *data, xdag_hash_t hash, xdag_amount_t amount, xdag_time_t time, int n_our_key);
 
 	extern void xdag_log_xfer(xdag_hash_t from, xdag_hash_t to, xdag_amount_t amount);

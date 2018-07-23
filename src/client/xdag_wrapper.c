@@ -54,20 +54,19 @@ int xdag_wrapper_init(void* thisObj, xdag_password_callback_t password, xdag_eve
 
 int xdag_wrapper_xfer(const char *amount, const char *to)
 {
-	return xdag_do_xfer(NULL, amount, to, 0);
+	char *out = NULL;
+	return xdag_do_xfer(amount, to, &out);
 }
 
 int xdag_wrapper_log(int level, xdag_error_no err, char *data)
 {
 	xdag_wrapper_event(event_id_log, err, data);
-
 	return 0;
 }
 
 int xdag_wrapper_interact(char *data)
 {
 	xdag_wrapper_event(event_id_interact, 8, data);
-
 	return 0;
 }
 
