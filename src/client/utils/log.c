@@ -15,6 +15,7 @@
 #include "../init.h"
 #include "utils.h"
 #include "xdag_wrapper.h"
+#include "common.h"
 
 static int log_level = XDAG_INFO;
 

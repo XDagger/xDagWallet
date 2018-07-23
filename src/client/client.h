@@ -17,15 +17,12 @@ extern "C" {
 #endif
 	
 	extern struct dfslib_crypt *g_crypt;
-
-	/* a number of mining threads */
-	extern int g_xdag_mining_threads;
-
+	
 	/* init client */
 	extern int client_init(void);
 
 	/* client main thread */
-	extern void *client_main_thread(void *arg);
+	extern void *client_thread(void *arg);
 
 	/* send block to network via pool */
 	extern int xdag_send_block_via_pool(struct xdag_block *block);

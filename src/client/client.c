@@ -61,11 +61,7 @@ struct miner {
 
 static struct miner g_local_miner;
 
-/* a number of mining threads */
-int g_xdag_mining_threads = 0;
-
 static int g_socket = -1;
-
 
 static int crypt_start(void)
 {
@@ -104,9 +100,9 @@ int xdag_client_init(const char *pool_arg)
 	printf("%s\n", pool_arg);
 
 	pthread_t th;
-	int err = pthread_create(&th, 0, client_main_thread, (void*)pool_arg);
+	int err = pthread_create(&th, 0, client_thread, (void*)pool_arg);
 	if(err != 0) {
-		printf("create client_main_thread failed, error : %s\n", strerror(err));
+		printf("create client_thread failed, error : %s\n", strerror(err));
 		return -1;
 	}
 
@@ -233,7 +229,14 @@ int client_init(void)
 	return 0;
 }
 
-void *client_main_thread(void *arg)
+static void client_thread_cleanup()
+{
+	xdag_debug("client thread clean up called ");
+	xdag_blocks_finish();
+	xdag_debug(" work thread clean up finished ");
+}
+
+void *client_thread(void *arg)
 {
 	if(!arg) {
 		xdag_err(error_missing_param, "need pool arguments!");
@@ -249,16 +252,22 @@ void *client_main_thread(void *arg)
 		return (void *)1;
 	}
 #else
+
+	int oldcancelstate;
+	int oldcanceltype;
+	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, &oldcancelstate);
+	pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, &oldcanceltype);
+
+	pthread_cleanup_push(client_thread_cleanup, NULL);
+
 	int err = pthread_detach(pthread_self());
 	if(err != 0) {
-		printf("detach client_main_thread failed, error : %s\n", strerror(err));
+		printf("detach client_thread failed, error : %s\n", strerror(err));
 		return 0;
 	}
 #endif
 
 	xdag_mess("Initialize miner...");
-
-//	const char *mess = "", *mess1 = "";
 
 	struct xdag_block b;
 	struct xdag_field data[2];
@@ -475,6 +484,7 @@ begin:
 		}
 	}
 
+	pthread_cleanup_pop(0);
 	return 0;
 
 err:
@@ -494,8 +504,7 @@ end:
 }
 
 /* send block to network via pool */
-int xdag_send_block_via_pool(struct xdag_block *b)
-{
+int xdag_send_block_via_pool(struct xdag_block *b) {
 	if(g_socket < 0) return -1;
 	int ret = send_to_pool(b->field, XDAG_BLOCK_FIELDS);
 	return ret;

@@ -1035,6 +1035,27 @@ int xdag_blocks_reset(void)
 	return 0;
 }
 
+static void reset_callback(struct ldus_rbtree *node)
+{
+	free(node);
+}
+
+/* cleanup blocks */
+int xdag_blocks_finish(void)
+{
+	pthread_mutex_lock(&block_mutex);
+	ldus_rbtree_walk_up(root, reset_callback);
+
+	root = 0;
+	g_balance = 0;
+	top_main_chain = pretop_main_chain = 0;
+	ourfirst = ourlast = noref_first = noref_last = 0;
+	memset(&g_xdag_stats, 0, sizeof(g_xdag_stats));
+	memset(&g_xdag_extstats, 0, sizeof(g_xdag_extstats));
+
+	return 0;
+}
+
 #define pramount(amount) xdag_amount2xdag(amount), xdag_amount2cheato(amount)
 
 static int bi_compar(const void *l, const void *r)

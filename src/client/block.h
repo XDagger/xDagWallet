@@ -107,6 +107,9 @@ extern "C" {
 	// reinitialization of block processing
 	extern int xdag_blocks_reset(void);
 
+	// cleanup blocks
+	extern int xdag_blocks_finish(void);
+
 	// calculate difficulty from hash
 	xdag_diff_t xdag_hash_difficulty(xdag_hash_t hash);
 

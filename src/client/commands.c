@@ -238,6 +238,7 @@ void processExitCommand()
 {
 	xdag_wallet_finish();
 	xdag_storage_finish();
+	xdag_blocks_finish();
 }
 
 void processHelpCommand(char **out)
