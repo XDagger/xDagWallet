@@ -11,19 +11,15 @@ extern "C" {
 #endif
 
 #define XFER_MAX_IN		11
-
-	extern void startCommandProcessing(void);
-
-	struct xfer_callback_data {
-		struct xdag_field fields[XFER_MAX_IN + 1];
-		int keys[XFER_MAX_IN + 1];
-		xdag_amount_t todo, done, remains;
-		int fieldsCount, keysCount, outsig;
-		xdag_hash_t transactionBlockHash;
-	};
+	extern void processAccountCommand(int count, char **out);
+	extern void processBalanceCommand(char *address, char **out);
+	extern void processLevelCommand(char *level, char **out);
+	extern void processXferCommand(char *address, char *amount, char **out);
+	extern void processStateCommand(char **out);
+	extern void processExitCommand(void);
+	extern void processHelpCommand(char **out);
 
 	extern int xdag_do_xfer(const char *amount, const char *address, char **out);
-	extern int xfer_callback(void *data, xdag_hash_t hash, xdag_amount_t amount, xdag_time_t time, int n_our_key);
 
 	extern void xdag_log_xfer(xdag_hash_t from, xdag_hash_t to, xdag_amount_t amount);
 #ifdef __cplusplus

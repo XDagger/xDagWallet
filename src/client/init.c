@@ -5,7 +5,7 @@
 #include "init.h"
 #include "common.h"
 #include "client.h"
-#include "commands.h"
+#include "terminal.h"
 #include "utils/utils.h"
 #include "utils/log.h"
 #include <sys/termios.h>

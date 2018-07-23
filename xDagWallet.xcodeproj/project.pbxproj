@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		3833516420EA849D0070E5A9 /* block.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF258520E7E6DE0058B19B /* block.c */; };
+		383D19252105E5BF00FDC3C5 /* terminal.c in Sources */ = {isa = PBXBuildFile; fileRef = 383D19242105E5BF00FDC3C5 /* terminal.c */; };
 		384AAA7820F798FF00088073 /* events.c in Sources */ = {isa = PBXBuildFile; fileRef = 384AAA7720F798FF00088073 /* events.c */; };
 		384C360420EBB98C002A7B52 /* dnet_crypt.c in Sources */ = {isa = PBXBuildFile; fileRef = 384C360220EBB98C002A7B52 /* dnet_crypt.c */; };
 		38A7BBF520F650E20042ACFD /* common.c in Sources */ = {isa = PBXBuildFile; fileRef = 38A7BBF420F650E20042ACFD /* common.c */; };
@@ -47,6 +48,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		383D19232105E5BF00FDC3C5 /* terminal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = terminal.h; sourceTree = "<group>"; };
+		383D19242105E5BF00FDC3C5 /* terminal.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = terminal.c; sourceTree = "<group>"; };
 		384AAA7620F798FF00088073 /* events.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = events.h; sourceTree = "<group>"; };
 		384AAA7720F798FF00088073 /* events.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = events.c; sourceTree = "<group>"; };
 		384C360220EBB98C002A7B52 /* dnet_crypt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dnet_crypt.c; sourceTree = "<group>"; };
@@ -208,6 +211,8 @@
 				38CF25D120E7E6DE0058B19B /* wallet.h */,
 				38A7BBF320F650E20042ACFD /* common.h */,
 				38A7BBF420F650E20042ACFD /* common.c */,
+				383D19232105E5BF00FDC3C5 /* terminal.h */,
+				383D19242105E5BF00FDC3C5 /* terminal.c */,
 				38A7BBF620F671DC0042ACFD /* xdag_wrapper.h */,
 				38A7BBF720F671DC0042ACFD /* xdag_wrapper.c */,
 				384AAA7620F798FF00088073 /* events.h */,
@@ -303,6 +308,7 @@
 				38CF25F220E7E6DE0058B19B /* dfslib_string.c in Sources */,
 				38CF260420E7E6DE0058B19B /* main.c in Sources */,
 				384AAA7820F798FF00088073 /* events.c in Sources */,
+				383D19252105E5BF00FDC3C5 /* terminal.c in Sources */,
 				38CF25F120E7E6DE0058B19B /* dfslib_random.c in Sources */,
 				38CF261620E7E6DE0058B19B /* utils.c in Sources */,
 				3833516420EA849D0070E5A9 /* block.c in Sources */,

@@ -24,172 +24,18 @@ struct account_callback_data {
 	int count;
 };
 
-typedef int (*xdag_com_func_t)(char*, FILE *);
-typedef struct {
-	char *name;				/* command name */
-	xdag_com_func_t func;	/* command function */
-} XDAG_COMMAND;
+struct xfer_callback_data {
+	struct xdag_field fields[XFER_MAX_IN + 1];
+	int keys[XFER_MAX_IN + 1];
+	xdag_amount_t todo, done, remains;
+	int fieldsCount, keysCount, outsig;
+	xdag_hash_t transactionBlockHash;
+};
 
 // Function declarations
 int account_callback(void *data, xdag_hash_t hash, xdag_amount_t amount, xdag_time_t time, int n_our_key);
+int xfer_callback(void *data, xdag_hash_t hash, xdag_amount_t amount, xdag_time_t time, int n_our_key);
 const char *get_state(void);
-int read_command(char* cmd);
-int xdag_command(char *cmd, FILE *out);
-
-void processAccountCommand(int count, char **out);
-void processBalanceCommand(char *address, char **out);
-void processLevelCommand(char *level, char **out);
-void processExitCommand(void);
-void processXferCommand(char *address, char *amount, char **out);
-void processHelpCommand(FILE *out);
-
-int xdag_com_account(char *, FILE*);
-int xdag_com_balance(char *, FILE*);
-int xdag_com_level(char *, FILE*);
-int xdag_com_xfer(char *, FILE*);
-int xdag_com_stats(char *, FILE*);
-int xdag_com_state(char *, FILE*);
-int xdag_com_help(char *, FILE*);
-int xdag_com_terminate(char *, FILE*);
-int xdag_com_exit(char *, FILE*);
-
-XDAG_COMMAND* find_xdag_command(char*);
-
-XDAG_COMMAND commands[] = {
-	{ "account"    , xdag_com_account },
-	{ "balance"    , xdag_com_balance },
-	{ "level"      , xdag_com_level },
-	{ "xfer"       , xdag_com_xfer },
-	{ "state"      , xdag_com_state },
-	{ "exit"       , xdag_com_exit },
-	{ "xfer"       , (xdag_com_func_t)NULL},
-	{ "help"       , xdag_com_help},
-	{ (char *)NULL , (xdag_com_func_t)NULL}
-};
-
-int xdag_com_account(char *args, FILE* out)
-{
-	int count = 1;
-	char *result = NULL;
-	char *cmd = strtok_r(args, " \t\r\n", &args);
-	if(cmd) {
-		sscanf(cmd, "%d", &count);
-	}
-
-	processAccountCommand(count, &result);
-
-	if(result) {
-		fprintf(out, "%s", result);
-		free(result);
-	}
-
-	return 0;
-}
-
-int xdag_com_balance(char *args, FILE* out)
-{
-	char *address = strtok_r(args, " \t\r\n", &args);
-	char *result = NULL;
-
-	processBalanceCommand(address, &result);
-
-	if(result) {
-		fprintf(out, "%s", result);
-		free(result);
-	}
-
-	return 0;
-}
-
-int xdag_com_xfer(char *args, FILE* out)
-{
-	char *result = NULL;
-	char *amount = strtok_r(args, " \t\r\n", &args);
-	char *address = strtok_r(0, " \t\r\n", &args);
-
-	processXferCommand(amount, address, &result);
-
-	if(result) {
-		fprintf(out, "%s", result);
-		free(result);
-	}
-
-	return 0;
-}
-
-int xdag_com_level(char *args, FILE* out)
-{
-	char *cmd = strtok_r(args, " \t\r\n", &args);
-	char *result = NULL;
-	processLevelCommand(cmd, &result);
-
-	if(result) {
-		fprintf(out, "%s", result);
-		free(result);
-	}
-	return 0;
-}
-
-int xdag_com_state(char *args, FILE* out)
-{
-	fprintf(out, "%s\n", get_state());
-	return 0;
-}
-
-int xdag_com_exit(char * args, FILE* out)
-{
-	processExitCommand();
-	return -1;
-}
-
-int xdag_com_help(char *args, FILE* out)
-{
-	processHelpCommand(out);
-	return 0;
-}
-
-XDAG_COMMAND* find_xdag_command(char *name)
-{
-	for(int i = 0; commands[i].name; i++) {
-		if(strcmp(name, commands[i].name) == 0) {
-			return (&commands[i]);
-		}
-	}
-	return (XDAG_COMMAND *)NULL;
-}
-
-void startCommandProcessing(void)
-{
-	char cmd[XDAG_COMMAND_MAX];
-	printf("Type command, help for example.\n");
-
-	for(;;) {
-		read_command(cmd);
-		if(strlen(cmd) > 0) {
-			int ret = xdag_command(cmd, stdout);
-			if(ret < 0) {
-				break;
-			}
-		}
-	}
-}
-
-int xdag_command(char *cmd, FILE *out)
-{
-	char *nextParam;
-
-	cmd = strtok_r(cmd, " \t\r\n", &nextParam);
-	if(!cmd) return 0;
-
-	XDAG_COMMAND *command = find_xdag_command(cmd);
-
-	if(!command) {
-		fprintf(out, "Illegal command.\n");
-	} else {
-		return (*(command->func))(nextParam, out);
-	}
-	return 0;
-}
 
 int account_callback(void *data, xdag_hash_t hash, xdag_amount_t amount, xdag_time_t time, int n_our_key)
 {
@@ -272,14 +118,10 @@ void processXferCommand(char *amount, char *address, char **out)
 	}
 }
 
-const char *get_state()
+
+void processStateCommand(char **out)
 {
-	static const char *states[] = {
-#define xdag_state(n,s) s ,
-#include "state.h"
-#undef xdag_state
-	};
-	return states[g_xdag_state];
+	*out = strdup(get_state());
 }
 
 static int make_transaction_block(struct xfer_callback_data *xferData)
@@ -398,25 +240,24 @@ void processExitCommand()
 	xdag_storage_finish();
 }
 
-void processHelpCommand(FILE *out)
+void processHelpCommand(char **out)
 {
-	fprintf(out, "Commands:\n"
+	*out = strdup("Commands:\n"
 		"  account [N]         - print first N (20 by default) our addresses with their amounts\n"
 		"  balance [A]         - print balance of the address A or total balance for all our addresses\n"
-		"  exit                - exit this program (not the daemon)\n"
-		"  help                - print this help\n"
-		"  keygen              - generate new private/public key pair and set it by default\n"
 		"  level [N]           - print level of logging or set it to N (0 - nothing, ..., 9 - all)\n"
 		"  state               - print the program state\n"
-		"  terminate           - terminate both daemon and this program\n"
-		"  xfer S A            - transfer S our %s to the address A\n"
-		, COINNAME);
+		"  xfer S A            - transfer S our xdag to the address A\n"
+		"  exit                - exit this program\n"
+		"  help                - print this help\n");
 }
 
-int read_command(char *cmd)
+const char *get_state()
 {
-	printf("xdag> ");
-	fflush(stdout);
-	fgets(cmd, XDAG_COMMAND_MAX, stdin);
-	return 0;
+	static const char *states[] = {
+#define xdag_state(n,s) s ,
+#include "state.h"
+#undef xdag_state
+	};
+	return states[g_xdag_state];
 }
