@@ -12,16 +12,12 @@
 #include "client.h"
 #include "storage.h"
 #include "errno.h"
-#if !defined(_WIN32) && !defined(_WIN64)
-#include "utils/linenoise.h"
-#endif
 
 #if !defined(_WIN32) && !defined(_WIN64)
 #include <unistd.h>
 #endif
 
 #define Nfields(d) (2 + d->fieldsCount + 3 * d->keysCount + 2 * d->outsig)
-#define COMMAND_HISTORY ".cmd.history"
 
 struct account_callback_data {
 	char out[128];

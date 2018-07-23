@@ -27,7 +27,6 @@
 		38CF260720E7E6DE0058B19B /* client.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25A620E7E6DE0058B19B /* client.c */; };
 		38CF260D20E7E6DE0058B19B /* sha256.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25B420E7E6DE0058B19B /* sha256.c */; };
 		38CF260F20E7E6DE0058B19B /* storage.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25B820E7E6DE0058B19B /* storage.c */; };
-		38CF261320E7E6DE0058B19B /* linenoise.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25C620E7E6DE0058B19B /* linenoise.c */; };
 		38CF261420E7E6DE0058B19B /* log.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25C820E7E6DE0058B19B /* log.c */; };
 		38CF261620E7E6DE0058B19B /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25CD20E7E6DE0058B19B /* utils.c */; };
 		38CF261720E7E6DE0058B19B /* wallet.c in Sources */ = {isa = PBXBuildFile; fileRef = 38CF25D020E7E6DE0058B19B /* wallet.c */; };
@@ -95,8 +94,6 @@
 		38CF25B920E7E6DE0058B19B /* storage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = storage.h; sourceTree = "<group>"; };
 		38CF25BC20E7E6DE0058B19B /* system.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = system.h; sourceTree = "<group>"; };
 		38CF25C120E7E6DE0058B19B /* types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = types.h; sourceTree = "<group>"; };
-		38CF25C620E7E6DE0058B19B /* linenoise.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = linenoise.c; sourceTree = "<group>"; };
-		38CF25C720E7E6DE0058B19B /* linenoise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = linenoise.h; sourceTree = "<group>"; };
 		38CF25C820E7E6DE0058B19B /* log.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = log.c; sourceTree = "<group>"; };
 		38CF25C920E7E6DE0058B19B /* log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = log.h; sourceTree = "<group>"; };
 		38CF25CD20E7E6DE0058B19B /* utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = utils.c; sourceTree = "<group>"; };
@@ -224,8 +221,6 @@
 		38CF25C520E7E6DE0058B19B /* utils */ = {
 			isa = PBXGroup;
 			children = (
-				38CF25C620E7E6DE0058B19B /* linenoise.c */,
-				38CF25C720E7E6DE0058B19B /* linenoise.h */,
 				38CF25C820E7E6DE0058B19B /* log.c */,
 				38CF25C920E7E6DE0058B19B /* log.h */,
 				38CF25CD20E7E6DE0058B19B /* utils.c */,
@@ -310,7 +305,6 @@
 				384AAA7820F798FF00088073 /* events.c in Sources */,
 				38CF25F120E7E6DE0058B19B /* dfslib_random.c in Sources */,
 				38CF261620E7E6DE0058B19B /* utils.c in Sources */,
-				38CF261320E7E6DE0058B19B /* linenoise.c in Sources */,
 				3833516420EA849D0070E5A9 /* block.c in Sources */,
 				38CF260720E7E6DE0058B19B /* client.c in Sources */,
 				38CF25F420E7E6DE0058B19B /* address.c in Sources */,
