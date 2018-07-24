@@ -102,7 +102,8 @@ int event_callback(void* thisObj, xdag_event *event)
 
 		case event_id_interact:
 		{
-			printf("%s\n", event->event_data);
+			fprintf(stdout, "%s\n", event->event_data);
+			fflush(stdout);
 			break;
 		}
 
@@ -121,7 +122,7 @@ int password_callback(const char *prompt, char *buf, unsigned len)
 {
 	struct termios t[1];
 	int noecho = !!strstr(prompt, "assword");
-	printf("%s: ", prompt); fflush(stdout);
+	fprintf(stdout,"%s: ", prompt); fflush(stdout);
 	if (noecho) {
 		tcgetattr(0, t);
 		t->c_lflag &= ~ECHO;
@@ -131,7 +132,7 @@ int password_callback(const char *prompt, char *buf, unsigned len)
 	if (noecho) {
 		t->c_lflag |= ECHO;
 		tcsetattr(0, TCSANOW, t);
-		printf("\n");
+		fprintf(stdout,"\n");
 	}
 	len = (int)strlen(buf);
 	if (len && buf[len - 1] == '\n') buf[len - 1] = 0;

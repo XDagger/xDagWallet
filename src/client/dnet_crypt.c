@@ -12,6 +12,7 @@
 #include "./utils/utils.h"
 #include "./utils/log.h"
 #include "errno.h"
+#include "common.h"
 
 #define KEYFILE	    "dnet_key.dat"
 #define PWDLEN	    64
@@ -263,7 +264,7 @@ int dnet_crypt_init(const char *version) {
 			dfslib_utf8_string(&str1, pwd1, strlen(pwd1));
 			if (str.len != str1.len || memcmp(str.utf8, str1.utf8, str.len)) {
 				xdag_err(error_pwd_inconsistent, "Passwords differ.");
-				printf("Passwords differ.\n");
+				xdag_wrapper_interact("Passwords differ.\n");
 				return 4;
 			}
 			if (str.len) set_user_crypt(&str);
@@ -271,7 +272,7 @@ int dnet_crypt_init(const char *version) {
 		}
 
 		dfslib_random_fill(keys->pub.key, DNET_KEYLEN * sizeof(dfsrsa_t), 0, dfslib_utf8_string(&str, buf, strlen(buf)));
-		printf("Generating host keys... "); fflush(stdout);
+		xdag_wrapper_interact("Generating host keys... ");
 #ifdef __arm__
 		g_keylen = KEYLEN_MIN;
 #else
@@ -280,7 +281,7 @@ int dnet_crypt_init(const char *version) {
 		dfsrsa_keygen(keys->priv.key, keys->pub.key, g_keylen);
 		dnet_make_key(keys->priv.key, g_keylen);
 		dnet_make_key(keys->pub.key, g_keylen);
-		printf("OK.\n"); fflush(stdout);
+		xdag_wrapper_interact("OK.\n");
 		if (g_dnet_user_crypt) for (i = 0; i < (sizeof(struct dnet_keys) >> 9); ++i)
 			dfslib_encrypt_sector(g_dnet_user_crypt, (uint32_t *)keys + 128 * i, ~(uint64_t)i);
 		if (fwrite(keys, sizeof(struct dnet_keys), 1, f) != 1) return 5;

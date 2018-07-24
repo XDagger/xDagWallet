@@ -14,8 +14,8 @@ extern "C" {
 
 	extern xdag_error_no processAccountCommand(char **out);
 	extern xdag_error_no processAddressCommand(char **out);
-	extern xdag_error_no processBalanceCommand(const char *address, char **out);
-	extern xdag_error_no processLevelCommand(char *level, char **out);
+	extern xdag_error_no processBalanceCommand(char **out);
+	extern xdag_error_no processLevelCommand(const char *level, char **out);
 	extern xdag_error_no processXferCommand(const char *address, const char *amount, char **out);
 	extern xdag_error_no processStateCommand(char **out);
 	extern xdag_error_no processExitCommand(void);

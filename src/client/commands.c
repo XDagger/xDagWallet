@@ -85,20 +85,14 @@ xdag_error_no processAddressCommand(char **out)
 	return error_none;
 }
 
-xdag_error_no processBalanceCommand(const char *address, char **out)
+xdag_error_no processBalanceCommand(char **out)
 {
 	if(g_xdag_state < XDAG_STATE_XFER) {
 		*out = strdup("Not ready to show a balance. Type 'state' command to see the reason.");
 		return error_not_ready;
 	} else {
-		xdag_hash_t hash;
 		xdag_amount_t balance;
-		if(address) {
-			xdag_address2hash(address, hash);
-			balance = xdag_get_balance(hash);
-		} else {
-			balance = xdag_get_balance(0);
-		}
+		balance = xdag_get_balance(0);
 		char result[128] = {0};
 		sprintf(result, "%.9Lf", amount2xdags(balance));
 		*out = strdup(result);
@@ -107,7 +101,7 @@ xdag_error_no processBalanceCommand(const char *address, char **out)
 	}
 }
 
-xdag_error_no processLevelCommand(char *level, char **out)
+xdag_error_no processLevelCommand(const char *level, char **out)
 {
 	unsigned lv;
 	if(!level) {
@@ -276,7 +270,7 @@ xdag_error_no processExitCommand()
 	xdag_storage_finish();
 	xdag_blocks_finish();
 
-	return error_none;
+	return -1;
 }
 
 xdag_error_no processHelpCommand(char **out)

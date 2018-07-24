@@ -54,7 +54,14 @@ int xdag_wrapper_init(void* thisObj, xdag_password_callback_t password, xdag_eve
 int xdag_wrapper_xfer(const char *amount, const char *to)
 {
 	char *result = NULL;
-	int err = processXferCommand(to, amount, &result);
+	int err = processXferCommand(amount, to, &result);
+
+	if(err != error_none) {
+		xdag_wrapper_event(event_id_err, err, result);
+	} else {
+		xdag_wrapper_event(event_id_xfer_done, 0, result);
+	}
+
 	if(result) {
 		free(result);
 	}
@@ -64,12 +71,93 @@ int xdag_wrapper_xfer(const char *amount, const char *to)
 int xdag_wrapper_account(void)
 {
 	char *result = NULL;
-	int err = processAddressCommand(&result);
+	int err = processAccountCommand(&result);
+
+	if(err != error_none) {
+		xdag_wrapper_event(event_id_err, err, result);
+	} else {
+		xdag_wrapper_event(event_id_account_done, 0, result);
+	}
+
 	if(result) {
 		free(result);
 	}
 	return err;
 }
+
+int xdag_wrapper_address(void)
+{
+	char *result = NULL;
+	int err = processAddressCommand(&result);
+
+	if(err != error_none) {
+		xdag_wrapper_event(event_id_err, err, result);
+	} else {
+		xdag_wrapper_event(event_id_address_done, 0, result);
+	}
+
+	if(result) {
+		free(result);
+	}
+	return err;
+}
+
+int xdag_wrapper_balance(void)
+{
+	char *result = NULL;
+	int err = processBalanceCommand(&result);
+
+	if(err != error_none) {
+		xdag_wrapper_event(event_id_err, err, result);
+	} else {
+		xdag_wrapper_event(event_id_balance_done, 0, result);
+	}
+
+	if(result) {
+		free(result);
+	}
+	return err;
+}
+
+int xdag_wrapper_level(const char *level)
+{
+	char *result = NULL;
+	int err = processLevelCommand(level, &result);
+	if(err != error_none) {
+		xdag_wrapper_event(event_id_err, err, result);
+	} else {
+		xdag_wrapper_event(event_id_level_done, 0, result);
+	}
+
+	if(result) {
+		free(result);
+	}
+
+	return err;
+}
+
+int xdag_wrapper_state(void)
+{
+	char *result = NULL;
+	int err = processStateCommand(&result);
+
+	if(err != error_none) {
+		xdag_wrapper_event(event_id_err, err, result);
+	} else {
+		xdag_wrapper_event(event_id_state_done, 0, result);
+	}
+
+	if(result) {
+		free(result);
+	}
+	return err;
+}
+
+int xdag_wrapper_exit(void)
+{
+	return processExitCommand();
+}
+
 
 int xdag_wrapper_log(int level, xdag_error_no err, const char *data)
 {
@@ -91,7 +179,7 @@ int xdag_wrapper_event(xdag_event_id event_id, xdag_error_no err, const char *da
 		xdag_event *evt = calloc(1, sizeof(xdag_event));
 		evt->event_id = event_id;
 		evt->error_no = err;
-		evt->event_data = strdup(data);
+		evt->event_data = data ? strdup(data) : strdup("");
 
 		(*g_wrapper_event_callback)(g_thisObj, evt);
 

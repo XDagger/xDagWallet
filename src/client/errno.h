@@ -14,6 +14,12 @@ typedef enum {
 	// no error
 	error_none						= 0x0000,
 
+	// general errors
+	error_unknown					= 0x0001,
+	error_malloc					= 0x0002,
+	error_fatal						= 0x0003,
+	error_invalid_command			= 0x0004,
+
 	// init errors
 	error_pwd_inconsistent			= 0x1001,
 	error_pwd_incorrect				= 0x1002,
@@ -58,12 +64,7 @@ typedef enum {
 	error_socket_write				= 0x5008,
 	error_socket_timeout			= 0x5009,
 	error_socket_resolve_host		= 0x5010,
-	error_socket_closed				= 0x5011,
-
-	// general errors
-	error_unknown					= 0x0001,
-	error_malloc					= 0x0002,
-	error_fatal						= 0x0003,
+	error_socket_closed				= 0x5011
 
 } xdag_error_no;
 

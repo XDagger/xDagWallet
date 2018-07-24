@@ -20,6 +20,10 @@ typedef int(*xdag_password_callback_t)(const char *prompt, char *buf, unsigned s
 extern int xdag_wrapper_init(void* thisObj, xdag_password_callback_t password, xdag_event_callback_t event);
 extern int xdag_wrapper_xfer(const char *amount, const char *to);
 extern int xdag_wrapper_account(void);
+extern int xdag_wrapper_address(void);
 extern int xdag_wrapper_balance(void);
+extern int xdag_wrapper_level(const char *level);
+extern int xdag_wrapper_state(void);
+extern int xdag_wrapper_exit(void);
 
 #endif /* xdag_wrapper_h */
