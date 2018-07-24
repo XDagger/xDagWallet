@@ -54,7 +54,7 @@ int xdag_com_account(char *args)
 
 int xdag_com_address(char *args)
 {
-	return xdag_wrapper_account();
+	return xdag_wrapper_address();
 }
 
 int xdag_com_balance(char *args)

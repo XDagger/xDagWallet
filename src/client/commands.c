@@ -45,7 +45,7 @@ int account_callback(void *data, xdag_hash_t hash, xdag_amount_t amount, xdag_ti
 	}
 	xdag_hash2address(hash, address);
 
-	if(g_xdag_state < XDAG_STATE_XFER) {
+	if(xdag_get_state() < XDAG_STATE_XFER) {
 		sprintf(d->out, "%s  key %d", address, n_our_key);
 	} else {
 		sprintf(d->out, "%s %20.9Lf  key %d", address, amount2xdags(amount), n_our_key);
@@ -59,7 +59,7 @@ xdag_error_no processAccountCommand(char **out)
 	d.count = 1;
 
 	char tmp[128] = {0};
-	if(g_xdag_state < XDAG_STATE_XFER) {
+	if(xdag_get_state() < XDAG_STATE_XFER) {
 		sprintf(tmp, "Not ready to show balances. Type 'state' command to see the reason.");
 	}
 	xdag_traverse_our_blocks(&d, &account_callback);
@@ -87,7 +87,7 @@ xdag_error_no processAddressCommand(char **out)
 
 xdag_error_no processBalanceCommand(char **out)
 {
-	if(g_xdag_state < XDAG_STATE_XFER) {
+	if(xdag_get_state() < XDAG_STATE_XFER) {
 		*out = strdup("Not ready to show a balance. Type 'state' command to see the reason.");
 		return error_not_ready;
 	} else {
@@ -191,7 +191,7 @@ xdag_error_no xdag_do_xfer(const char *amount, const char *address, char **out)
 
 	xdag_wallet_default_key(&xfer.keys[XFER_MAX_IN]);
 	xfer.outsig = 1;
-	g_xdag_state = XDAG_STATE_XFER;
+	xdag_set_state(XDAG_STATE_XFER);
 	g_xdag_xfer_last = time(0);
 
 	int err = xdag_traverse_our_blocks(&xfer, &xfer_callback);

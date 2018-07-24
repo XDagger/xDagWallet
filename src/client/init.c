@@ -107,6 +107,13 @@ int event_callback(void* thisObj, xdag_event *event)
 			break;
 		}
 
+		case event_id_state_change:
+		{
+			fprintf(stdout, "state changed %s\n", event->event_data);
+			fflush(stdout);
+			break;
+		}
+
 		default:
 		{
 			if(event->event_data) {

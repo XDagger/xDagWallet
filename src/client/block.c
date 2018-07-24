@@ -94,7 +94,7 @@ static inline struct block_internal *block_by_hash(const xdag_hashlow_t hash)
 static void log_block(const char *mess, xdag_hash_t h, xdag_time_t t, uint64_t pos)
 {
 	/* Do not log blocks as we are loading from local storage */
-	if(g_xdag_state != XDAG_STATE_LOAD) {
+	if(xdag_get_state() != XDAG_STATE_LOAD) {
 		xdag_info("%s: %016llx%016llx%016llx%016llx t=%llx pos=%llx", mess,
 			((uint64_t*)h)[3], ((uint64_t*)h)[2], ((uint64_t*)h)[1], ((uint64_t*)h)[0], t, pos);
 	}
@@ -566,7 +566,7 @@ static int add_block_nolock(struct xdag_block *newBlock, xdag_time_t limit)
 
 	if(xdag_diff_gt(tmpNodeBlock.difficulty, g_xdag_stats.difficulty)) {
 		/* Only log this if we are NOT loading state */
-		if(g_xdag_state != XDAG_STATE_LOAD)
+		if(xdag_get_state() != XDAG_STATE_LOAD)
 			xdag_info("Diff  : %llx%016llx (+%llx%016llx)", xdag_diff_args(tmpNodeBlock.difficulty), xdag_diff_args(diff0));
 
 		for(blockRef = nodeBlock, blockRef0 = 0; blockRef && !(blockRef->flags & BI_MAIN_CHAIN); blockRef = blockRef->link[blockRef->max_diff_link]) {
@@ -841,7 +841,7 @@ int xdag_blocks_start(void)
 
 	// loading block from the local storage
 	xdag_time_t t = XDAG_ERA;
-	g_xdag_state = XDAG_STATE_LOAD;
+	xdag_set_state(XDAG_STATE_LOAD);
 	xdag_mess("Loading blocks from local storage...");
 	uint64_t start = get_timestamp();
 	xdag_load_blocks(t, get_timestamp(), &t, &add_block_callback);
@@ -1025,9 +1025,9 @@ int xdag_get_key(xdag_hash_t hash)
 int xdag_blocks_reset(void)
 {
 	pthread_mutex_lock(&block_mutex);
-	if (g_xdag_state != XDAG_STATE_REST) {
+	if (xdag_get_state() != XDAG_STATE_REST) {
 		xdag_crit(error_storage_corrupted, "The local storage is corrupted. Resetting blocks engine.");
-		g_xdag_state = XDAG_STATE_REST;
+		xdag_set_state(XDAG_STATE_REST);
 	}
 	pthread_mutex_unlock(&block_mutex);
 

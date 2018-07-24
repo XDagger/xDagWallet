@@ -362,29 +362,33 @@ begin:
 	res = connect(g_socket, (struct sockaddr*)&peeraddr, sizeof(peeraddr));
 	if(res) {
 		xdag_err(error_socket_connect, "cannot connect to the pool");
-		g_xdag_state = g_xdag_testnet ? XDAG_STATE_TTST : XDAG_STATE_TRYP;
+//		g_xdag_state = g_xdag_testnet ? XDAG_STATE_TTST : XDAG_STATE_TRYP;
+		xdag_set_state(g_xdag_testnet ? XDAG_STATE_TTST : XDAG_STATE_TRYP);
 		goto err;
 	}
 
 	if(send_to_pool(b.field, XDAG_BLOCK_FIELDS) < 0) {
 		xdag_err(error_socket_closed, "socket is closed");
-		g_xdag_state = g_xdag_testnet ? XDAG_STATE_TTST : XDAG_STATE_TRYP;
+//		g_xdag_state = g_xdag_testnet ? XDAG_STATE_TTST : XDAG_STATE_TRYP;
+		xdag_set_state(g_xdag_testnet ? XDAG_STATE_TTST : XDAG_STATE_TRYP);
 		goto err;
 	}
 
 	for(;;) {
 		if(get_timestamp() - t > 1024) {
 			t = get_timestamp();
-			if (g_xdag_state == XDAG_STATE_REST) {
+			if (xdag_get_state() == XDAG_STATE_REST) {
 				xdag_err(error_block_load_failed, "block reset!!!");
 			} else {
 				if (t > (g_xdag_last_received << 10) && t - (g_xdag_last_received << 10) > 3 * MAIN_CHAIN_PERIOD) {
-					g_xdag_state = g_xdag_testnet ? XDAG_STATE_TTST : XDAG_STATE_TRYP;
+//					g_xdag_state = g_xdag_testnet ? XDAG_STATE_TTST : XDAG_STATE_TRYP;
+					xdag_set_state(g_xdag_testnet ? XDAG_STATE_TTST : XDAG_STATE_TRYP);
 				} else {
 					if (t - (g_xdag_xfer_last << 10) <= 2 * MAIN_CHAIN_PERIOD + 4) {
-						g_xdag_state = XDAG_STATE_XFER;
+						xdag_set_state(XDAG_STATE_XFER);
 					} else {
-						g_xdag_state = g_xdag_testnet ? XDAG_STATE_PTST : XDAG_STATE_POOL;
+//						g_xdag_state = g_xdag_testnet ? XDAG_STATE_PTST : XDAG_STATE_POOL;
+						xdag_set_state(g_xdag_testnet ? XDAG_STATE_PTST : XDAG_STATE_POOL);
 					}
 				}
 			}

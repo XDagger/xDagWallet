@@ -47,9 +47,8 @@ void xdag_set_state(enum xdag_states state)
 {
 	if(g_xdag_state != state) {
 		g_xdag_state = state;
+		xdag_wrapper_event(event_id_state_change, 0, xdag_get_state_str());
 	}
-
-	xdag_wrapper_event(event_id_state_change, 0, xdag_get_state_str());
 }
 
 const char *xdag_get_state_str()
