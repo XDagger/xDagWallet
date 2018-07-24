@@ -74,12 +74,19 @@ extern "C" {
 	// contert xdag to cheato
 	extern xdag_amount_t xdags2amount(const char *str);
 
+	extern enum xdag_states xdag_get_state(void);
+
+	extern void xdag_set_state(enum xdag_states state);
+
+	extern const char *xdag_get_state_str(void);
+
+
 	/* see dnet_user_crypt_action */
 	extern int xdag_user_crypt_action(unsigned *data, unsigned long long data_id, unsigned size, int action);
 
-	extern int xdag_wrapper_log(int level, xdag_error_no err, char *data);
-	extern int xdag_wrapper_interact(char *data);
-	extern int xdag_wrapper_event(xdag_event_id event_id, xdag_error_no err, char *data);
+	extern int xdag_wrapper_log(int level, xdag_error_no err, const char *data);
+	extern int xdag_wrapper_interact(const char *data);
+	extern int xdag_wrapper_event(xdag_event_id event_id, xdag_error_no err, const char *data);
 #ifdef __cplusplus
 }
 #endif

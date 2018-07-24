@@ -38,6 +38,30 @@ long double amount2xdags(xdag_amount_t amount)
 	return xdag_amount2xdag(amount) + (long double)xdag_amount2cheato(amount) / 1000000000;
 }
 
+enum xdag_states xdag_get_state(void)
+{
+	return g_xdag_state;
+}
+
+void xdag_set_state(enum xdag_states state)
+{
+	if(g_xdag_state != state) {
+		g_xdag_state = state;
+	}
+
+	xdag_wrapper_event(event_id_state_change, 0, xdag_get_state_str());
+}
+
+const char *xdag_get_state_str()
+{
+	static const char *states[] = {
+#define xdag_state(n,s) s ,
+#include "state.h"
+#undef xdag_state
+	};
+	return states[g_xdag_state];
+}
+
 /* see dnet_user_crypt_action */
 int xdag_user_crypt_action(unsigned *data, unsigned long long data_id, unsigned size, int action)
 {

@@ -3,23 +3,25 @@
 
 #include <time.h>
 #include "block.h"
+#include "errno.h"
 
-#define XDAG_COMMAND_MAX	0x1000
+#define XDAG_COMMAND_MAX	0x100
+#define XFER_MAX_IN		11
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define XFER_MAX_IN		11
-	extern void processAccountCommand(int count, char **out);
-	extern void processBalanceCommand(char *address, char **out);
-	extern void processLevelCommand(char *level, char **out);
-	extern void processXferCommand(char *address, char *amount, char **out);
-	extern void processStateCommand(char **out);
-	extern void processExitCommand(void);
-	extern void processHelpCommand(char **out);
+	extern xdag_error_no processAccountCommand(char **out);
+	extern xdag_error_no processAddressCommand(char **out);
+	extern xdag_error_no processBalanceCommand(const char *address, char **out);
+	extern xdag_error_no processLevelCommand(char *level, char **out);
+	extern xdag_error_no processXferCommand(const char *address, const char *amount, char **out);
+	extern xdag_error_no processStateCommand(char **out);
+	extern xdag_error_no processExitCommand(void);
+	extern xdag_error_no processHelpCommand(char **out);
 
-	extern int xdag_do_xfer(const char *amount, const char *address, char **out);
+	extern xdag_error_no xdag_do_xfer(const char *amount, const char *address, char **out);
 
 	extern void xdag_log_xfer(xdag_hash_t from, xdag_hash_t to, xdag_amount_t amount);
 #ifdef __cplusplus

@@ -21,9 +21,7 @@ int xdag_init(int argc, char **argv, int isGui)
 	xdag_init_path(argv[0]);
 
 	const char *pool_arg = 0;
-//	int level = 0;
-
-	if (!isGui) {
+	if(!isGui) {
 		printf("xdag client/server, version %s.\n", XDAG_VERSION);
 	}
 
@@ -43,7 +41,7 @@ int xdag_init(int argc, char **argv, int isGui)
 			continue;
 		}
 		
-		if(ARG_EQUAL(argv[i], "-h", "")) { /* help */
+		if(ARG_EQUAL(argv[i], "-h", "--help")) { /* help */
 			printUsage(argv[0]);
 			return 0;
 		} else {
@@ -53,7 +51,7 @@ int xdag_init(int argc, char **argv, int isGui)
 	}
 
 	printf("Set log callback...\n");
-	xdag_wrapper_init(NULL, &password_callback, &event_callback, &log_callback);
+	xdag_wrapper_init(NULL, &password_callback, &event_callback);
 
 	printf("Starting...\n");
 	if(xdag_client_init(pool_arg)) return -1;

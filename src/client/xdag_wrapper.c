@@ -42,35 +42,48 @@ int xdag_set_password_callback(xdag_password_callback_t callback)
 	return xdag_user_crypt_action((uint32_t *)(void *)callback, 0, 0, 6);
 }
 
-int xdag_wrapper_init(void* thisObj, xdag_password_callback_t password, xdag_event_callback_t event, xdag_log_callback_t log)
+int xdag_wrapper_init(void* thisObj, xdag_password_callback_t password, xdag_event_callback_t event)
 {
 	if(thisObj) g_thisObj = thisObj;
 	if(password) xdag_set_password_callback(password);
 	if(event) xdag_set_event_callback(event);
-	if(log) xdag_set_log_callback(log);
 
 	return 0;
 }
 
 int xdag_wrapper_xfer(const char *amount, const char *to)
 {
-	char *out = NULL;
-	return xdag_do_xfer(amount, to, &out);
+	char *result = NULL;
+	int err = processXferCommand(to, amount, &result);
+	if(result) {
+		free(result);
+	}
+	return err;
 }
 
-int xdag_wrapper_log(int level, xdag_error_no err, char *data)
+int xdag_wrapper_account(void)
+{
+	char *result = NULL;
+	int err = processAddressCommand(&result);
+	if(result) {
+		free(result);
+	}
+	return err;
+}
+
+int xdag_wrapper_log(int level, xdag_error_no err, const char *data)
 {
 	xdag_wrapper_event(event_id_log, err, data);
 	return 0;
 }
 
-int xdag_wrapper_interact(char *data)
+int xdag_wrapper_interact(const char *data)
 {
-	xdag_wrapper_event(event_id_interact, 8, data);
+	xdag_wrapper_event(event_id_interact, 0, data);
 	return 0;
 }
 
-int xdag_wrapper_event(xdag_event_id event_id, xdag_error_no err, char *data)
+int xdag_wrapper_event(xdag_event_id event_id, xdag_error_no err, const char *data)
 {
 	if(!g_wrapper_event_callback) {
 		assert(0);

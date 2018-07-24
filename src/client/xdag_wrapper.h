@@ -17,8 +17,9 @@ typedef int(*xdag_log_callback_t)(int, xdag_error_no, char *);
 typedef int(*xdag_event_callback_t)(void *, xdag_event *) ;
 typedef int(*xdag_password_callback_t)(const char *prompt, char *buf, unsigned size);
 
-extern int xdag_wrapper_init(void* thisObj, xdag_password_callback_t password, xdag_event_callback_t event, xdag_log_callback_t log);
+extern int xdag_wrapper_init(void* thisObj, xdag_password_callback_t password, xdag_event_callback_t event);
 extern int xdag_wrapper_xfer(const char *amount, const char *to);
-
+extern int xdag_wrapper_account(void);
+extern int xdag_wrapper_balance(void);
 
 #endif /* xdag_wrapper_h */

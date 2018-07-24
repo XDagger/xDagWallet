@@ -873,8 +873,7 @@ int xdag_get_our_block(xdag_hash_t hash)
 }
 
 /* calls callback for each own block */
-int xdag_traverse_our_blocks(void *data,
-    int (*callback)(void*, xdag_hash_t, xdag_amount_t, xdag_time_t, int))
+int xdag_traverse_our_blocks(void *data, int (*callback)(void*, xdag_hash_t, xdag_amount_t, xdag_time_t, int))
 {
 	int res = 0;
 

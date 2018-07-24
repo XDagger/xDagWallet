@@ -35,42 +35,61 @@ struct xfer_callback_data {
 // Function declarations
 int account_callback(void *data, xdag_hash_t hash, xdag_amount_t amount, xdag_time_t time, int n_our_key);
 int xfer_callback(void *data, xdag_hash_t hash, xdag_amount_t amount, xdag_time_t time, int n_our_key);
-const char *get_state(void);
 
 int account_callback(void *data, xdag_hash_t hash, xdag_amount_t amount, xdag_time_t time, int n_our_key)
 {
-	char address[33];
+	char address[33] = {0};
 	struct account_callback_data *d = (struct account_callback_data *)data;
 	if(!d->count--) {
 		return -1;
 	}
 	xdag_hash2address(hash, address);
 
-	if(g_xdag_state < XDAG_STATE_XFER)
-		sprintf(d->out, "%s  key %d\n", address, n_our_key);
-	else
-		sprintf(d->out, "%s %20.9Lf  key %d\n", address, amount2xdags(amount), n_our_key);
+	if(g_xdag_state < XDAG_STATE_XFER) {
+		sprintf(d->out, "%s  key %d", address, n_our_key);
+	} else {
+		sprintf(d->out, "%s %20.9Lf  key %d", address, amount2xdags(amount), n_our_key);
+	}
 	return 0;
 }
 
-void processAccountCommand(int count, char **out)
+xdag_error_no processAccountCommand(char **out)
 {
 	struct account_callback_data d;
-	d.count = count;
+	d.count = 1;
 
 	char tmp[128] = {0};
 	if(g_xdag_state < XDAG_STATE_XFER) {
-		sprintf(tmp, "Not ready to show balances. Type 'state' command to see the reason.\n");
+		sprintf(tmp, "Not ready to show balances. Type 'state' command to see the reason.");
 	}
 	xdag_traverse_our_blocks(&d, &account_callback);
 
 	*out = strdup(strcat(tmp, d.out));
+
+	return error_none;
 }
 
-void processBalanceCommand(char *address, char **out)
+xdag_error_no processAddressCommand(char **out)
+{
+	struct account_callback_data d;
+	d.count = 1;
+
+	char tmp[33] = {0};
+
+	xdag_hash_t hash;
+	xdag_get_our_block(hash);
+	xdag_hash2address(hash, tmp);
+
+	*out = strdup(tmp);
+
+	return error_none;
+}
+
+xdag_error_no processBalanceCommand(const char *address, char **out)
 {
 	if(g_xdag_state < XDAG_STATE_XFER) {
-		*out = strdup("Not ready to show a balance. Type 'state' command to see the reason.\n");
+		*out = strdup("Not ready to show a balance. Type 'state' command to see the reason.");
+		return error_not_ready;
 	} else {
 		xdag_hash_t hash;
 		xdag_amount_t balance;
@@ -81,47 +100,54 @@ void processBalanceCommand(char *address, char **out)
 			balance = xdag_get_balance(0);
 		}
 		char result[128] = {0};
-		sprintf(result, "Balance: %.9Lf\n", amount2xdags(balance));
+		sprintf(result, "%.9Lf", amount2xdags(balance));
 		*out = strdup(result);
+
+		return error_none;
 	}
 }
 
-void processLevelCommand(char *level, char **out)
+xdag_error_no processLevelCommand(char *level, char **out)
 {
 	unsigned lv;
 	if(!level) {
 		char tmp[16];
 		sprintf(tmp, "%d\n", xdag_set_log_level(-1));
 		*out = strdup(tmp);
+		return error_none;
 	} else if(sscanf(level, "%u", &lv) != 1 || lv > XDAG_TRACE) {
 		*out = strdup("Illegal level.\n");
+		return error_incorrect_level;
 	} else {
 		xdag_set_log_level(lv);
+		return error_none;
 	}
 }
 
-void processXferCommand(char *amount, char *address, char **out)
+xdag_error_no processXferCommand(const char *amount, const char *address, char **out)
 {
 	if(!amount) {
-		*out = strdup("Xfer: amount not given.\n");
-		return;
+		*out = strdup("Xfer: amount not given.");
+		return error_xfer_no_amount;
 	}
 	if(!address) {
-		*out = strdup("Xfer: destination address not given.\n");
-		return;
+		*out = strdup("Xfer: destination address not given.");
+		return error_xfer_no_address;
 	}
 	if(xdag_user_crypt_action(0, 0, 0, 3)) {
 		sleep(3);
-		*out = strdup("Password incorrect.\n");
+		*out = strdup("Password incorrect.");
+		return error_pwd_incorrect;
 	} else {
-		xdag_do_xfer(amount, address, out);
+		return xdag_do_xfer(amount, address, out);
 	}
 }
 
 
-void processStateCommand(char **out)
+xdag_error_no processStateCommand(char **out)
 {
-	*out = strdup(get_state());
+	*out = strdup(xdag_get_state_str());
+	return error_none;
 }
 
 static int make_transaction_block(struct xfer_callback_data *xferData)
@@ -136,7 +162,7 @@ static int make_transaction_block(struct xfer_callback_data *xferData)
 		xdag_hash2address(xferData->fields[xferData->fieldsCount].hash, address);
 		xdag_err(error_block_create, "FAILED: to %s xfer %.9Lf %s, error %d",
 			address, amount2xdags(xferData->todo), COINNAME, res);
-		return -1;
+		return error_block_create;
 	}
 	xferData->done += xferData->todo;
 	xferData->todo = 0;
@@ -146,7 +172,7 @@ static int make_transaction_block(struct xfer_callback_data *xferData)
 	return 0;
 }
 
-int xdag_do_xfer(const char *amount, const char *address, char **out)
+xdag_error_no xdag_do_xfer(const char *amount, const char *address, char **out)
 {
 	char address_buf[33];
 	char result[256] = {0};
@@ -155,28 +181,36 @@ int xdag_do_xfer(const char *amount, const char *address, char **out)
 	memset(&xfer, 0, sizeof(xfer));
 	xfer.remains = xdags2amount(amount);
 	if(!xfer.remains) {
-		*out = strdup("Xfer: nothing to transfer.\n");
-		return 1;
+		*out = strdup("Xfer: nothing to transfer.");
+		return error_xfer_nothing;
 	}
+
 	if(xfer.remains > xdag_get_balance(0)) {
-		*out = strdup("Xfer: balance too small.\n");
-		return 1;
+		*out = strdup("Xfer: balance too small.");
+		return error_xfer_too_small;
 	}
+
 	if(xdag_address2hash(address, xfer.fields[XFER_MAX_IN].hash)) {
-		*out = strdup("Xfer: incorrect address.\n");
-		return 1;
+		*out = strdup("Xfer: incorrect address.");
+		return error_xfer_incorrect_address;
 	}
+
 	xdag_wallet_default_key(&xfer.keys[XFER_MAX_IN]);
 	xfer.outsig = 1;
 	g_xdag_state = XDAG_STATE_XFER;
 	g_xdag_xfer_last = time(0);
-	xdag_traverse_our_blocks(&xfer, &xfer_callback);
-//	xdag_hash2address(xfer.fields[XFER_MAX_IN].hash, address_buf);
-	xdag_hash2address(xfer.transactionBlockHash, address_buf);
-	sprintf(result, "Xfer: transferred %.9Lf %s to the address %s\nTx block address is %s\n", amount2xdags(xfer.done), COINNAME, address, address_buf);
 
+	int err = xdag_traverse_our_blocks(&xfer, &xfer_callback);
+	if(err != 0 && err != 1) {
+		sprintf(result, "%.9Lf", amount2xdags(xfer.done));
+		return err;
+	}
+
+	xdag_hash2address(xfer.transactionBlockHash, address_buf);
+	sprintf(result, "%s", address_buf);
 	*out = strdup(result);
-	return 0;
+
+	return error_none;
 }
 
 int xfer_callback(void *data, xdag_hash_t hash, xdag_amount_t amount, xdag_time_t time, int n_our_key)
@@ -185,7 +219,7 @@ int xfer_callback(void *data, xdag_hash_t hash, xdag_amount_t amount, xdag_time_
 	xdag_amount_t todo = xferData->remains;
 	int i;
 	if(!amount) {
-		return -1;
+		return error_xfer_nothing;
 	}
 	for(i = 0; i < xferData->keysCount; ++i) {
 		if(n_our_key == xferData->keys[i]) {
@@ -199,8 +233,9 @@ int xfer_callback(void *data, xdag_hash_t hash, xdag_amount_t amount, xdag_time_
 		xferData->outsig = 0;
 	}
 	if(Nfields(xferData) > XDAG_BLOCK_FIELDS) {
-		if(make_transaction_block(xferData)) {
-			return -1;
+		int err = make_transaction_block(xferData);
+		if(err) {
+			return err;
 		}
 		xferData->keys[xferData->keysCount++] = n_our_key;
 		if(xferData->keys[XFER_MAX_IN] == n_our_key) {
@@ -216,10 +251,11 @@ int xfer_callback(void *data, xdag_hash_t hash, xdag_amount_t amount, xdag_time_
 	xferData->remains -= todo;
 	xdag_log_xfer(hash, xferData->fields[XFER_MAX_IN].hash, todo);
 	if(!xferData->remains || Nfields(xferData) == XDAG_BLOCK_FIELDS) {
-		if(make_transaction_block(xferData)) {
-			return -1;
+		int err = make_transaction_block(xferData);
+		if(err) {
+			return err;
 		}
-		if(!xferData->remains) {
+		if(!xferData->remains) { // xfer done
 			return 1;
 		}
 	}
@@ -234,31 +270,26 @@ void xdag_log_xfer(xdag_hash_t from, xdag_hash_t to, xdag_amount_t amount)
 	xdag_mess("Xfer : from %s to %s xfer %.9Lf %s", address_from, address_to, amount2xdags(amount), COINNAME);
 }
 
-void processExitCommand()
+xdag_error_no processExitCommand()
 {
 	xdag_wallet_finish();
 	xdag_storage_finish();
 	xdag_blocks_finish();
+
+	return error_none;
 }
 
-void processHelpCommand(char **out)
+xdag_error_no processHelpCommand(char **out)
 {
 	*out = strdup("Commands:\n"
-		"  account [N]         - print first N (20 by default) our addresses with their amounts\n"
-		"  balance [A]         - print balance of the address A or total balance for all our addresses\n"
+		"  account             - print our address with their amounts\n"
+		"  address             - print our address\n"
+		"  balance             - print balance of the address A or total balance for all our addresses\n"
 		"  level [N]           - print level of logging or set it to N (0 - nothing, ..., 9 - all)\n"
 		"  state               - print the program state\n"
 		"  xfer S A            - transfer S our xdag to the address A\n"
 		"  exit                - exit this program\n"
 		"  help                - print this help\n");
-}
 
-const char *get_state()
-{
-	static const char *states[] = {
-#define xdag_state(n,s) s ,
-#include "state.h"
-#undef xdag_state
-	};
-	return states[g_xdag_state];
+	return error_none;
 }

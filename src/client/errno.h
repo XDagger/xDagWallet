@@ -23,6 +23,8 @@ typedef enum {
 	error_init_task_failed			= 0x1006,
 	error_init_crypt_failed			= 0x1007,
 	error_missing_param				= 0x1008,
+	error_not_ready					= 0x1009,
+	error_incorrect_level			= 0x100A,
 
 	// storage
 	error_storage_load_faild		= 0x2001,
@@ -34,7 +36,11 @@ typedef enum {
 	// xfer
 	error_xfer_nothing				= 0x3001,
 	error_xfer_too_small			= 0x3002,
-	error_xfer_address				= 0x3003,
+	error_xfer_incorrect_address	= 0x3003,
+	error_xfer_no_address			= 0x3004,
+	error_xfer_no_amount			= 0x3005,
+	error_xfer_not_ready			= 0x3006,
+	error_xfer_make_failed			= 0x3007,
 
 	// block
 	error_block_create				= 0x4001,

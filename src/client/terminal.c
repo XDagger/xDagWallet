@@ -11,28 +11,30 @@
 #include <string.h>
 #include <stdlib.h>
 
-typedef int (*xdag_com_func_t)(char*, FILE *);
+typedef int (*xdag_com_func_t)(char *, FILE *);
 typedef struct {
 	char *name;				/* command name */
 	xdag_com_func_t func;	/* command function */
 } XDAG_COMMAND;
 
 
-int read_command(char* cmd);
+int read_command(char *cmd);
 int xdag_command(char *cmd, FILE *out);
 
-int xdag_com_account(char *, FILE*);
-int xdag_com_balance(char *, FILE*);
-int xdag_com_level(char *, FILE*);
-int xdag_com_xfer(char *, FILE*);
-int xdag_com_state(char *, FILE*);
-int xdag_com_help(char *, FILE*);
-int xdag_com_exit(char *, FILE*);
+int xdag_com_account(char *, FILE *);
+int xdag_com_address(char *, FILE *);
+int xdag_com_balance(char *, FILE *);
+int xdag_com_level(char *, FILE *);
+int xdag_com_xfer(char *, FILE *);
+int xdag_com_state(char *, FILE *);
+int xdag_com_help(char *, FILE *);
+int xdag_com_exit(char *, FILE *);
 
 XDAG_COMMAND* find_xdag_command(char*);
 
 XDAG_COMMAND commands[] = {
 	{ "account"    , xdag_com_account },
+	{ "address"    , xdag_com_address },
 	{ "balance"    , xdag_com_balance },
 	{ "level"      , xdag_com_level },
 	{ "xfer"       , xdag_com_xfer },
@@ -45,17 +47,24 @@ XDAG_COMMAND commands[] = {
 
 int xdag_com_account(char *args, FILE* out)
 {
-	int count = 1;
 	char *result = NULL;
-	char *cmd = strtok_r(args, " \t\r\n", &args);
-	if(cmd) {
-		sscanf(cmd, "%d", &count);
-	}
-
-	processAccountCommand(count, &result);
+	processAccountCommand(&result);
 
 	if(result) {
-		fprintf(out, "%s", result);
+		fprintf(out, "%s\n", result);
+		free(result);
+	}
+
+	return 0;
+}
+
+int xdag_com_address(char *args, FILE* out)
+{
+	char *result = NULL;
+	processAddressCommand(&result);
+
+	if(result) {
+		fprintf(out, "%s\n", result);
 		free(result);
 	}
 
@@ -70,7 +79,7 @@ int xdag_com_balance(char *args, FILE* out)
 	processBalanceCommand(address, &result);
 
 	if(result) {
-		fprintf(out, "%s", result);
+		fprintf(out, "%s\n", result);
 		free(result);
 	}
 
@@ -86,7 +95,7 @@ int xdag_com_xfer(char *args, FILE* out)
 	processXferCommand(amount, address, &result);
 
 	if(result) {
-		fprintf(out, "%s", result);
+		fprintf(out, "%s\n", result);
 		free(result);
 	}
 
@@ -100,7 +109,7 @@ int xdag_com_level(char *args, FILE* out)
 	processLevelCommand(cmd, &result);
 
 	if(result) {
-		fprintf(out, "%s", result);
+		fprintf(out, "%s\n", result);
 		free(result);
 	}
 	return 0;
@@ -147,22 +156,6 @@ XDAG_COMMAND* find_xdag_command(char *name)
 	return (XDAG_COMMAND *)NULL;
 }
 
-void startCommandProcessing(void)
-{
-	char cmd[XDAG_COMMAND_MAX];
-	printf("Type command, help for example.\n");
-
-	for(;;) {
-		read_command(cmd);
-		if(strlen(cmd) > 0) {
-			int ret = xdag_command(cmd, stdout);
-			if(ret < 0) {
-				break;
-			}
-		}
-	}
-}
-
 int xdag_command(char *cmd, FILE *out)
 {
 	char *nextParam;
@@ -186,5 +179,21 @@ int read_command(char *cmd)
 	fflush(stdout);
 	fgets(cmd, XDAG_COMMAND_MAX, stdin);
 	return 0;
+}
+
+void startCommandProcessing(void)
+{
+	char cmd[XDAG_COMMAND_MAX];
+	printf("Type command, help for example.\n");
+
+	for(;;) {
+		read_command(cmd);
+		if(strlen(cmd) > 0) {
+			int ret = xdag_command(cmd, stdout);
+			if(ret < 0) {
+				break;
+			}
+		}
+	}
 }
 

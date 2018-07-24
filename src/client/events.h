@@ -15,10 +15,12 @@
 typedef enum {
 	event_id_log,
 	event_id_interact,
+	
 	event_id_xfer_done,
 	event_id_passwd,
 	event_id_passwd_again,
 	event_id_random_key,
+	event_id_state_change,
 
 	// no error
 	event_id_error_none						= 0x1000,
