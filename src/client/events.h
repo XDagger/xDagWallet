@@ -15,7 +15,7 @@
 typedef enum {
 	event_id_log,
 	event_id_interact,
-	event_id_err,
+//	event_id_err,
 	event_id_err_exit,
 
 	// command result

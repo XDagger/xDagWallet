@@ -95,12 +95,12 @@ int event_callback(void* thisObj, xdag_event *event)
 			break;
 		}
 
-		case event_id_err:
-		{
-			fprintf(stdout, "error : %x, msg : %s\n", event->error_no, event->event_data);
-			fflush(stdout);
-			break;
-		}
+//		case event_id_err:
+//		{
+//			fprintf(stdout, "error : %x, msg : %s\n", event->error_no, event->event_data);
+//			fflush(stdout);
+//			break;
+//		}
 
 		case event_id_err_exit:
 		{

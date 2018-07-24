@@ -51,7 +51,10 @@ int xdag_wrapper_init(void* thisObj, xdag_password_callback_t password, xdag_eve
 	return 0;
 }
 
-
+int xdag_wrapper_init_client(const char *args)
+{
+	return 0;
+}
 
 int xdag_wrapper_xfer(const char *amount, const char *to)
 {
@@ -59,7 +62,7 @@ int xdag_wrapper_xfer(const char *amount, const char *to)
 	int err = processXferCommand(amount, to, &result);
 
 	if(err != error_none) {
-		xdag_wrapper_event(event_id_err, err, result);
+		xdag_wrapper_event(event_id_log, err, result);
 	} else {
 		xdag_wrapper_event(event_id_xfer_done, 0, result);
 	}
@@ -76,7 +79,7 @@ int xdag_wrapper_account(void)
 	int err = processAccountCommand(&result);
 
 	if(err != error_none) {
-		xdag_wrapper_event(event_id_err, err, result);
+		xdag_wrapper_event(event_id_log, err, result);
 	} else {
 		xdag_wrapper_event(event_id_account_done, 0, result);
 	}
@@ -93,7 +96,7 @@ int xdag_wrapper_address(void)
 	int err = processAddressCommand(&result);
 
 	if(err != error_none) {
-		xdag_wrapper_event(event_id_err, err, result);
+		xdag_wrapper_event(event_id_log, err, result);
 	} else {
 		xdag_wrapper_event(event_id_address_done, 0, result);
 	}
@@ -110,7 +113,7 @@ int xdag_wrapper_balance(void)
 	int err = processBalanceCommand(&result);
 
 	if(err != error_none) {
-		xdag_wrapper_event(event_id_err, err, result);
+		xdag_wrapper_event(event_id_log, err, result);
 	} else {
 		xdag_wrapper_event(event_id_balance_done, 0, result);
 	}
@@ -126,7 +129,7 @@ int xdag_wrapper_level(const char *level)
 	char *result = NULL;
 	int err = processLevelCommand(level, &result);
 	if(err != error_none) {
-		xdag_wrapper_event(event_id_err, err, result);
+		xdag_wrapper_event(event_id_log, err, result);
 	} else {
 		xdag_wrapper_event(event_id_level_done, 0, result);
 	}
@@ -144,7 +147,7 @@ int xdag_wrapper_state(void)
 	int err = processStateCommand(&result);
 
 	if(err != error_none) {
-		xdag_wrapper_event(event_id_err, err, result);
+		xdag_wrapper_event(event_id_log, err, result);
 	} else {
 		xdag_wrapper_event(event_id_state_done, 0, result);
 	}
