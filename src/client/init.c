@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 #include "version.h"
@@ -64,19 +65,6 @@ int xdag_init(int argc, char **argv, int isGui)
 }
 
 #define XDAG_LOG_FILE "xdag.log"
-int log_callback(int level, xdag_error_no err, char *buffer)
-{
-	FILE *f;
-	char buf[64] = {0};
-	sprintf(buf, XDAG_LOG_FILE);
-	f = xdag_open_file(buf, "a");
-	if (f) {
-		fprintf(f, "%s\n", buffer);
-	}
-
-	xdag_close_file(f);
-	return 0;
-}
 
 int event_callback(void* thisObj, xdag_event *event)
 {
@@ -104,6 +92,87 @@ int event_callback(void* thisObj, xdag_event *event)
 		{
 			fprintf(stdout, "%s\n", event->event_data);
 			fflush(stdout);
+			break;
+		}
+
+		case event_id_err:
+		{
+			fprintf(stdout, "error : %x, msg : %s\n", event->error_no, event->event_data);
+			fflush(stdout);
+			break;
+		}
+
+		case event_id_err_exit:
+		{
+			fprintf(stdout, "error : %x, msg : %s\n", event->error_no, event->event_data);
+			fflush(stdout);
+			xdag_wrapper_exit();
+			pthread_cancel(g_client_thread);
+			exit(1);
+			break;
+		}
+
+		case event_id_account_done:
+		{
+			fprintf(stdout, "%s\n", event->event_data);
+			fflush(stdout);
+			break;
+		}
+
+		case event_id_address_done:
+		{
+			fprintf(stdout, "%s\n", event->event_data);
+			fflush(stdout);
+			break;
+		}
+
+		case event_id_balance_done:
+		{
+			fprintf(stdout, "%s\n", event->event_data);
+			fflush(stdout);
+			break;
+		}
+
+		case event_id_xfer_done:
+		{
+			fprintf(stdout, "%s\n", event->event_data);
+			fflush(stdout);
+			break;
+		}
+
+		case event_id_level_done:
+		{
+			fprintf(stdout, "%s\n", event->event_data);
+			fflush(stdout);
+			break;
+		}
+
+		case event_id_state_done:
+		{
+			fprintf(stdout, "%s\n", event->event_data);
+			fflush(stdout);
+			break;
+		}
+
+		case event_id_exit_done:
+		{
+			fprintf(stdout, "%s\n", event->event_data);
+			fflush(stdout);
+			break;
+		}
+
+		case event_id_passwd:
+		{
+			break;
+		}
+
+		case event_id_passwd_again:
+		{
+			break;
+		}
+
+		case event_id_random_key:
+		{
 			break;
 		}
 

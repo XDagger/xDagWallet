@@ -51,6 +51,8 @@ int xdag_wrapper_init(void* thisObj, xdag_password_callback_t password, xdag_eve
 	return 0;
 }
 
+
+
 int xdag_wrapper_xfer(const char *amount, const char *to)
 {
 	char *result = NULL;

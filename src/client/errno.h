@@ -31,6 +31,13 @@ typedef enum {
 	error_missing_param				= 0x1008,
 	error_not_ready					= 0x1009,
 	error_incorrect_level			= 0x100A,
+	error_init_log					= 0x100B,
+	error_init_crypto				= 0x100C,
+	error_init_wallet				= 0x100D,
+	error_init_address				= 0x100E,
+	error_init_block				= 0x1010,
+	error_init_task					= 0x1011,
+	error_start_crypto				= 0x1012,
 
 	// storage
 	error_storage_load_faild		= 0x2001,

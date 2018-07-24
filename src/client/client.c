@@ -42,6 +42,8 @@
 #define BLOCK_HEADER_WORD  0x3fca9e2bu
 
 time_t g_xdag_last_received = 0;
+pthread_t g_client_thread;
+
 
 struct xdag_pool_task g_xdag_pool_task[2];
 uint64_t g_xdag_pool_task_index;
@@ -98,9 +100,8 @@ int xdag_client_init(const char *pool_arg)
 #endif
 
 	printf("%s\n", pool_arg);
-
-	pthread_t th;
-	int err = pthread_create(&th, 0, client_thread, (void*)pool_arg);
+	
+	int err = pthread_create(&g_client_thread, 0, client_thread, (void*)pool_arg);
 	if(err != 0) {
 		printf("create client_thread failed, error : %s\n", strerror(err));
 		return -1;
@@ -190,21 +191,40 @@ int client_init(void)
 	printf("Initialize...\n");
 	if (dnet_crypt_init(DNET_VERSION)) {
 		sleep(3);
-		printf("Password incorrect.\n");
+		xdag_wrapper_event(event_id_err_exit, error_pwd_incorrect, "Password incorrect.\n");
 		return -1;
 	}
 
-	if (xdag_log_init()) return -1;
+	if (xdag_log_init()) {
+		xdag_wrapper_event(event_id_err_exit, error_init_log, "Init log failed.\n");
+		return -1;
+	}
 
 	xdag_mess("Initializing cryptography...");
-	if (xdag_crypt_init(1)) return -1;
+	if (xdag_crypt_init(1)) {
+		xdag_wrapper_event(event_id_err_exit, error_init_crypto, "Init crypto failed.\n");
+		return -1;
+	}
+
 	xdag_mess("Reading wallet...");
-	if (xdag_wallet_init()) return -1;
+	if (xdag_wallet_init()) {
+		xdag_wrapper_event(event_id_err_exit, error_init_wallet, "Init wallet failed.\n");
+		return -1;
+	}
+
 	xdag_mess("Initializing addresses...");
-	if (xdag_address_init()) return -1;
+	if (xdag_address_init()) {
+		xdag_wrapper_event(event_id_err_exit, error_init_address, "Init wallet failed.\n");
+		return -1;
+	}
 
 	xdag_mess("Starting blocks engine...");
-	if (xdag_blocks_start()) return -1;
+	if (xdag_blocks_start()) {
+		xdag_wrapper_event(event_id_err_exit, error_init_block, "load blocks failed.\n");
+		return -1;
+	}
+
+	xdag_wrapper_event(event_id_err_exit, error_unknown, "unkown error\n");
 
 	//	if(is_rpc) {
 	//		xdag_mess("Initializing RPC service...");
@@ -216,13 +236,13 @@ int client_init(void)
 		g_xdag_pool_task[i].ctx = malloc(xdag_hash_ctx_size());
 
 		if(!g_xdag_pool_task[i].ctx0 || !g_xdag_pool_task[i].ctx) {
-			xdag_err(error_init_task_failed,"init task failed.");
+			xdag_wrapper_event(event_id_err_exit, error_init_task, "Init task failed.\n");
 			return -1;
 		}
 	}
 
 	if(crypt_start()) {
-		xdag_err(error_init_crypt_failed,"crypt start failed.");
+		xdag_wrapper_event(event_id_err_exit, error_start_crypto, "crypt start failed.\n");
 		return -1;
 	}
 

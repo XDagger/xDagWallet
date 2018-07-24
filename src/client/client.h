@@ -11,6 +11,7 @@ struct xdag_pool_task {
 };
 
 extern time_t g_xdag_last_received;
+extern pthread_t g_client_thread;
 
 #ifdef __cplusplus
 extern "C" {
