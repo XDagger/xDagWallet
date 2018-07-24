@@ -44,36 +44,5 @@ typedef unsigned int		dfs32;
 typedef unsigned short		dfs16;
 typedef unsigned char		dfs8;
 
-typedef dfs32			dfs_atomic;
-typedef dfs64			dfs_atomic64;
-typedef void *			dfs_mutex;
-
-/* common platform-dependent operations */
-struct dfslib_platform_op {
-	void *		(*malloc)(unsigned long size);
-	void 		(*free)(void *mem);
-	void		(*memcpy)(void *to, const void *from, unsigned long size);
-	dfs64		(*time)(void); /* current time in nanoseconds since 1.1.1970 UTC */
-	void 		(*pause)(void); /* run another processes */
-	void 		(*alert)(const char *mess, dfs64 arg1, dfs64 arg2);
-	dfs32		(*div)(dfs64 *n, dfs32 base); /* *n /= base; return *n % base */
-
-	dfs32		(*atomic_read)(dfs_atomic *ptr);
-	void		(*atomic_set)(dfs_atomic *ptr, dfs32 value);
-	dfs32		(*atomic_inc_return)(dfs_atomic *ptr);
-	dfs32		(*atomic_dec_return)(dfs_atomic *ptr);
-	dfs32		(*atomic_cmpxchg)(dfs_atomic *ptr, dfs32 old_, dfs32 new_);
-
-	dfs64		(*atomic64_read)(dfs_atomic64 *ptr);
-	void		(*atomic64_set)(dfs_atomic64 *ptr, dfs64 value);
-	dfs64		(*atomic64_inc_return)(dfs_atomic64 *ptr);
-	dfs64		(*atomic64_dec_return)(dfs_atomic64 *ptr);
-	dfs64		(*atomic64_cmpxchg)(dfs_atomic64 *ptr, dfs64 old_, dfs64 new_);
-
-	dfs_mutex	(*mutex_init)(void); /* allocate and init mutex */
-	void		(*mutex_lock)(dfs_mutex mutex);
-	void		(*mutex_unlock)(dfs_mutex mutex);
-	void		(*mutex_fini)(dfs_mutex mutex); /* finish and free mutex */
-};
 
 #endif
