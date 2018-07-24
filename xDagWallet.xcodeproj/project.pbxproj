@@ -72,8 +72,6 @@
 		38CF257A20E7E6DE0058B19B /* dfslib_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dfslib_types.h; sourceTree = "<group>"; };
 		38CF257B20E7E6DE0058B19B /* dfsrsa.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dfsrsa.c; sourceTree = "<group>"; };
 		38CF257C20E7E6DE0058B19B /* dfsrsa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dfsrsa.h; sourceTree = "<group>"; };
-		38CF257E20E7E6DE0058B19B /* atomic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = atomic.h; sourceTree = "<group>"; };
-		38CF257F20E7E6DE0058B19B /* list.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = list.h; sourceTree = "<group>"; };
 		38CF258020E7E6DE0058B19B /* rbtree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rbtree.h; sourceTree = "<group>"; };
 		38CF258220E7E6DE0058B19B /* address.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = address.c; sourceTree = "<group>"; };
 		38CF258320E7E6DE0058B19B /* address.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = address.h; sourceTree = "<group>"; };
@@ -171,8 +169,6 @@
 		38CF257D20E7E6DE0058B19B /* ldus */ = {
 			isa = PBXGroup;
 			children = (
-				38CF257E20E7E6DE0058B19B /* atomic.h */,
-				38CF257F20E7E6DE0058B19B /* list.h */,
 				38CF258020E7E6DE0058B19B /* rbtree.h */,
 			);
 			path = ldus;
