@@ -50,5 +50,19 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
-xDagWallet.xcodeproj/project.xcworkspace/xcshareddata
-xDagWallet.xcodeproj/project.xcworkspace
+
+######### Folders ########
+
+# mac
+mac/xDagWallet.xcodeproj/project.xcworkspace/xcshareddata
+mac/xDagWallet.xcodeproj/project.xcworkspace
+
+
+# dotnet
+dotnet/.vs/
+dotnet/packages/
+dotnet/core/Debug/
+dotnet/xdagwallet/bin/
+dotnet/xdagwallet/obj/
+
+dotnet/xdagwalletCLI/x64/

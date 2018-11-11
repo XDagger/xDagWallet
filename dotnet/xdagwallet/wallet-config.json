@@ -1,0 +1,9 @@
+﻿{
+    "version": "0.1.0",
+    "wallet_options": {
+        "rpc_enabled": false,
+        "rpc_port": null,
+        "is_test_net": false,
+        "disable_mining": true
+    }
+}

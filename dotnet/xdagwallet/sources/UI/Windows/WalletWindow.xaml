@@ -1,0 +1,30 @@
+﻿<Window x:Class="XDagNetWallet.UI.Windows.WalletWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:local="clr-namespace:XDagNetWallet.UI.Windows"
+        mc:Ignorable="d"
+        Title="XDag Wallet" Height="235.333" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Ellipse x:Name="ellPortrait" Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="109" Margin="27,25,0,0" Stroke="Black" VerticalAlignment="Top" Width="110"/>
+        <Label x:Name="lblBalance" Content="0.000000000" Margin="256,27,189.333,123" FontSize="36" FontWeight="Bold" FontFamily="Arial Black"/>
+        <Label x:Name="lblAddressTitle" Content="Wallet Address: " HorizontalAlignment="Left" Margin="165,103,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.974,0.603" Width="108" Height="30" FontSize="14"/>
+        <Label x:Name="lblBalanceTitle" Content="Balance:" HorizontalAlignment="Left" Margin="166,38,0,0" VerticalAlignment="Top" Width="85" Height="45" FontSize="18" FontWeight="Bold"/>
+        
+        <Label x:Name="lblStatusTitle" Content="Status: " HorizontalAlignment="Left" Margin="12,139,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.974,0.603" Width="49" FontSize="14"/>
+        <Label x:Name="lblWalletStatus" Content="" Margin="66,139,574.333,0" VerticalAlignment="Top" RenderTransformOrigin="-0.974,0.603" FontSize="14"/>
+        <TextBox x:Name="txtWalletAddress" Height="30" Margin="278,103,224.333,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" FontSize="14" IsEnabled="False"/>
+        <Button x:Name="btnCopyWalletAddress" Content="#" HorizontalAlignment="Left" Margin="574,103,0,0" VerticalAlignment="Top" Width="30" Height="30" Click="btnCopyWalletAddress_Click"/>
+        <Button x:Name="btnTransfer" Content="Transfer" Margin="0,68,20.333,0" VerticalAlignment="Top" Height="66" FontSize="24" HorizontalAlignment="Right" Width="136" Click="btnTransfer_Click"/>
+        <xctk:SplitButton Name="btnLang" Content="Lang 文" Height="20" Margin="0,10,20.333,0" VerticalAlignment="Top" TabIndex="2" HorizontalAlignment="Right" Width="74" >
+            <xctk:SplitButton.DropDownContent>
+                <Grid>
+                    <Button Name="btnLangEN" Content="English" Height="20" Width="95" Margin="0,20,0,0" VerticalAlignment="Top" Click="btnLangEN_Click" />
+                    <Button Name="btnLangZH" Content="中文" Height="20" Width="95" Margin="0,0,0,0" VerticalAlignment="Top" Click="btnLangZH_Click" />
+                </Grid>
+            </xctk:SplitButton.DropDownContent>
+        </xctk:SplitButton>
+    </Grid>
+</Window>

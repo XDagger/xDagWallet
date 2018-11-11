@@ -1,0 +1,261 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="LogonWindow_ConnectingAccount" xml:space="preserve">
+    <value>Connection account...</value>
+  </data>
+  <data name="LogonWindow_ConnectWallet" xml:space="preserve">
+    <value>Connect Wallet</value>
+  </data>
+  <data name="LogonWindow_RegisterWallet" xml:space="preserve">
+    <value>Create New Wallet</value>
+  </data>
+  <data name="LogonWindow_SearchingConnection" xml:space="preserve">
+    <value>Searching connection...</value>
+  </data>
+  <data name="LogonWindow_Title" xml:space="preserve">
+    <value>Welcome to XDAG Wallet</value>
+  </data>
+  <data name="Common_ConfirmTitle" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  <data name="Common_MessageTitle" xml:space="preserve">
+    <value>Message</value>
+  </data>
+  <data name="Message_PasswordIncorrect" xml:space="preserve">
+    <value>Password is incorrect</value>
+  </data>
+  <data name="PasswordWindow_Enter" xml:space="preserve">
+    <value>Enter</value>
+  </data>
+  <data name="PasswordWindow_InputPassword" xml:space="preserve">
+    <value>Input Password:</value>
+  </data>
+  <data name="PasswordWindow_RetypePassword" xml:space="preserve">
+    <value>Re-type Password:</value>
+  </data>
+  <data name="PasswordWindow_SetPassword" xml:space="preserve">
+    <value>Set Password:</value>
+  </data>
+  <data name="WalletState_ConnectedAndMining" xml:space="preserve">
+    <value>Connected and mining</value>
+  </data>
+  <data name="WalletState_ConnectedNetwork" xml:space="preserve">
+    <value>Connected to network</value>
+  </data>
+  <data name="WalletState_ConnectedPool" xml:space="preserve">
+    <value>Connected to pool</value>
+  </data>
+  <data name="WalletState_ConnectingNetwork" xml:space="preserve">
+    <value>Connecting to network...</value>
+  </data>
+  <data name="WalletState_ConnectingPool" xml:space="preserve">
+    <value>Connecting to pool...</value>
+  </data>
+  <data name="WalletState_Idle" xml:space="preserve">
+    <value>Idle</value>
+  </data>
+  <data name="WalletState_LoadingBlocks" xml:space="preserve">
+    <value>Loading blocks...</value>
+  </data>
+  <data name="WalletState_None" xml:space="preserve">
+    <value>Not Exists</value>
+  </data>
+  <data name="WalletState_Registering" xml:space="preserve">
+    <value>Registering...</value>
+  </data>
+  <data name="WalletState_ResetingEngine" xml:space="preserve">
+    <value>Reseting engine...</value>
+  </data>
+  <data name="WalletState_Stopped" xml:space="preserve">
+    <value>Stopped</value>
+  </data>
+  <data name="WalletState_Synchronized" xml:space="preserve">
+    <value>Synchronized</value>
+  </data>
+  <data name="WalletState_Synchronizing" xml:space="preserve">
+    <value>Synchronizing...</value>
+  </data>
+  <data name="WalletState_TransferPending" xml:space="preserve">
+    <value>Transfer pending...</value>
+  </data>
+  <data name="Common_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="LogonWindow_InitializeFailed" xml:space="preserve">
+    <value>Initializing Failed:</value>
+  </data>
+  <data name="LogonWindow_InitializingAccount" xml:space="preserve">
+    <value>Initialzing Account...</value>
+  </data>
+  <data name="LogonWindow_InitializingElapsedTime" xml:space="preserve">
+    <value>Elaspsed Time: [{0}] (Usually needs about 10-15 minutes)...</value>
+  </data>
+  <data name="PasswordWindow_PasswordMismatch" xml:space="preserve">
+    <value>Password is not matched with previous you enterred.</value>
+  </data>
+  <data name="TransferWindow_AccountFormatError" xml:space="preserve">
+    <value>Wallet Address format is incorrect.</value>
+  </data>
+  <data name="TransferWindow_AddressTitle" xml:space="preserve">
+    <value>To address:</value>
+  </data>
+  <data name="TransferWindow_AmountFormatError" xml:space="preserve">
+    <value>Amount should be a positive number.</value>
+  </data>
+  <data name="TransferWindow_CommitFailed" xml:space="preserve">
+    <value>Commit Transaction Failed:</value>
+  </data>
+  <data name="TransferWindow_CommitSuccess" xml:space="preserve">
+    <value>Transfer has been committed. Please wait for a while to get it done.</value>
+  </data>
+  <data name="TransferWindow_CommittingTransaction" xml:space="preserve">
+    <value>Committing transaction...</value>
+  </data>
+  <data name="TransferWindow_ConfirmTransfer" xml:space="preserve">
+    <value>Are you sure you want to transfer {0} XDAGs to [{1}]?</value>
+  </data>
+  <data name="TransferWindow_InsufficientAmount" xml:space="preserve">
+    <value>Your wallet balance is insufficient.</value>
+  </data>
+  <data name="TransferWindow_Title" xml:space="preserve">
+    <value>Transfer XDAG to address</value>
+  </data>
+  <data name="TransferWindow_TransferTitle" xml:space="preserve">
+    <value>Transfer</value>
+  </data>
+  <data name="WalletWindow_AddressCopied" xml:space="preserve">
+    <value>Wallet address has been copied to Clipboard.</value>
+  </data>
+  <data name="WalletWindow_AddressTitle" xml:space="preserve">
+    <value>Wallet Address:</value>
+  </data>
+  <data name="WalletWindow_BalanceTitle" xml:space="preserve">
+    <value>Balance:</value>
+  </data>
+  <data name="WalletWindow_StatusTitle" xml:space="preserve">
+    <value>Status:</value>
+  </data>
+  <data name="WalletWindow_Title" xml:space="preserve">
+    <value>XDag Wallet</value>
+  </data>
+  <data name="WalletWindow_TransferTitle" xml:space="preserve">
+    <value>Transfer</value>
+  </data>
+</root>

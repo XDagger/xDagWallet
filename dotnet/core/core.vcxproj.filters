@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="getopt.c" />
+    <ClCompile Include="..\..\core\client\address.c" />
+    <ClCompile Include="..\..\core\client\block.c" />
+    <ClCompile Include="..\..\core\client\client.c" />
+    <ClCompile Include="..\..\core\client\commands.c" />
+    <ClCompile Include="..\..\core\client\common.c" />
+    <ClCompile Include="..\..\core\client\crypt.c" />
+    <ClCompile Include="..\..\core\client\dnet_crypt.c" />
+    <ClCompile Include="..\..\core\client\hash.c" />
+    <ClCompile Include="..\..\core\client\init.c" />
+    <ClCompile Include="..\..\core\client\main.c" />
+    <ClCompile Include="..\..\core\client\sha256.c" />
+    <ClCompile Include="..\..\core\client\storage.c" />
+    <ClCompile Include="..\..\core\client\terminal.c" />
+    <ClCompile Include="..\..\core\client\wallet.c" />
+    <ClCompile Include="..\..\core\client\xdag_wrapper.c" />
+    <ClCompile Include="..\..\core\client\utils\log.c" />
+    <ClCompile Include="..\..\core\client\utils\utils.c" />
+    <ClCompile Include="..\..\core\dus\crc_c.c" />
+    <ClCompile Include="..\..\core\dus\dfslib_crypt.c" />
+    <ClCompile Include="..\..\core\dus\dfslib_random.c" />
+    <ClCompile Include="..\..\core\dus\dfslib_string.c" />
+    <ClCompile Include="..\..\core\dus\dfsrsa.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="unistd.h" />
+    <ClInclude Include="getopt.h" />
+    <ClInclude Include="..\..\core\client\address.h" />
+    <ClInclude Include="..\..\core\client\block.h" />
+    <ClInclude Include="..\..\core\client\client.h" />
+    <ClInclude Include="..\..\core\client\commands.h" />
+    <ClInclude Include="..\..\core\client\common.h" />
+    <ClInclude Include="..\..\core\client\crypt.h" />
+    <ClInclude Include="..\..\core\client\dnet_crypt.h" />
+    <ClInclude Include="..\..\core\client\errno.h" />
+    <ClInclude Include="..\..\core\client\events.h" />
+    <ClInclude Include="..\..\core\client\hash.h" />
+    <ClInclude Include="..\..\core\client\init.h" />
+    <ClInclude Include="..\..\core\client\sha256.h" />
+    <ClInclude Include="..\..\core\client\state.h" />
+    <ClInclude Include="..\..\core\client\storage.h" />
+    <ClInclude Include="..\..\core\client\terminal.h" />
+    <ClInclude Include="..\..\core\client\types.h" />
+    <ClInclude Include="..\..\core\client\version.h" />
+    <ClInclude Include="..\..\core\client\wallet.h" />
+    <ClInclude Include="..\..\core\client\xdag_wrapper.h" />
+    <ClInclude Include="..\..\core\client\utils\log.h" />
+    <ClInclude Include="..\..\core\client\utils\utils.h" />
+    <ClInclude Include="..\..\core\dus\crc_c.h" />
+    <ClInclude Include="..\..\core\dus\dfslib_crypt.h" />
+    <ClInclude Include="..\..\core\dus\dfslib_random.h" />
+    <ClInclude Include="..\..\core\dus\dfslib_string.h" />
+    <ClInclude Include="..\..\core\dus\dfslib_types.h" />
+    <ClInclude Include="..\..\core\dus\dfsrsa.h" />
+    <ClInclude Include="..\..\core\ldus\rbtree.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\pools\netdb-testnet.txt" />
+    <Text Include="..\..\pools\netdb-white-testnet.txt" />
+    <Text Include="..\..\pools\netdb-white.txt" />
+    <Text Include="..\..\pools\netdb.txt" />
+    <Text Include="..\..\pools\pools-testnet.txt" />
+    <Text Include="..\..\pools\pools.txt" />
+  </ItemGroup>
+</Project>
