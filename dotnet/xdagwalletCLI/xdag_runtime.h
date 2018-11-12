@@ -1,11 +1,14 @@
 #pragma once
 
+#pragma unmanaged
+
 #ifndef XDAG_RUNTIME_HEADER_H
 #define XDAG_RUNTIME_HEADER_H
 
 #include "stdafx.h"
 
 #define _TIMESPEC_DEFINED
+
 
 // This is to disable security warning from Visual C++
 //// #define _CRT_SECURE_NO_WARNINGS
@@ -78,7 +81,6 @@ int xdag_init_wrap(int argc, char **argv, int isGui)
 	}
 
 	xdag_set_event_callback(&xdag_event_callback);
-
 	if (xdag_client_init(pool_arg)) return -1;
 
 	return 0;

@@ -1,0 +1,61 @@
+ImageRuntimeVersion: v4.0.30319
+Assembly xdagwalletCLI, Version=0.0.*, Culture=Invariant Language (Invariant Country): 
+	hash=SHA1, flags=PublicKey
+Assembly mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Assembly System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Interface XDagNetWalletCLI.IXDagWallet: AutoLayout, AnsiClass, Class, Public, ClassSemanticsMask, Abstract, BeforeFieldInit
+  Methods:
+    OnPromptInputPassword(String, UInt32): PrivateScope, Public, Virtual, HideBySig, VtableLayoutMask, Abstract
+    OnUpdateState(String, String, String): PrivateScope, Public, Virtual, HideBySig, VtableLayoutMask, Abstract
+Class XDagNetWalletCLI.XDagRuntime: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+    Void .ctor(XDagNetWalletCLI.IXDagWallet): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Interfaces:
+    System.IDisposable
+  Methods:
+    InputPassword(SByte*, SByte*, UInt32): PrivateScope, Public, HideBySig
+    ShowState(SByte*, SByte*, SByte*): PrivateScope, Public, HideBySig
+    Start(): PrivateScope, Public, HideBySig
+    HasExistingAccount(): PrivateScope, Public, HideBySig
+    DoTesting(): PrivateScope, Public, HideBySig
+    TransferToAddress(String, Double): PrivateScope, Public, HideBySig
+    ValidateWalletAddress(String): PrivateScope, Public, HideBySig
+    Dispose(): PrivateScope, Public, Final, Virtual, HideBySig
+Class XDagNetWalletCLI.XDagRuntime+InputPasswordDelegate: AutoLayout, AnsiClass, Class, NestedPublic, Sealed, BeforeFieldInit
+  :System.MulticastDelegate
+    Void .ctor(System.Object, IntPtr): PrivateScope, Public, SpecialName, RTSpecialName
+  Methods:
+    Invoke(SByte*, SByte*, UInt32): PrivateScope, Public, Final, Virtual, VtableLayoutMask
+    BeginInvoke(SByte*, SByte*, UInt32, AsyncCallback, Object): PrivateScope, Public, Final, Virtual, VtableLayoutMask
+    EndInvoke(IAsyncResult): PrivateScope, Public, Final, Virtual, VtableLayoutMask
+Class XDagNetWalletCLI.XDagRuntime+ShowStateDelegate: AutoLayout, AnsiClass, Class, NestedPublic, Sealed, BeforeFieldInit
+  :System.MulticastDelegate
+    Void .ctor(System.Object, IntPtr): PrivateScope, Public, SpecialName, RTSpecialName
+  Methods:
+    Invoke(SByte*, SByte*, SByte*): PrivateScope, Public, Final, Virtual, VtableLayoutMask
+    BeginInvoke(SByte*, SByte*, SByte*, AsyncCallback, Object): PrivateScope, Public, Final, Virtual, VtableLayoutMask
+    EndInvoke(IAsyncResult): PrivateScope, Public, Final, Virtual, VtableLayoutMask
+Class XDagNetWalletCLI.XDagException: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Exception
+    Void .ctor(XDagNetWalletCLI.XDagErrorCode, System.String): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+Class XDagNetWalletCLI.XDagUserException: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :XDagNetWalletCLI.XDagException
+    Void .ctor(XDagNetWalletCLI.XDagErrorCode, System.String): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+Class XDagNetWalletCLI.PasswordIncorrectException: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :XDagNetWalletCLI.XDagUserException
+    Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+Class XDagNetWalletCLI.WalletAddressFormatException: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :XDagNetWalletCLI.XDagUserException
+    Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+Class XDagNetWalletCLI.InsufficientAmountException: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :XDagNetWalletCLI.XDagUserException
+    Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+Struct XDagNetWalletCLI.XDagErrorCode: AutoLayout, AnsiClass, Class, Public, Sealed, BeforeFieldInit
+  :System.Enum
+  Fields:
+    Int32 value__ : Public, SpecialName, RTSpecialName
+    XDagNetWalletCLI.XDagErrorCode PASSWORD_INCORRECT = 0 : Public, Static, Literal, HasDefault
+    XDagNetWalletCLI.XDagErrorCode PASSWORD_EMPTY = 1 : Public, Static, Literal, HasDefault
+    XDagNetWalletCLI.XDagErrorCode INSUFFICIENT_AMOUNT = 2 : Public, Static, Literal, HasDefault
+    XDagNetWalletCLI.XDagErrorCode ADDRESS_FORMAT_ERROR = 3 : Public, Static, Literal, HasDefault

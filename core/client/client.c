@@ -9,6 +9,9 @@
 
 #include "../win/unistd.h"
 #include <Winsock2.h>
+#include <windows.h>
+// need link with Ws2_32.lib
+#pragma comment(lib, "ws2_32.lib")
 
 #else
 #include <unistd.h>
@@ -363,7 +366,13 @@ begin:
 	}
 	if(!strcmp(s, "any")) {
 		peeraddr.sin_addr.s_addr = htonl(INADDR_ANY);
-	} else if(!inet_aton(s, &peeraddr.sin_addr)) {
+	} else if(
+#if defined(_WIN32) || defined(_WIN64)
+		!inet_pton(AF_INET, s, &peeraddr.sin_addr)
+#else
+		!inet_aton(s, &peeraddr.sin_addr)
+#endif
+		) {
 		struct hostent *host = gethostbyname(s);
 		if(host == NULL || host->h_addr_list[0] == NULL) {
 			xdag_err(error_socket_resolve_host, "cannot resolve host %s", s);
