@@ -156,7 +156,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\xdagnetwalletCLI\xdagnetwalletCLI.vcxproj">
+    <ProjectReference Include="..\xdagwalletCLI\xdagwalletCLI.vcxproj">
       <Project>{237579b0-457e-494b-93d0-f44080945a95}</Project>
       <Name>xdagnetwalletCLI</Name>
     </ProjectReference>

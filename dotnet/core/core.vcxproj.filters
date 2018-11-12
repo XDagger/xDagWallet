@@ -1,68 +1,212 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="getopt.c" />
-    <ClCompile Include="..\..\core\client\address.c" />
-    <ClCompile Include="..\..\core\client\block.c" />
-    <ClCompile Include="..\..\core\client\client.c" />
-    <ClCompile Include="..\..\core\client\commands.c" />
-    <ClCompile Include="..\..\core\client\common.c" />
-    <ClCompile Include="..\..\core\client\crypt.c" />
-    <ClCompile Include="..\..\core\client\dnet_crypt.c" />
-    <ClCompile Include="..\..\core\client\hash.c" />
-    <ClCompile Include="..\..\core\client\init.c" />
-    <ClCompile Include="..\..\core\client\main.c" />
-    <ClCompile Include="..\..\core\client\sha256.c" />
-    <ClCompile Include="..\..\core\client\storage.c" />
-    <ClCompile Include="..\..\core\client\terminal.c" />
-    <ClCompile Include="..\..\core\client\wallet.c" />
-    <ClCompile Include="..\..\core\client\xdag_wrapper.c" />
-    <ClCompile Include="..\..\core\client\utils\log.c" />
-    <ClCompile Include="..\..\core\client\utils\utils.c" />
-    <ClCompile Include="..\..\core\dus\crc_c.c" />
-    <ClCompile Include="..\..\core\dus\dfslib_crypt.c" />
-    <ClCompile Include="..\..\core\dus\dfslib_random.c" />
-    <ClCompile Include="..\..\core\dus\dfslib_string.c" />
-    <ClCompile Include="..\..\core\dus\dfsrsa.c" />
+    <ClCompile Include="..\..\core\client\address.c">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\core\client\block.c">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\core\client\client.c">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\core\client\commands.c">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\core\client\common.c">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\core\client\utils\log.c">
+      <Filter>client\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\core\client\utils\utils.c">
+      <Filter>client\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\core\client\crypt.c">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\core\client\hash.c">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\core\client\init.c">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\core\client\main.c">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\core\client\dnet_crypt.c">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\core\dus\crc_c.c">
+      <Filter>dus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\core\dus\dfslib_crypt.c">
+      <Filter>dus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\core\dus\dfslib_random.c">
+      <Filter>dus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\core\dus\dfslib_string.c">
+      <Filter>dus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\core\dus\dfsrsa.c">
+      <Filter>dus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\core\client\sha256.c">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\core\client\storage.c">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\core\client\terminal.c">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\core\client\wallet.c">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\core\client\xdag_wrapper.c">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\core\win\getopt.c">
+      <Filter>win</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="unistd.h" />
-    <ClInclude Include="getopt.h" />
-    <ClInclude Include="..\..\core\client\address.h" />
-    <ClInclude Include="..\..\core\client\block.h" />
-    <ClInclude Include="..\..\core\client\client.h" />
-    <ClInclude Include="..\..\core\client\commands.h" />
-    <ClInclude Include="..\..\core\client\common.h" />
-    <ClInclude Include="..\..\core\client\crypt.h" />
-    <ClInclude Include="..\..\core\client\dnet_crypt.h" />
-    <ClInclude Include="..\..\core\client\errno.h" />
-    <ClInclude Include="..\..\core\client\events.h" />
-    <ClInclude Include="..\..\core\client\hash.h" />
-    <ClInclude Include="..\..\core\client\init.h" />
-    <ClInclude Include="..\..\core\client\sha256.h" />
-    <ClInclude Include="..\..\core\client\state.h" />
-    <ClInclude Include="..\..\core\client\storage.h" />
-    <ClInclude Include="..\..\core\client\terminal.h" />
-    <ClInclude Include="..\..\core\client\types.h" />
-    <ClInclude Include="..\..\core\client\version.h" />
-    <ClInclude Include="..\..\core\client\wallet.h" />
-    <ClInclude Include="..\..\core\client\xdag_wrapper.h" />
-    <ClInclude Include="..\..\core\client\utils\log.h" />
-    <ClInclude Include="..\..\core\client\utils\utils.h" />
-    <ClInclude Include="..\..\core\dus\crc_c.h" />
-    <ClInclude Include="..\..\core\dus\dfslib_crypt.h" />
-    <ClInclude Include="..\..\core\dus\dfslib_random.h" />
-    <ClInclude Include="..\..\core\dus\dfslib_string.h" />
-    <ClInclude Include="..\..\core\dus\dfslib_types.h" />
-    <ClInclude Include="..\..\core\dus\dfsrsa.h" />
-    <ClInclude Include="..\..\core\ldus\rbtree.h" />
+    <ClInclude Include="..\..\core\client\address.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\client\block.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\client\client.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\client\commands.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\client\common.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\client\utils\log.h">
+      <Filter>client\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\client\utils\utils.h">
+      <Filter>client\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\client\crypt.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\client\hash.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\client\init.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\client\errno.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\client\events.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\client\dnet_crypt.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\dus\crc_c.h">
+      <Filter>dus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\dus\dfslib_crypt.h">
+      <Filter>dus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\dus\dfslib_random.h">
+      <Filter>dus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\dus\dfslib_string.h">
+      <Filter>dus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\dus\dfslib_types.h">
+      <Filter>dus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\dus\dfsrsa.h">
+      <Filter>dus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\ldus\rbtree.h">
+      <Filter>ldus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\client\sha256.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\client\state.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\client\storage.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\client\system.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\client\types.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\client\terminal.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\client\version.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\client\wallet.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\client\xdag_wrapper.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\win\getopt.h">
+      <Filter>win</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\win\unistd.h">
+      <Filter>win</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\win\wintime.h">
+      <Filter>win</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\..\pools\netdb-testnet.txt" />
-    <Text Include="..\..\pools\netdb-white-testnet.txt" />
-    <Text Include="..\..\pools\netdb-white.txt" />
-    <Text Include="..\..\pools\netdb.txt" />
-    <Text Include="..\..\pools\pools-testnet.txt" />
-    <Text Include="..\..\pools\pools.txt" />
+    <Text Include="..\..\pools\netdb.txt">
+      <Filter>pools</Filter>
+    </Text>
+    <Text Include="..\..\pools\netdb-testnet.txt">
+      <Filter>pools</Filter>
+    </Text>
+    <Text Include="..\..\pools\netdb-white.txt">
+      <Filter>pools</Filter>
+    </Text>
+    <Text Include="..\..\pools\netdb-white-testnet.txt">
+      <Filter>pools</Filter>
+    </Text>
+    <Text Include="..\..\pools\pools.txt">
+      <Filter>pools</Filter>
+    </Text>
+    <Text Include="..\..\pools\pools-testnet.txt">
+      <Filter>pools</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="client">
+      <UniqueIdentifier>{00f220af-72f1-43a1-a91e-1f3405349576}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dus">
+      <UniqueIdentifier>{117bc0a1-0baa-4089-abcc-bdb5d81d7bee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="client\utils">
+      <UniqueIdentifier>{917c72e3-c611-4948-aca8-41ac53d89877}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pools">
+      <UniqueIdentifier>{dc7e3bf0-eef6-4c64-bd3e-4c66f92f840b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ldus">
+      <UniqueIdentifier>{7f382ce5-99e1-47aa-92c4-d653061d5f62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="win">
+      <UniqueIdentifier>{98fdfa0f-c975-4f2a-912b-4403d64ca7a4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

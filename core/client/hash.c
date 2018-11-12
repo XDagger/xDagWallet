@@ -1,10 +1,16 @@
 #include <string.h>
 #ifdef SHA256_OPENSSL_MBLOCK
-#include <arpa/inet.h>
 #endif
 #include "sha256.h"
 #include "hash.h"
 #include "system.h"
+
+#if defined(_WIN32) || defined(_WIN64)
+//// #include <WinSock2.h>
+#else
+#include <arpa/inet.h>
+#endif
+
 
 void xdag_hash(void *data, size_t size, xdag_hash_t hash)
 {

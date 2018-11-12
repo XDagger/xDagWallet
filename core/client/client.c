@@ -4,6 +4,13 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <pthread.h>
+
+#if defined(_WIN32) || defined(_WIN64)
+
+#include "../win/unistd.h"
+#include <Winsock2.h>
+
+#else
 #include <unistd.h>
 #include <sys/socket.h>
 #include <sys/ioctl.h>
@@ -11,6 +18,8 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include "system.h"
+
+#endif
 #include "../dus/dfslib_crypt.h"
 #include "../dus/crc.h"
 #include "crypt.h"

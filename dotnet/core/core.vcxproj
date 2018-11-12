@@ -49,7 +49,7 @@
     <ClCompile Include="..\..\core\dus\dfslib_random.c" />
     <ClCompile Include="..\..\core\dus\dfslib_string.c" />
     <ClCompile Include="..\..\core\dus\dfsrsa.c" />
-    <ClCompile Include="getopt.c" />
+    <ClCompile Include="..\..\core\win\getopt.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\core\client\address.h" />
@@ -66,6 +66,7 @@
     <ClInclude Include="..\..\core\client\sha256.h" />
     <ClInclude Include="..\..\core\client\state.h" />
     <ClInclude Include="..\..\core\client\storage.h" />
+    <ClInclude Include="..\..\core\client\system.h" />
     <ClInclude Include="..\..\core\client\terminal.h" />
     <ClInclude Include="..\..\core\client\types.h" />
     <ClInclude Include="..\..\core\client\version.h" />
@@ -79,9 +80,10 @@
     <ClInclude Include="..\..\core\dus\dfslib_string.h" />
     <ClInclude Include="..\..\core\dus\dfslib_types.h" />
     <ClInclude Include="..\..\core\dus\dfsrsa.h" />
-	<ClInclude Include="..\..\core\ldus\rbtree.h" />
-    <ClInclude Include="getopt.h" />
-    <ClInclude Include="unistd.h" />
+    <ClInclude Include="..\..\core\ldus\rbtree.h" />
+    <ClInclude Include="..\..\core\win\getopt.h" />
+    <ClInclude Include="..\..\core\win\unistd.h" />
+    <ClInclude Include="..\..\core\win\wintime.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\pools\netdb-testnet.txt" />
