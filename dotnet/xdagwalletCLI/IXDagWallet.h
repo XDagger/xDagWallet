@@ -18,7 +18,18 @@ namespace XDagNetWalletCLI {
 		///
 		///
 		///
-		int OnUpdateState(String^ state, String^ balance, String^ address);
+		int OnUpdateState(String^ state, String^ balance, String^ address, String^ message);
+
+
+		void OnStateUpdated(String^ newState);
+
+		void OnBalanceUpdated(String^ newBalance);
+
+		void OnAddressUpdated(String^ address);
+
+		void OnMessage(String^ message);
+
+		void OnError(int errorCode, String^ errorString);
 
 	};
 };

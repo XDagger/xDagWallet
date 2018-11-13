@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using XDagNetWallet.Interop;
 
 using XDagNetWalletCLI;
 
@@ -16,6 +18,8 @@ namespace XDagNetWallet.Components
         private Action<WalletState> onUpdatingState = null;
         private Action<double> onUpdatingBalance = null;
         private Action<string> onUpdatingAddress = null;
+        private Action<string> onMessage = null;
+        private Action<XDagErrorCode> onError = null;
 
         private WalletOptions walletOptions = null;
 
@@ -123,6 +127,18 @@ namespace XDagNetWallet.Components
             this.onUpdatingState = f;
         }
 
+        public void SetMessageAction(Action<string> f)
+        {
+            this.onMessage = f;
+        }
+
+        public void SetErrorAction(Action<XDagErrorCode> f)
+        {
+            this.onError = f;
+        }
+
+        #region Interface Methods
+
         /// <summary>
         /// 
         /// </summary>
@@ -134,15 +150,65 @@ namespace XDagNetWallet.Components
             return this.promptInputPasswordFunc?.Invoke(promptMessage, passwordSize);
         }
 
+
+        public void OnStateUpdated(string newState)
+        {
+            WalletState newStateEnum = WalletStateConverter.ConvertFromMessage(newState);
+
+            if (newStateEnum != WalletState.None && newStateEnum != walletState)
+            {
+                this.onUpdatingState?.Invoke(newStateEnum);
+                walletState = newStateEnum;
+            }
+        }
+
+        public void OnBalanceUpdated(string newBalance)
+        {
+            double balanceValue = 0;
+            if (double.TryParse(newBalance, out balanceValue))
+            {
+                this.onUpdatingBalance?.Invoke(balanceValue);
+                this.Balance = balanceValue;
+            }
+        }
+
+        public void OnAddressUpdated(string address)
+        {
+            if (IsValidAddress(address))
+            {
+                this.onUpdatingAddress?.Invoke(address);
+                this.Address = address;
+            }
+        }
+
+        public void OnMessage(string message)
+        {
+            this.onMessage?.Invoke(message);
+        }
+
+        public void OnError(int errorCode, string errorMessage)
+        {
+            XDagErrorCode error = XDagErrorHandler.ParseErrorCode(errorCode);
+            this.onError?.Invoke(error);
+        }
+
+        #endregion
+
         /// <summary>
-        /// 
+        /// This should be legacy
         /// </summary>
         /// <param name="state"></param>
         /// <param name="balance"></param>
         /// <param name="address"></param>
         /// <returns></returns>
-        public int OnUpdateState(string state, string balance, string address)
+        public int OnUpdateState(string state, string balance, string address, string message)
         {
+            using(StreamWriter sw = new StreamWriter("testout.txt", true))
+            {
+                sw.WriteLine("State=[{0}] Message=[{1}]", state, message);
+            }
+
+            /*
             WalletState newState = WalletStateConverter.ConvertFromMessage(state);
 
             if (newState != walletState)
@@ -163,8 +229,9 @@ namespace XDagNetWallet.Components
                 this.onUpdatingAddress?.Invoke(address);
                 this.Address = address;
             }
-
-            return this.updateStateFunc?.Invoke(state, balance, address) ?? -1;
+            */
+            //// return this.updateStateFunc?.Invoke(state, balance, address) ?? -1;
+            return 0;
         }
 
         public static bool IsValidAddress(string addressString)
@@ -181,5 +248,6 @@ namespace XDagNetWallet.Components
 
             return true;
         }
+
     }
 }

@@ -18,6 +18,7 @@ using XDagNetWallet.Utils;
 using XDagNetWalletCLI;
 using System.Threading;
 using System.Globalization;
+using XDagNetWallet.Interop;
 
 namespace XDagNetWallet.UI.Windows
 {
@@ -39,7 +40,7 @@ namespace XDagNetWallet.UI.Windows
 
         private LogonStatus logonStatus = LogonStatus.None;
 
-        private Logger xdagLogger = Logger.GetInstance();
+        private Logger logger = Logger.GetInstance();
 
         private WalletConfig walletConfig = WalletConfig.Current;
 
@@ -91,6 +92,22 @@ namespace XDagNetWallet.UI.Windows
                     UpdateState(state);
                 });
             });
+            
+            xdagWallet.SetMessageAction((message) =>
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                    OnMessage(message);
+                });
+            });
+
+            xdagWallet.SetErrorAction((err) =>
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                    OnError(err);
+                });
+            });
 
             if (!runtime.HasExistingAccount())
             {
@@ -123,6 +140,25 @@ namespace XDagNetWallet.UI.Windows
         private void btnConnectAccount_Click(object sender, RoutedEventArgs e)
         {
             ConnectAccount();
+        }
+
+        private void OnMessage(string message)
+        {
+            logger.Trace(message);
+        }
+
+        private void OnError(XDagErrorCode errorCode)
+        {
+            logger.Error("Got error code:" + errorCode.ToString());
+
+            if (logonStatus == LogonStatus.ConnectingPending)
+            {
+                if (errorCode == XDagErrorCode.PasswordIncorrect)
+                {
+                    MessageBox.Show(Properties.Strings.Message_PasswordIncorrect, Properties.Strings.Common_MessageTitle);
+                    HideStatus();
+                }
+            }
         }
 
         private void OnRegisteringTimerTick(object sender, System.Timers.ElapsedEventArgs e)
@@ -224,7 +260,7 @@ namespace XDagNetWallet.UI.Windows
 
         private void ConnectAccount()
         {
-            xdagLogger.Trace("Begin ConnectAccount().");
+            logger.Trace("Begin ConnectAccount().");
 
             if (runtime == null)
             {
@@ -239,7 +275,7 @@ namespace XDagNetWallet.UI.Windows
 
             if (string.IsNullOrEmpty(userInputPassword))
             {
-                xdagLogger.Trace("User input empty password, cancel the connect.");
+                logger.Trace("User input empty password, cancel the connect.");
                 return;
             }
 
@@ -259,7 +295,7 @@ namespace XDagNetWallet.UI.Windows
                 },
                 (taskResult) => {
 
-                    xdagLogger.Trace("ConnectAccount work finished.");
+                    logger.Trace("ConnectAccount work finished.");
                     if (taskResult.HasError)
                     {
                         if (taskResult.Exception is PasswordIncorrectException)
@@ -278,7 +314,7 @@ namespace XDagNetWallet.UI.Windows
                 }
             ).Execute();
 
-            xdagLogger.Trace("End ConnectAccount().");
+            logger.Trace("End ConnectAccount().");
         }
 
         private String InputPassword(String promptMessage, uint passwordSize)
@@ -341,6 +377,10 @@ namespace XDagNetWallet.UI.Windows
             this.btnConnectAccount.Content = message;
             this.btnRegisterAccount.Content = message;
 
+            this.btnConnectAccount.IsEnabled = false;
+            this.btnRegisterAccount.IsEnabled = false;
+            this.btnLang.IsEnabled = false;
+
             //// this.lblWalletStatus.Visibility = Visibility.Visible;
             this.lblWalletStatus.Content = message;
 
@@ -353,6 +393,9 @@ namespace XDagNetWallet.UI.Windows
             this.btnConnectAccount.Content = Properties.Strings.LogonWindow_ConnectWallet;
             this.btnRegisterAccount.Content = Properties.Strings.LogonWindow_RegisterWallet;
 
+            this.btnConnectAccount.IsEnabled = true;
+            this.btnRegisterAccount.IsEnabled = true;
+            this.btnLang.IsEnabled = true;
 
             this.lblWalletStatus.Visibility = Visibility.Hidden;
             this.prbProgress.Visibility = Visibility.Hidden;

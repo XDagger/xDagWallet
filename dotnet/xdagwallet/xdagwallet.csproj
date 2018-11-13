@@ -73,7 +73,9 @@
     </Compile>
     <Compile Include="sources\Components\WalletConfig.cs" />
     <Compile Include="sources\Components\WalletOptions.cs" />
-    <Compile Include="sources\Components\WalletState.cs" />
+    <Compile Include="sources\Interop\WalletState.cs" />
+    <Compile Include="sources\Interop\XDagErrorCode.cs" />
+    <Compile Include="sources\Interop\XDagErrorHandler.cs" />
     <Compile Include="sources\UI\Async\BackgroundResult.cs" />
     <Compile Include="sources\UI\Async\BackgroundWork.cs" />
     <Compile Include="sources\UI\Windows\LogonWindow.xaml.cs">
@@ -186,8 +188,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy $(SolutionDir)xdag\win\x64\Debug\*.txt $(TargetDir)
-copy $(SolutionDir)xdag\win\x64\Debug\msvcr100.dll $(TargetDir)
+    <PostBuildEvent>copy $(SolutionDir)core\dependencies\x64\msvcr100.dll $(TargetDir)
 </PostBuildEvent>
   </PropertyGroup>
 </Project>

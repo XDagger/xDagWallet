@@ -78,7 +78,7 @@ namespace XDagNetWallet.UI.Async
             }
 
             Action<Task<BackgroundWorkResult<T>>> endActionWrapper = ((taskResult) =>
-                this.Window.Dispatcher.Invoke(new Action(() => this.EndAction(taskResult.Result)))
+                this.Window.Dispatcher.Invoke(new Action(() => this.EndAction?.Invoke(taskResult.Result)))
             );
 
             try

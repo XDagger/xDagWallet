@@ -88,7 +88,7 @@ namespace XDagNetWallet.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Connection account....
+        ///   Looks up a localized string similar to Connecting account....
         /// </summary>
         internal static string LogonWindow_ConnectingAccount {
             get {

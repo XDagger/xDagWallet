@@ -200,7 +200,7 @@ int client_init(void)
 
 	xdag_mess("Starting xdag, version %s", XDAG_VERSION);
 	xdag_mess("Starting dnet transport...");
-	printf("Initialize...\n");
+	/// printf("Initialize...\n");
 	if (dnet_crypt_init(DNET_VERSION)) {
 		sleep(3);
 		xdag_wrapper_event(event_id_err_exit, error_pwd_incorrect, "Password incorrect.\n");
@@ -236,7 +236,7 @@ int client_init(void)
 		return -1;
 	}
 
-	xdag_wrapper_event(event_id_err_exit, error_unknown, "unkown error\n");
+	//// xdag_wrapper_event(event_id_err_exit, error_unknown, "unkown error\n");
 
 	//	if(is_rpc) {
 	//		xdag_mess("Initializing RPC service...");
@@ -345,7 +345,20 @@ begin:
 	}
 
 	// Create a socket
+#if defined(_WIN32) || defined(_WIN64)
+	WSADATA mainSdata;
+	if (WSAStartup(2.2, &mainSdata) == 0)
+	{
+		g_socket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, NULL);
+	}
+	else
+	{
+		g_socket = INVALID_SOCKET;
+	}
+#else
 	g_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+#endif
+	
 	if(g_socket == INVALID_SOCKET) {
 		xdag_err(error_socket_create, "cannot create a socket");
 		goto end;

@@ -61,6 +61,7 @@ mac/xDagWallet.xcodeproj/project.xcworkspace
 # dotnet
 dotnet/.vs/
 dotnet/packages/
+dotnet/x64/
 
 dotnet/core/Debug/
 dotnet/core/x64/

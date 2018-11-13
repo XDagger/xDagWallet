@@ -53,6 +53,12 @@ int xdag_event_callback(void* thisObj, xdag_event *event);
 ////---- Exporting functions ----
 NATIVE_LIB_EXPORT int xdag_init_wrap(int argc, char **argv, int isGui);
 NATIVE_LIB_EXPORT int xdag_set_password_callback_wrap(int(*callback)(const char *prompt, char *buf, unsigned size));
+NATIVE_LIB_EXPORT int xdag_set_event_callback_wrap(int(*callback)(void*, xdag_event *));
+NATIVE_LIB_EXPORT int xdag_get_state_wrap(void);
+NATIVE_LIB_EXPORT int xdag_get_balance_wrap(void);
+NATIVE_LIB_EXPORT int xdag_get_address_wrap(void);
+
+
 NATIVE_LIB_EXPORT int xdag_transfer_wrap(char* toAddress, char* amountString);
 NATIVE_LIB_EXPORT bool xdag_is_valid_wallet_address(const char* address);
 NATIVE_LIB_EXPORT bool xdag_dnet_crpt_found();
@@ -63,26 +69,37 @@ NATIVE_LIB_EXPORT bool xdag_dnet_crpt_found();
 ////---- Exporting functions wrapping functions ----
 int xdag_init_wrap(int argc, char **argv, int isGui)
 {
-	//// return xdag_init(argc, argv, isGui);
-
 	xdag_init_path(argv[0]);
 
-	const char *pool_arg = 0;
-	for (int i = 1; i < argc; ++i) {
-		if (argv[i][0] != '-') {
-			if ((!argv[i][1] || argv[i][2]) && strchr(argv[i], ':')) {
-				pool_arg = argv[i];
-			}
-			else {
-				return 0;
-			}
-			continue;
-		}
-	}
+	const char *pool_arg = "de1.xdag.org:13654";
 
-	xdag_set_event_callback(&xdag_event_callback);
+	////xdag_set_event_callback(&xdag_event_callback);
+
 	if (xdag_client_init(pool_arg)) return -1;
 
+	return 0;
+}
+
+int xdag_set_event_callback_wrap(int(*callback)(void*, xdag_event *))
+{
+	return xdag_set_event_callback(callback);
+}
+
+int xdag_get_state_wrap(void)
+{
+	xdag_wrapper_state();
+	return 0;
+}
+
+int xdag_get_balance_wrap(void)
+{
+	xdag_wrapper_balance();
+	return 0;
+}
+
+int xdag_get_address_wrap(void)
+{
+	xdag_wrapper_address();
 	return 0;
 }
 

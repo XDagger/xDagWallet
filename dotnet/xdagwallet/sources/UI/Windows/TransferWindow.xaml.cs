@@ -16,6 +16,7 @@ using System.Windows.Shapes;
 using XDagNetWallet.Components;
 using XDagNetWallet.UI.Async;
 using XDagNetWalletCLI;
+using XDagNetWallet.Interop;
 
 namespace XDagNetWallet.UI.Windows
 {
