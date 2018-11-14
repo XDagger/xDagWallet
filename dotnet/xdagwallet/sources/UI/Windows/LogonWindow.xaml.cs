@@ -388,6 +388,9 @@ namespace XDagNetWallet.UI.Windows
 
             this.btnConnectAccount.IsEnabled = false;
             this.btnRegisterAccount.IsEnabled = false;
+            this.btnConnectAccount.Foreground = new SolidColorBrush(Colors.DarkSlateGray);
+            this.btnRegisterAccount.Foreground = new SolidColorBrush(Colors.DarkSlateGray);
+
             ////this.btnLang.IsEnabled = false;
 
             //// this.lblWalletStatus.Visibility = Visibility.Visible;
@@ -404,6 +407,9 @@ namespace XDagNetWallet.UI.Windows
 
             this.btnConnectAccount.IsEnabled = true;
             this.btnRegisterAccount.IsEnabled = true;
+            this.btnConnectAccount.Foreground = new SolidColorBrush(Colors.AntiqueWhite);
+            this.btnRegisterAccount.Foreground = new SolidColorBrush(Colors.AntiqueWhite);
+
             ////this.btnLang.IsEnabled = true;
 
             this.lblWalletStatus.Visibility = Visibility.Hidden;

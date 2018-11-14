@@ -101,10 +101,10 @@ namespace XDagNetWallet.UI.Windows
             {
                 case WalletState.ConnectedPool:
                 case WalletState.ConnectedAndMining:
-                    ellPortrait.Fill = new SolidColorBrush(Colors.Green);
+                    ////ellPortrait.Fill = new SolidColorBrush(Colors.Green);
                     break;
                 case WalletState.TransferPending:
-                    ellPortrait.Fill = new SolidColorBrush(Colors.Orange);
+                    ////ellPortrait.Fill = new SolidColorBrush(Colors.Orange);
                     break;
                 default:
                     break;
@@ -149,6 +149,11 @@ namespace XDagNetWallet.UI.Windows
             walletConfig.SaveToFile();
 
             Load_LocalizedStrings();
+        }
+
+        private void btnSettings_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

@@ -53,7 +53,7 @@ namespace XDagNetWallet.UI.Windows
             this.passwordHandler?.Invoke(password);
 
             // Note: to ensure the userInputPassword is set after the PasswordWindow closed, we need to sleep for a while
-            Thread.Sleep(10);
+            Thread.Sleep(20);
 
             this.Close();
         }

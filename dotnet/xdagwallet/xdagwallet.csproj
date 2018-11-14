@@ -203,7 +203,10 @@
     <Resource Include="Resources\dagger-logo-c.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\settings.png" />
+    <Resource Include="Resources\icon-settings.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\icon-copy.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

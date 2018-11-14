@@ -34,8 +34,14 @@
 
         </xctk:MaterialButton>
 
-        <xctk:MaterialButton x:Name="btnSettings" Margin="0,10,33,0" Cursor="Hand" VerticalAlignment="Top" Height="30" Width="30" Click="btnSettings_Click" Background="#FF76C4E5" Foreground="Black" MaterialAccent="Cyan" Mode="Circle" HorizontalAlignment="Right">
-            <Image Source="/xdagnetwallet;component/Resources/settings.png" />
+        <xctk:MaterialButton x:Name="btnSettings" Margin="0,10,33,0" Cursor="Hand" VerticalAlignment="Top" Height="30" Width="30" Click="btnSettings_Click" Foreground="Black" MaterialAccent="Cyan" Mode="Circle" HorizontalAlignment="Right">
+            <xctk:MaterialButton.Background>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="#FF20A2A6" Offset="0"/>
+                    <GradientStop Color="#FF1A7275" Offset="1"/>
+                </LinearGradientBrush>
+            </xctk:MaterialButton.Background>
+            <Image Source="/xdagnetwallet;component/Resources/icon-settings.png" />
 
         </xctk:MaterialButton>
 
