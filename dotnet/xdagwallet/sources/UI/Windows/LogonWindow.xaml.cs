@@ -142,6 +142,15 @@ namespace XDagNetWallet.UI.Windows
             ConnectAccount();
         }
 
+        private void btnSettings_Click(object sender, RoutedEventArgs e)
+        {
+            SettingsWindow settings = new SettingsWindow();
+            settings.ShowDialog();
+
+            
+            Load_LocalizedStrings();
+        }
+
         private void OnMessage(string message)
         {
             logger.Trace(message);
@@ -226,7 +235,7 @@ namespace XDagNetWallet.UI.Windows
             }
 
             btnRegisterAccount.IsEnabled = false;
-            btnLang.IsEnabled = false;
+            ////btnLang.IsEnabled = false;
             BackgroundWork.CreateWork(
                 this,
                 () => {
@@ -247,7 +256,7 @@ namespace XDagNetWallet.UI.Windows
                         MessageBox.Show(Properties.Strings.LogonWindow_InitializeFailed + taskResult.Exception.Message);
 
                         btnRegisterAccount.IsEnabled = true;
-                        btnLang.IsEnabled = true;
+                        ////btnLang.IsEnabled = true;
 
                         HideStatus();
                         return;
@@ -280,7 +289,7 @@ namespace XDagNetWallet.UI.Windows
             }
 
             btnConnectAccount.IsEnabled = false;
-            btnLang.IsEnabled = false;
+            ////btnLang.IsEnabled = false;
 
             BackgroundWork.CreateWork(
                 this,
@@ -304,7 +313,7 @@ namespace XDagNetWallet.UI.Windows
                         }
 
                         btnConnectAccount.IsEnabled = true;
-                        btnLang.IsEnabled = true;
+                        ////btnLang.IsEnabled = true;
 
                         HideStatus();
                         return;
@@ -379,7 +388,7 @@ namespace XDagNetWallet.UI.Windows
 
             this.btnConnectAccount.IsEnabled = false;
             this.btnRegisterAccount.IsEnabled = false;
-            this.btnLang.IsEnabled = false;
+            ////this.btnLang.IsEnabled = false;
 
             //// this.lblWalletStatus.Visibility = Visibility.Visible;
             this.lblWalletStatus.Content = message;
@@ -395,7 +404,7 @@ namespace XDagNetWallet.UI.Windows
 
             this.btnConnectAccount.IsEnabled = true;
             this.btnRegisterAccount.IsEnabled = true;
-            this.btnLang.IsEnabled = true;
+            ////this.btnLang.IsEnabled = true;
 
             this.lblWalletStatus.Visibility = Visibility.Hidden;
             this.prbProgress.Visibility = Visibility.Hidden;
@@ -419,5 +428,7 @@ namespace XDagNetWallet.UI.Windows
 
             Load_LocalizedStrings();
         }
+
+       
     }
 }

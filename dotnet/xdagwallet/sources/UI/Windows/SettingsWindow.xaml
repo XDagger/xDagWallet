@@ -1,0 +1,31 @@
+﻿<Window x:Class="XDagNetWallet.UI.Windows.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:local="clr-namespace:XDagNetWallet.UI.Windows"
+        mc:Ignorable="d"
+        Title="Settings" Height="250.334" Width="461.873" WindowStyle="ToolWindow" ResizeMode="NoResize" Icon="/xdagnetwallet;component/Resources/XDagger.ico" WindowStartupLocation="CenterScreen">
+    <Grid>
+
+        <xctk:MaterialButton x:Name="btnConfirm" Content="Confirm" Margin="25,0,0,23" Cursor="Hand" FontFamily="Franklin Gothic Heavy" FontSize="14" Click="btnConfirm_Click" Background="FloralWhite" Foreground="SteelBlue" Height="35" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="168"/>
+        <xctk:MaterialButton x:Name="btnCancel" Content="Cancel" Margin="0,0,29.667,23" Cursor="Hand" FontFamily="Franklin Gothic Heavy" FontSize="14" Click="btnCancel_Click" Background="FloralWhite" Foreground="SteelBlue" Height="35" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="168"/>
+        <GroupBox x:Name="grpLanguage" Header="Choose Language" Height="58" Foreground="SteelBlue" BorderThickness="1" BorderBrush="SteelBlue" Margin="20,20,19.667,0" VerticalAlignment="Top">
+            <Grid>
+                <xctk:MaterialRadioButton x:Name="rdbLanguageEN"
+                                         GroupName="Language"
+                                         IsChecked="True"
+                                         Content="English" Margin="24,10,238.667,0" 
+                                          Foreground="SteelBlue"
+                                          MaterialAccent="LightBlue" MaterialAccentBrush="LightBlue" CheckMarkBrush="DeepSkyBlue" Height="17" VerticalAlignment="Top"/>
+                <xctk:MaterialRadioButton x:Name="rdbLanguageZH"
+                                         GroupName="Language"
+                                         Foreground="SteelBlue"
+                                          Content="中文（简体）" Margin="211,10,33.667,0"
+                                          MaterialAccent="LightBlue" MaterialAccentBrush="LightBlue" CheckMarkBrush="DeepSkyBlue" Height="17" VerticalAlignment="Top"/>
+            </Grid>
+        </GroupBox>
+
+    </Grid>
+</Window>
