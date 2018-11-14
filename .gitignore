@@ -70,3 +70,7 @@ dotnet/xdagwallet/bin/
 dotnet/xdagwallet/obj/
 
 dotnet/xdagwalletCLI/x64/
+
+
+dotnet/xdagwalletUI/bin/
+dotnet/xdagwalletUI/obj/

@@ -207,30 +207,7 @@ namespace XDagNetWallet.Components
             {
                 sw.WriteLine("State=[{0}] Message=[{1}]", state, message);
             }
-
-            /*
-            WalletState newState = WalletStateConverter.ConvertFromMessage(state);
-
-            if (newState != walletState)
-            {
-                this.onUpdatingState?.Invoke(newState);
-                walletState = newState;
-            }
-
-            double balanceValue = 0;
-            if (double.TryParse(balance, out balanceValue))
-            {
-                this.onUpdatingBalance?.Invoke(balanceValue);
-                this.Balance = balanceValue;
-            }
-
-            if (IsValidAddress(address))
-            {
-                this.onUpdatingAddress?.Invoke(address);
-                this.Address = address;
-            }
-            */
-            //// return this.updateStateFunc?.Invoke(state, balance, address) ?? -1;
+            
             return 0;
         }
 

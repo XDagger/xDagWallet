@@ -1,0 +1,26 @@
+﻿<Application x:Class="XDagWallet.UI.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:xcm="clr-namespace:Xceed.Wpf.Themes.Metro;assembly=Xceed.Wpf.Themes.Metro"
+             xmlns:xctm="clr-namespace:Xceed.Wpf.Toolkit.Themes.Metro;assembly=Xceed.Wpf.Toolkit.Themes.Metro"
+
+             xmlns:local="clr-namespace:XDagWallet.UI"
+             StartupUri="sources/UI/Windows/LogonWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.DeepPurple.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Lime.xaml" />
+                <ResourceDictionary Source="/ReuxablesLegacy;component/mercury.xaml" />
+
+                <!-- Core Controls -->
+                <xcm:MetroDarkThemeResourceDictionary AccentColor="Green" />
+                <!-- Toolkit Controls -->
+                <xctm:ToolkitMetroDarkThemeResourceDictionary AccentColor="Green" />
+                
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

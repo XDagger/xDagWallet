@@ -6,13 +6,15 @@
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:local="clr-namespace:XDagNetWallet.UI.Windows"
         mc:Ignorable="d"
-        Title="Welcome to XDAG Wallet" Height="233.332" Width="279.999" ResizeMode="NoResize" Loaded="Window_Loaded" WindowStartupLocation="CenterScreen">
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Title="Welcome to XDAG Wallet" Height="340.563" Width="437.55" ResizeMode="NoResize" Loaded="Window_Loaded" WindowStartupLocation="CenterScreen">
     <Grid>
-        <Image Height="205" Margin="0,0,-0.333,0" VerticalAlignment="Top" Stretch="Fill" Source="/xdagnetwallet;component/Resources/dagger-logo-c.png"/>
-        <Button x:Name="btnConnectAccount" Content="Connect Wallet" Margin="26,117,32.667,0" VerticalAlignment="Top" Height="40" FontFamily="Franklin Gothic Heavy" FontSize="14" Click="btnConnectAccount_Click" Foreground="#FF136BAB"/>
-        <Button x:Name="btnRegisterAccount" Content="Create New Wallet" Margin="26,117,32.667,0" VerticalAlignment="Top" Height="40" FontFamily="Franklin Gothic Heavy" FontSize="14" Click="btnRegisterAccount_Click" Foreground="#FF136BAB"/>
-        <ProgressBar x:Name="prbProgress" HorizontalAlignment="Left" Height="10" Margin="0,118,0,0" VerticalAlignment="Bottom" Width="377" Visibility="Hidden"/>
+        <Image Stretch="Fill" Source="/xdagnetwallet;component/Resources/dagger-logo-c.png" Margin="0,0,0.333,-0.333"/>
+        <Button x:Name="btnConnectAccount2" Content="Connect Wallet" Margin="26,184,33,0" VerticalAlignment="Top" Height="70" FontFamily="Franklin Gothic Heavy" FontSize="24" Click="btnConnectAccount_Click" Foreground="#FF136BAB"/>
+        <Button x:Name="btnRegisterAccount" Content="Create New Wallet" Margin="26,184,33,0" VerticalAlignment="Top" Height="70" FontFamily="Franklin Gothic Heavy" FontSize="24" Click="btnRegisterAccount_Click" Foreground="#FF136BAB"/>
+        <ProgressBar x:Name="prbProgress" HorizontalAlignment="Left" Height="10" Width="437" Margin="0,118,0,0" VerticalAlignment="Bottom" Visibility="Hidden"/>
         <Label x:Name="lblWalletStatus" Content="" HorizontalAlignment="Left" Margin="5,92,0,10" VerticalAlignment="Bottom" Width="357" Visibility="Hidden" Foreground="#FFE9EC91"/>
+        <!--
         <xctk:SplitButton Name="btnLang" Content="Lang 文" Margin="0,10,9.667,0" TabIndex="2" Foreground="#FF23ACB9" Height="22" VerticalAlignment="Top" HorizontalAlignment="Right" Width="64" >
             <xctk:SplitButton.DropDownContent>
                 <Grid>
@@ -21,5 +23,10 @@
                 </Grid>
             </xctk:SplitButton.DropDownContent>
         </xctk:SplitButton>
+        -->
+        <xctk:MaterialButton x:Name="btnConnectAccount" Content="Connect Wallet" Margin="26,184,33,0" Cursor="Hand" VerticalAlignment="Top" Height="70" FontFamily="Franklin Gothic Heavy" FontSize="24" Click="btnConnectAccount_Click" Background="#FF76C4E5" Foreground="Black"/>
+
+        <xctk:MaterialButton x:Name="btnSettings" Margin="369,10,33,0" Cursor="Hand" VerticalAlignment="Top" Height="30" Width="30" Click="btnConnectAccount_Click" Background="#FF76C4E5" Foreground="Black" MaterialAccent="BlueGray" Mode="Circle"/>
+
     </Grid>
 </Window>
