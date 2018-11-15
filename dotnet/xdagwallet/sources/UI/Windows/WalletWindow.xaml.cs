@@ -87,6 +87,8 @@ namespace XDagNetWallet.UI.Windows
             OnUpdatingBalance(xdagWallet.Balance);
 
             Load_LocalizedStrings();
+
+            xdagRuntime.LoadData();
         }
         
         private void Load_LocalizedStrings()

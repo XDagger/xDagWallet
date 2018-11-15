@@ -187,7 +187,7 @@ int xdag_wrapper_event(xdag_event_id event_id, xdag_error_no err, const char *da
 		evt->error_no = err;
 		evt->event_data = data ? strdup(data) : strdup("");
 
-		if (!g_wrapper_event_callback)
+		if (g_wrapper_event_callback)
 		{
 			(*g_wrapper_event_callback)(g_thisObj, evt);
 		}
