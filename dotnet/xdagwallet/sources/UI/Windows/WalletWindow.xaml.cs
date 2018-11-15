@@ -17,6 +17,7 @@ using XDagNetWallet.Components;
 using XDagNetWallet.UI.Windows;
 using XDagNetWalletCLI;
 using XDagNetWallet.Interop;
+using XDagNetWallet.UI.Async;
 
 namespace XDagNetWallet.UI.Windows
 {
@@ -30,6 +31,8 @@ namespace XDagNetWallet.UI.Windows
         private XDagRuntime xdagRuntime = null;
 
         private WalletConfig walletConfig = WalletConfig.Current;
+
+        private Point originPoint;
 
         public WalletWindow(XDagWallet wallet)
         {
@@ -46,7 +49,15 @@ namespace XDagNetWallet.UI.Windows
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             xdagRuntime = new XDagRuntime(xdagWallet);
-            
+
+            xdagWallet.SetPromptInputPasswordFunction((prompt, passwordSize) =>
+            {
+                return this.Dispatcher.Invoke(() =>
+                {
+                    return InputPassword(prompt, passwordSize);
+                });
+            });
+
             xdagWallet.SetStateChangedAction((state) =>
             {
                 this.Dispatcher.Invoke(() =>
@@ -86,12 +97,26 @@ namespace XDagNetWallet.UI.Windows
             this.Title = string.Format("{0} ({1})", Properties.Strings.WalletWindow_Title, walletConfig.Version);
 
             this.lblBalanceTitle.Content = Properties.Strings.WalletWindow_BalanceTitle;
-            this.lblStatusTitle.Content = Properties.Strings.WalletWindow_StatusTitle;
             this.lblAddressTitle.Content = Properties.Strings.WalletWindow_AddressTitle;
 
             this.btnTransfer.Content = Properties.Strings.WalletWindow_TransferTitle;
             this.lblWalletStatus.Content = WalletStateConverter.Localize(xdagWallet.State);
         }
+
+        private String InputPassword(String promptMessage, uint passwordSize)
+        {
+            string userInputPassword = string.Empty;
+            PasswordWindow passwordWindow = new PasswordWindow(Properties.Strings.PasswordWindow_InputPassword, (passwordInput) =>
+            {
+                userInputPassword = passwordInput;
+            });
+            passwordWindow.ShowDialog();
+
+            Thread.Sleep(50);
+
+            return userInputPassword;
+        }
+
 
         private void OnUpdatingState(WalletState state)
         {
@@ -123,8 +148,7 @@ namespace XDagNetWallet.UI.Windows
 
         private void btnTransfer_Click(object sender, RoutedEventArgs e)
         {
-            TransferWindow tWindow = new TransferWindow(xdagWallet);
-            tWindow.ShowDialog();
+            GenerateTransaction();
         }
 
         private void btnCopyWalletAddress_Click(object sender, RoutedEventArgs e)
@@ -153,7 +177,111 @@ namespace XDagNetWallet.UI.Windows
 
         private void btnSettings_Click(object sender, RoutedEventArgs e)
         {
+            SettingsWindow settings = new SettingsWindow();
+            settings.ShowDialog();
 
+
+            Load_LocalizedStrings();
         }
+
+        private void btnExit_Click(object sender, RoutedEventArgs e)
+        {
+            Environment.Exit(0);
+        }
+
+        private void Rectangle_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton != MouseButton.Left)
+            {
+                return;
+            }
+
+            this.DragMove();
+        }
+
+        private void GenerateTransaction()
+        {
+            double amount = 0;
+
+            string amountString = this.txtTransferAmount.Text.Trim();
+            if (!double.TryParse(amountString, out amount) || amount <= 0)
+            {
+                MessageBox.Show(Properties.Strings.TransferWindow_AmountFormatError);
+                return;
+            }
+
+            if (amount > xdagWallet.Balance)
+            {
+                MessageBox.Show(Properties.Strings.TransferWindow_InsufficientAmount);
+                return;
+            }
+
+            string targetWalletAddress = this.txtTransferTargetAddress.Text.Trim();
+            if (!xdagRuntime.ValidateWalletAddress(targetWalletAddress))
+            {
+                MessageBox.Show(Properties.Strings.TransferWindow_AccountFormatError);
+                return;
+            }
+
+            string confirmMessage = string.Format(Properties.Strings.TransferWindow_ConfirmTransfer, amount, targetWalletAddress);
+            MessageBoxResult result = MessageBox.Show(confirmMessage, Properties.Strings.Common_ConfirmTitle, MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.No)
+            {
+                return;
+            }
+
+            BackgroundWork.CreateWork(
+                this,
+                () => {
+                    this.materialTabControl.IsEnabled = false;
+                    ShowStatus(Properties.Strings.TransferWindow_CommittingTransaction);
+                },
+                () => {
+                    xdagRuntime.TransferToAddress(targetWalletAddress, amount);
+
+                    return 0;
+                },
+                (taskResult) => {
+
+                    if (taskResult.HasError)
+                    {
+                        if (taskResult.Exception is PasswordIncorrectException)
+                        {
+                            MessageBox.Show(Properties.Strings.Message_PasswordIncorrect, Properties.Strings.Common_MessageTitle);
+                        }
+                        else
+                        {
+                            MessageBox.Show(Properties.Strings.TransferWindow_CommitFailed + taskResult.Exception.Message);
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show(Properties.Strings.TransferWindow_CommitSuccess, Properties.Strings.Common_MessageTitle);
+                        this.Close();
+                    }
+
+                    this.materialTabControl.IsEnabled = true;
+                    HideStatus();
+                }
+            ).Execute();
+        }
+
+
+        private void ShowStatus(string message)
+        {
+            this.lblWalletStatus.Visibility = Visibility.Visible;
+            this.lblWalletStatus.Content = message;
+
+            this.progressBar.Visibility = Visibility.Visible;
+            this.progressBar.IsIndeterminate = true;
+        }
+
+        private void HideStatus()
+        {
+            this.lblWalletStatus.Visibility = Visibility.Hidden;
+            this.progressBar.Visibility = Visibility.Hidden;
+            this.progressBar.IsIndeterminate = false;
+        }
+
     }
 }

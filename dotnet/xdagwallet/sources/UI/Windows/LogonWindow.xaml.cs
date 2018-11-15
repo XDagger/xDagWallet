@@ -282,6 +282,8 @@ namespace XDagNetWallet.UI.Windows
             });
             passwordWindow.ShowDialog();
 
+            Thread.Sleep(50);
+
             if (string.IsNullOrEmpty(userInputPassword))
             {
                 logger.Trace("User input empty password, cancel the connect.");
@@ -392,6 +394,7 @@ namespace XDagNetWallet.UI.Windows
             this.btnRegisterAccount.Foreground = new SolidColorBrush(Colors.DarkSlateGray);
 
             ////this.btnLang.IsEnabled = false;
+            this.btnSettings.IsEnabled = false;
 
             //// this.lblWalletStatus.Visibility = Visibility.Visible;
             this.lblWalletStatus.Content = message;
@@ -411,6 +414,7 @@ namespace XDagNetWallet.UI.Windows
             this.btnRegisterAccount.Foreground = new SolidColorBrush(Colors.AntiqueWhite);
 
             ////this.btnLang.IsEnabled = true;
+            this.btnSettings.IsEnabled = true;
 
             this.lblWalletStatus.Visibility = Visibility.Hidden;
             this.prbProgress.Visibility = Visibility.Hidden;

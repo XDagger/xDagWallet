@@ -208,6 +208,10 @@
   <ItemGroup>
     <Resource Include="Resources\icon-copy.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\icon-close.png" />
+    <Resource Include="Resources\icon-copy-2.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy $(SolutionDir)core\dependencies\x64\msvcr100.dll $(TargetDir)

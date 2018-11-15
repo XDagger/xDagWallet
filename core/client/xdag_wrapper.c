@@ -180,13 +180,17 @@ int xdag_wrapper_event(xdag_event_id event_id, xdag_error_no err, const char *da
 {
 	if(!g_wrapper_event_callback) {
 		assert(0);
-	} else {
+	}
+	else {
 		xdag_event *evt = calloc(1, sizeof(xdag_event));
 		evt->event_id = event_id;
 		evt->error_no = err;
 		evt->event_data = data ? strdup(data) : strdup("");
 
-		(*g_wrapper_event_callback)(g_thisObj, evt);
+		if (!g_wrapper_event_callback)
+		{
+			(*g_wrapper_event_callback)(g_thisObj, evt);
+		}
 
 		if(evt->event_data) {
 			free(evt->event_data);

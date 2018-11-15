@@ -6,27 +6,26 @@
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:local="clr-namespace:XDagNetWallet.UI.Windows"
         mc:Ignorable="d"
-        Title="XDag Wallet" Height="390.993" Width="699.313" Loaded="Window_Loaded" WindowStartupLocation="CenterScreen" WindowStyle="None">
+        Title="XDag Wallet" Height="446.868" Width="699.313" Loaded="Window_Loaded" WindowStartupLocation="CenterScreen" WindowStyle="None">
     <Grid>
 
         <xctk:MaterialTabControl x:Name="materialTabControl"
                                         TabStripPlacement="Top"
                                         IsInkEffectActive="True"
                                         IsInkBarActive="True"
-                                 FontSize="18"
-                                        IsSlidingAnimationActive="True" Margin="0,62,0,0">
-            <xctk:MaterialTabItem Header="Account"
+                                 
+                                        IsSlidingAnimationActive="True" Margin="0,62,-0.333,0">
+            <xctk:MaterialTabItem Header="Account" FontSize="20" FontWeight="Bold"
                                         HorizontalContentAlignment="Left">
                 <Grid Width="690">
-                    <Label x:Name="lblWalletStatus" Content="" Margin="96,54,544.333,0" VerticalAlignment="Top" RenderTransformOrigin="-0.974,0.603" FontSize="14"/>
-                    <Label x:Name="lblAddressTitle" Content="Wallet Address: " HorizontalAlignment="Left" Margin="151,26,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.974,0.603" Width="108" Height="30" FontSize="14"/>
-                    <Label x:Name="lblStatusTitle" Content="" HorizontalAlignment="Left" Margin="96,97,0,0" VerticalAlignment="Top" Width="85" Height="45" FontSize="18" FontWeight="Bold"/>
-                    <Label x:Name="lblBalanceTitle" Content="Balance:" HorizontalAlignment="Left" Margin="96,147,0,0" VerticalAlignment="Top" Width="85" Height="45" FontSize="18" FontWeight="Bold"/>
-                    <TextBox x:Name="txtWalletAddress" Height="30" Margin="264,26,141,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" FontSize="14" IsEnabled="False"/>
-                    <xctk:MaterialButton x:Name="btnCopyWalletAddress" HorizontalAlignment="Left" Margin="549,26,0,0" Cursor="Hand" VerticalAlignment="Top" Width="30" Height="30" Background="FloralWhite" Foreground="SteelBlue"  Click="btnCopyWalletAddress_Click">
-                        <Image Source="/xdagnetwallet;component/Resources/icon-copy.png" />
+                    <Label x:Name="lblWalletStatus" Content="" Margin="45,19,327,0" VerticalAlignment="Top" RenderTransformOrigin="-0.974,0.603" FontSize="14"/>
+                    <Label x:Name="lblAddressTitle" Content="Address: " HorizontalAlignment="Left" Margin="73,92,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.974,0.603" Width="95" Height="30" FontSize="18" FontWeight="Bold"/>
+                    <Label x:Name="lblBalanceTitle" Content="Balance:" HorizontalAlignment="Left" Margin="73,179,0,0" VerticalAlignment="Top" Width="85" Height="45" FontSize="18" FontWeight="Bold"/>
+                    <TextBox x:Name="txtWalletAddress" Height="30" Margin="199,97,133,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" FontSize="14" IsEnabled="False"/>
+                    <xctk:MaterialButton x:Name="btnCopyWalletAddress" HorizontalAlignment="Left" Margin="557,97,0,0" Cursor="Hand" VerticalAlignment="Top" Width="30" Height="30" Background="FloralWhite" Foreground="SteelBlue"  Click="btnCopyWalletAddress_Click">
+                        <Image Source="/xdagnetwallet;component/Resources/icon-copy-2.png" />
                     </xctk:MaterialButton>
-                    <Label x:Name="lblBalance" Content="0.000000000" Margin="197,150,122,0" FontSize="36" FontWeight="Bold" FontFamily="Arial Black" Height="55" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5">
+                    <Label x:Name="lblBalance" Content="0.000000000" Margin="198,174,106,0" FontSize="32" FontWeight="Bold" FontFamily="Arial Black" Height="47" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5">
                         <Label.RenderTransform>
                             <TransformGroup>
                                 <ScaleTransform/>
@@ -36,28 +35,51 @@
                             </TransformGroup>
                         </Label.RenderTransform>
                     </Label>
+                    <Image x:Name="imgStatus" HorizontalAlignment="Left" Height="30"  Width="30" Margin="10,18,0,0" VerticalAlignment="Top"/>
 
                 </Grid>
             </xctk:MaterialTabItem>
-            <xctk:MaterialTabItem Header="Transfer"
+            <xctk:MaterialTabItem Header="Transfer" FontSize="20" FontWeight="Bold"
                                         HorizontalContentAlignment="Left"
                                         >
                 <Grid Width="690">
-                    <xctk:MaterialButton x:Name="btnTransfer" Content="Transfer" Margin="0,166,32.667,0" Cursor="Hand" VerticalAlignment="Top" Height="66" FontSize="24" HorizontalAlignment="Right" Width="136" Background="FloralWhite" Foreground="SteelBlue"  Click="btnTransfer_Click" FontWeight="Bold"/>
-
+                    <xctk:MaterialButton x:Name="btnTransfer" Content="Generate Transaction" Margin="80,0,74,37.333" Cursor="Hand" FontSize="24" Background="FloralWhite" Foreground="SteelBlue"  Click="btnTransfer_Click" FontWeight="Bold" Height="48" VerticalAlignment="Bottom"/>
+                    <Label Content="To Address:" HorizontalAlignment="Left" Margin="80,26,0,0" VerticalAlignment="Top" Width="157"/>
+                    <Label Content="Amount to Transfer:" HorizontalAlignment="Left" Margin="80,105,0,0" VerticalAlignment="Top" Width="262"/>
+                    <xctk:WatermarkTextBox x:Name="txtTransferTargetAddress" Margin="80,60,74,0" Height="36"
+                                   Watermark="0x12345678901234567890123456789012" FontSize="16"
+                                   KeepWatermarkOnGotFocus="True" VerticalAlignment="Top">
+                        <xctk:WatermarkTextBox.WatermarkTemplate>
+                            <DataTemplate>
+                                <Border BorderBrush="Green"
+                             BorderThickness="0"
+                             Padding="0">
+                                    <ContentControl Content="{Binding}"
+                                        Foreground="LightGray"
+                                        FontWeight="Normal"
+                                        Focusable="False" />
+                                </Border>
+                            </DataTemplate>
+                        </xctk:WatermarkTextBox.WatermarkTemplate>
+                    </xctk:WatermarkTextBox>
+                    <xctk:WatermarkTextBox x:Name="txtTransferAmount" Margin="80,140,74,0" Height="36"
+                                   Watermark="0.00" FontSize="16"
+                                   KeepWatermarkOnGotFocus="True" VerticalAlignment="Top">
+                    </xctk:WatermarkTextBox>
+                    <ProgressBar x:Name="progressBar" Height="10" Margin="0,0,0,0.333" VerticalAlignment="Bottom"/>
                 </Grid>
             </xctk:MaterialTabItem>
-            <xctk:MaterialTabItem Header="Transaction History"
+            <xctk:MaterialTabItem Header="Transaction History" FontSize="20" FontWeight="Bold"
                                         HorizontalContentAlignment="Center"
-                                        Content="MaterialTabItem #3" >
+                                        Content="[To be continue...]" >
 
             </xctk:MaterialTabItem>
         </xctk:MaterialTabControl>
-        
-       
-        
 
-        <Rectangle Height="57" VerticalAlignment="Top" Margin="0,0,-0.333,0" RenderTransformOrigin="0.5,0.5">
+
+
+
+        <Rectangle Height="57" VerticalAlignment="Top" Margin="0,0,-0.333,0" RenderTransformOrigin="0.5,0.5" MouseDown="Rectangle_MouseDown">
             <Rectangle.Fill>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,0" >
                     <GradientStop Color="#FF11555E" Offset="0.002"/>
@@ -66,7 +88,7 @@
                 </LinearGradientBrush>
             </Rectangle.Fill>
         </Rectangle>
-        <xctk:MaterialButton x:Name="btnSettings" Margin="0,15,33,0" Cursor="Hand" VerticalAlignment="Top" Height="30" Width="30" Click="btnSettings_Click" Foreground="Black" MaterialAccent="Cyan" Mode="Circle" HorizontalAlignment="Right">
+        <xctk:MaterialButton x:Name="btnSettings" Margin="0,14,55.667,0" Cursor="Hand" VerticalAlignment="Top" Height="30" Width="30" Click="btnSettings_Click" Foreground="Black" MaterialAccent="Cyan" Mode="Circle" HorizontalAlignment="Right">
             <xctk:MaterialButton.Background>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                     <GradientStop Color="#FFD6D6DB" Offset="0"/>
@@ -74,11 +96,20 @@
                 </LinearGradientBrush>
             </xctk:MaterialButton.Background>
             <Image Source="/xdagnetwallet;component/Resources/icon-settings.png" />
-
         </xctk:MaterialButton>
+        <xctk:MaterialButton x:Name="btnExit" Margin="0,14,9.667,0" Cursor="Hand" VerticalAlignment="Top" Height="30" Width="30" Click="btnExit_Click" Foreground="Black" MaterialAccent="Cyan" Mode="Circle" HorizontalAlignment="Right">
+            <xctk:MaterialButton.Background>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="#FFD6D6DB" Offset="0"/>
+                    <GradientStop Color="#FFDBD8C5" Offset="1"/>
+                </LinearGradientBrush>
+            </xctk:MaterialButton.Background>
+            <Image Source="/xdagnetwallet;component/Resources/icon-close.png" />
+        </xctk:MaterialButton>
+
         <Image HorizontalAlignment="Left" Height="57" Margin="18,0,0,0" VerticalAlignment="Top" Width="58" Source="/xdagnetwallet;component/Resources/XDagger.ico"/>
-        <Label Content="XDAG Wallet" HorizontalAlignment="Left" Margin="76,8,0,0" VerticalAlignment="Top" FontSize="24" FontFamily="Segoe UI Black" Foreground="#FFD6DBD0"/>
-        <Label Content="Version: 0.2.0" HorizontalAlignment="Left" Margin="532,19,0,0" VerticalAlignment="Top"/>
+        <Label Content="XDAG Wallet" HorizontalAlignment="Left" Margin="76,8,0,0" VerticalAlignment="Top" FontSize="24" FontFamily="Segoe UI Black" Foreground="#FFD6DBD0" Background="Transparent"/>
+        <Label Content="Version: 0.2.0" HorizontalAlignment="Left" Margin="510,18,0,0" VerticalAlignment="Top" Background="Transparent" />
 
     </Grid>
 </Window>

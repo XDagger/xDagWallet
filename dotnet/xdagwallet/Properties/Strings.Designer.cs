@@ -72,6 +72,15 @@ namespace XDagNetWallet.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Confirm.
         /// </summary>
+        internal static string Common_Confirm {
+            get {
+                return ResourceManager.GetString("Common_Confirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Confirm.
+        /// </summary>
         internal static string Common_ConfirmTitle {
             get {
                 return ResourceManager.GetString("Common_ConfirmTitle", resourceCulture);
@@ -210,6 +219,24 @@ namespace XDagNetWallet.Properties {
         internal static string PasswordWindow_SetPassword {
             get {
                 return ResourceManager.GetString("PasswordWindow_SetPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Choose Language.
+        /// </summary>
+        internal static string SettingsWindow_ChooseLanguage {
+            get {
+                return ResourceManager.GetString("SettingsWindow_ChooseLanguage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Settings.
+        /// </summary>
+        internal static string SettingsWindow_Title {
+            get {
+                return ResourceManager.GetString("SettingsWindow_Title", resourceCulture);
             }
         }
         
@@ -439,7 +466,7 @@ namespace XDagNetWallet.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Wallet Address:.
+        ///   Looks up a localized string similar to Address:.
         /// </summary>
         internal static string WalletWindow_AddressTitle {
             get {
@@ -475,7 +502,7 @@ namespace XDagNetWallet.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Transfer.
+        ///   Looks up a localized string similar to Generate Transaction.
         /// </summary>
         internal static string WalletWindow_TransferTitle {
             get {

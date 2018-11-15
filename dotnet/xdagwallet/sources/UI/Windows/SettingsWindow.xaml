@@ -6,7 +6,7 @@
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:local="clr-namespace:XDagNetWallet.UI.Windows"
         mc:Ignorable="d"
-        Title="Settings" Height="250.334" Width="461.873" WindowStyle="ToolWindow" ResizeMode="NoResize" Icon="/xdagnetwallet;component/Resources/XDagger.ico" WindowStartupLocation="CenterScreen">
+        Title="Settings" Height="250.334" Width="461.873" WindowStyle="ToolWindow" ResizeMode="NoResize" Icon="/xdagnetwallet;component/Resources/XDagger.ico" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded">
     <Grid>
 
         <xctk:MaterialButton x:Name="btnConfirm" Content="Confirm" Margin="25,0,0,23" Cursor="Hand" FontFamily="Franklin Gothic Heavy" FontSize="14" Click="btnConfirm_Click" Background="FloralWhite" Foreground="SteelBlue" Height="35" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="168"/>

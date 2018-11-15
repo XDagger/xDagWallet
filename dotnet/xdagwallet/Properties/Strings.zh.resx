@@ -256,6 +256,15 @@
     <value>XDAG 钱包账户</value>
   </data>
   <data name="WalletWindow_TransferTitle" xml:space="preserve">
-    <value>转账</value>
+    <value>发起转账请求</value>
+  </data>
+  <data name="Common_Confirm" xml:space="preserve">
+    <value>确定</value>
+  </data>
+  <data name="SettingsWindow_ChooseLanguage" xml:space="preserve">
+    <value>选择语言</value>
+  </data>
+  <data name="SettingsWindow_Title" xml:space="preserve">
+    <value>系统设置</value>
   </data>
 </root>
