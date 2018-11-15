@@ -27,6 +27,7 @@ Class XDagNetWalletCLI.XDagRuntime: AutoLayout, AnsiClass, Class, Public, Before
     DoTesting(): PrivateScope, Public, HideBySig
     TransferToAddress(String, Double): PrivateScope, Public, HideBySig
     ValidateWalletAddress(String): PrivateScope, Public, HideBySig
+    RefreshData(): PrivateScope, Public, HideBySig
     Dispose(): PrivateScope, Public, Final, Virtual, HideBySig
 Class XDagNetWalletCLI.XDagRuntime+InputPasswordDelegate: AutoLayout, AnsiClass, Class, NestedPublic, Sealed, BeforeFieldInit
   :System.MulticastDelegate

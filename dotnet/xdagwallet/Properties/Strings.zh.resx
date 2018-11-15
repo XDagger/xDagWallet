@@ -267,4 +267,13 @@
   <data name="SettingsWindow_Title" xml:space="preserve">
     <value>系统设置</value>
   </data>
+  <data name="WalletWindow_TabAccount" xml:space="preserve">
+    <value>账户信息</value>
+  </data>
+  <data name="WalletWindow_TabHistory" xml:space="preserve">
+    <value>历史记录</value>
+  </data>
+  <data name="WalletWindow_TabTransfer" xml:space="preserve">
+    <value>转账</value>
+  </data>
 </root>

@@ -15,12 +15,12 @@
                                         IsInkBarActive="True"
                                  
                                         IsSlidingAnimationActive="True" Margin="0,62,-0.333,0">
-            <xctk:MaterialTabItem Header="Account" FontSize="20" FontWeight="Bold"
+            <xctk:MaterialTabItem x:Name="tabAccount" Header="Account" FontSize="20" FontWeight="Bold"
                                         HorizontalContentAlignment="Left">
                 <Grid Width="690">
-                    <Label x:Name="lblWalletStatus" Content="" Margin="45,19,327,0" VerticalAlignment="Top" RenderTransformOrigin="-0.974,0.603" FontSize="14"/>
-                    <Label x:Name="lblAddressTitle" Content="Address: " HorizontalAlignment="Left" Margin="73,92,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.974,0.603" Width="95" Height="30" FontSize="18" FontWeight="Bold"/>
-                    <Label x:Name="lblBalanceTitle" Content="Balance:" HorizontalAlignment="Left" Margin="73,179,0,0" VerticalAlignment="Top" Width="85" Height="45" FontSize="18" FontWeight="Bold"/>
+                    <Label x:Name="lblWalletStatus" Content="" Margin="199,28,285,0" VerticalAlignment="Top" RenderTransformOrigin="-0.974,0.603" FontSize="14"/>
+                    <Label x:Name="lblAddressTitle" Content="Address: " HorizontalAlignment="Left" Margin="99,97,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.974,0.603" Width="95" Height="30" FontSize="18" FontWeight="Bold"/>
+                    <Label x:Name="lblBalanceTitle" Content="Balance:" HorizontalAlignment="Left" Margin="99,179,0,0" VerticalAlignment="Top" Width="85" Height="35" FontSize="18" FontWeight="Bold"/>
                     <TextBox x:Name="txtWalletAddress" Height="30" Margin="199,97,133,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" FontSize="14" IsEnabled="False"/>
                     <xctk:MaterialButton x:Name="btnCopyWalletAddress" HorizontalAlignment="Left" Margin="557,97,0,0" Cursor="Hand" VerticalAlignment="Top" Width="30" Height="30" Background="FloralWhite" Foreground="SteelBlue"  Click="btnCopyWalletAddress_Click">
                         <Image Source="/xdagnetwallet;component/Resources/icon-copy-2.png" />
@@ -35,11 +35,12 @@
                             </TransformGroup>
                         </Label.RenderTransform>
                     </Label>
-                    <Image x:Name="imgStatus" HorizontalAlignment="Left" Height="30"  Width="30" Margin="10,18,0,0" VerticalAlignment="Top"/>
+                    <Image x:Name="imgStatus" HorizontalAlignment="Left" Height="30"  Width="30" Margin="147,28,0,0" VerticalAlignment="Top" Source="/xdagnetwallet;component/Resources/icon-status-online.png"/>
+                    <!--<Image HorizontalAlignment="Left" Height="30" Width="30" Margin="15,19,0,0" VerticalAlignment="Top"/>-->
 
                 </Grid>
             </xctk:MaterialTabItem>
-            <xctk:MaterialTabItem Header="Transfer" FontSize="20" FontWeight="Bold"
+            <xctk:MaterialTabItem x:Name="tabTransfer" Header="Transfer" FontSize="20" FontWeight="Bold"
                                         HorizontalContentAlignment="Left"
                                         >
                 <Grid Width="690">
@@ -47,7 +48,7 @@
                     <Label Content="To Address:" HorizontalAlignment="Left" Margin="80,26,0,0" VerticalAlignment="Top" Width="157"/>
                     <Label Content="Amount to Transfer:" HorizontalAlignment="Left" Margin="80,105,0,0" VerticalAlignment="Top" Width="262"/>
                     <xctk:WatermarkTextBox x:Name="txtTransferTargetAddress" Margin="80,60,74,0" Height="36"
-                                   Watermark="0x12345678901234567890123456789012" FontSize="16"
+                                   Watermark="12345678901234567890123456789012" FontSize="16"
                                    KeepWatermarkOnGotFocus="True" VerticalAlignment="Top">
                         <xctk:WatermarkTextBox.WatermarkTemplate>
                             <DataTemplate>
@@ -69,7 +70,7 @@
                     <ProgressBar x:Name="progressBar" Height="10" Margin="0,0,0,0.333" VerticalAlignment="Bottom"/>
                 </Grid>
             </xctk:MaterialTabItem>
-            <xctk:MaterialTabItem Header="Transaction History" FontSize="20" FontWeight="Bold"
+            <xctk:MaterialTabItem x:Name="tabHistory" Header="Transaction History" FontSize="20" FontWeight="Bold"
                                         HorizontalContentAlignment="Center"
                                         Content="[To be continue...]" >
 
@@ -89,21 +90,21 @@
             </Rectangle.Fill>
         </Rectangle>
         <xctk:MaterialButton x:Name="btnSettings" Margin="0,14,55.667,0" Cursor="Hand" VerticalAlignment="Top" Height="30" Width="30" Click="btnSettings_Click" Foreground="Black" MaterialAccent="Cyan" Mode="Circle" HorizontalAlignment="Right">
-            <xctk:MaterialButton.Background>
+            <!--<xctk:MaterialButton.Background>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                     <GradientStop Color="#FFD6D6DB" Offset="0"/>
                     <GradientStop Color="#FFDBD8C5" Offset="1"/>
                 </LinearGradientBrush>
-            </xctk:MaterialButton.Background>
+            </xctk:MaterialButton.Background>-->
             <Image Source="/xdagnetwallet;component/Resources/icon-settings.png" />
         </xctk:MaterialButton>
         <xctk:MaterialButton x:Name="btnExit" Margin="0,14,9.667,0" Cursor="Hand" VerticalAlignment="Top" Height="30" Width="30" Click="btnExit_Click" Foreground="Black" MaterialAccent="Cyan" Mode="Circle" HorizontalAlignment="Right">
-            <xctk:MaterialButton.Background>
+            <!--<xctk:MaterialButton.Background>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                     <GradientStop Color="#FFD6D6DB" Offset="0"/>
                     <GradientStop Color="#FFDBD8C5" Offset="1"/>
                 </LinearGradientBrush>
-            </xctk:MaterialButton.Background>
+            </xctk:MaterialButton.Background>-->
             <Image Source="/xdagnetwallet;component/Resources/icon-close.png" />
         </xctk:MaterialButton>
 

@@ -18,6 +18,7 @@ using XDagNetWallet.UI.Windows;
 using XDagNetWalletCLI;
 using XDagNetWallet.Interop;
 using XDagNetWallet.UI.Async;
+using System.Timers;
 
 namespace XDagNetWallet.UI.Windows
 {
@@ -32,7 +33,11 @@ namespace XDagNetWallet.UI.Windows
 
         private WalletConfig walletConfig = WalletConfig.Current;
 
-        private Point originPoint;
+        private System.Timers.Timer refreshWalletDataTimer = null;
+
+        private System.Timers.Timer refreshWalletDataRepeatTimer = null;
+
+        private readonly object refreshWalletDataLock = new object();
 
         public WalletWindow(XDagWallet wallet)
         {
@@ -41,9 +46,18 @@ namespace XDagNetWallet.UI.Windows
                 throw new ArgumentNullException("wallet is null.");
             }
 
+            InitializeComponent();
+
             xdagWallet = wallet;
 
-            InitializeComponent();
+            refreshWalletDataTimer = new System.Timers.Timer();
+            refreshWalletDataTimer.AutoReset = false;   // Only be run once
+            refreshWalletDataTimer.Interval = 500;
+            refreshWalletDataTimer.Elapsed += new ElapsedEventHandler(this.OnRefreshWalletData);
+
+            refreshWalletDataRepeatTimer = new System.Timers.Timer();
+            refreshWalletDataRepeatTimer.Interval = 10 * 1000;
+            refreshWalletDataRepeatTimer.Elapsed += new ElapsedEventHandler(this.OnRefreshWalletData);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -88,7 +102,9 @@ namespace XDagNetWallet.UI.Windows
 
             Load_LocalizedStrings();
 
-            xdagRuntime.LoadData();
+            xdagRuntime.RefreshData();
+
+            refreshWalletDataRepeatTimer.Start();
         }
         
         private void Load_LocalizedStrings()
@@ -103,6 +119,11 @@ namespace XDagNetWallet.UI.Windows
 
             this.btnTransfer.Content = Properties.Strings.WalletWindow_TransferTitle;
             this.lblWalletStatus.Content = WalletStateConverter.Localize(xdagWallet.State);
+
+            this.tabAccount.Header = Properties.Strings.WalletWindow_TabAccount;
+            this.tabTransfer.Header = Properties.Strings.WalletWindow_TabTransfer;
+            this.tabHistory.Header = Properties.Strings.WalletWindow_TabHistory;
+
         }
 
         private String InputPassword(String promptMessage, uint passwordSize)
@@ -119,7 +140,6 @@ namespace XDagNetWallet.UI.Windows
             return userInputPassword;
         }
 
-
         private void OnUpdatingState(WalletState state)
         {
             lblWalletStatus.Content = WalletStateConverter.Localize(state);
@@ -128,14 +148,20 @@ namespace XDagNetWallet.UI.Windows
             {
                 case WalletState.ConnectedPool:
                 case WalletState.ConnectedAndMining:
+                    imgStatus.Source = new BitmapImage(new Uri(@"/xdagnetwallet;component/Resources/icon-status-online.png", UriKind.Relative));
                     ////ellPortrait.Fill = new SolidColorBrush(Colors.Green);
                     break;
                 case WalletState.TransferPending:
+                    imgStatus.Source = new BitmapImage(new Uri(@"/xdagnetwallet;component/Resources/icon-status-pending.png", UriKind.Relative));
                     ////ellPortrait.Fill = new SolidColorBrush(Colors.Orange);
                     break;
                 default:
+                    imgStatus.Source = new BitmapImage(new Uri(@"/xdagnetwallet;component/Resources/icon-status-offline.png", UriKind.Relative));
                     break;
             }
+
+            // Set up a timer to trigger
+            refreshWalletDataTimer.Start();
         }
 
         private void OnUpdatingAddress(string address)
@@ -146,6 +172,19 @@ namespace XDagNetWallet.UI.Windows
         private void OnUpdatingBalance(double balance)
         {
             this.lblBalance.Content = XDagWallet.BalanceToString(balance);
+        }
+
+        private void StartRefreshWalletData()
+        {
+            
+        }
+
+        private void OnRefreshWalletData(object sender, ElapsedEventArgs e)
+        {
+            lock (refreshWalletDataLock)
+            {
+                xdagRuntime.RefreshData();
+            }
         }
 
         private void btnTransfer_Click(object sender, RoutedEventArgs e)
@@ -258,8 +297,10 @@ namespace XDagNetWallet.UI.Windows
                     }
                     else
                     {
+                        // Success
                         MessageBox.Show(Properties.Strings.TransferWindow_CommitSuccess, Properties.Strings.Common_MessageTitle);
-                        this.Close();
+                        this.txtTransferAmount.Text = string.Empty;
+                        this.tabAccount.IsSelected = true;
                     }
 
                     this.materialTabControl.IsEnabled = true;
@@ -271,8 +312,8 @@ namespace XDagNetWallet.UI.Windows
 
         private void ShowStatus(string message)
         {
-            this.lblWalletStatus.Visibility = Visibility.Visible;
-            this.lblWalletStatus.Content = message;
+            //this.lblWalletStatus.Visibility = Visibility.Visible;
+            //this.lblWalletStatus.Content = message;
 
             this.progressBar.Visibility = Visibility.Visible;
             this.progressBar.IsIndeterminate = true;
@@ -280,7 +321,7 @@ namespace XDagNetWallet.UI.Windows
 
         private void HideStatus()
         {
-            this.lblWalletStatus.Visibility = Visibility.Hidden;
+            //this.lblWalletStatus.Visibility = Visibility.Hidden;
             this.progressBar.Visibility = Visibility.Hidden;
             this.progressBar.IsIndeterminate = false;
         }

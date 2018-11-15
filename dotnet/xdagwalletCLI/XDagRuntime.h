@@ -53,7 +53,7 @@ namespace XDagNetWalletCLI {
 
 		bool ValidateWalletAddress(String^ address);
 
-		void LoadData();
+		void RefreshData();
 
 	private:
 

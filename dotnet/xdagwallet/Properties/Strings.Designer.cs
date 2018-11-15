@@ -493,6 +493,33 @@ namespace XDagNetWallet.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Account.
+        /// </summary>
+        internal static string WalletWindow_TabAccount {
+            get {
+                return ResourceManager.GetString("WalletWindow_TabAccount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Transaction History.
+        /// </summary>
+        internal static string WalletWindow_TabHistory {
+            get {
+                return ResourceManager.GetString("WalletWindow_TabHistory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Transfer.
+        /// </summary>
+        internal static string WalletWindow_TabTransfer {
+            get {
+                return ResourceManager.GetString("WalletWindow_TabTransfer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to XDag Wallet.
         /// </summary>
         internal static string WalletWindow_Title {

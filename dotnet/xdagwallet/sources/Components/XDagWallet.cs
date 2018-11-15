@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using XDagNetWallet.Interop;
-
+using XDagNetWallet.Utils;
 using XDagNetWalletCLI;
 
 namespace XDagNetWallet.Components
@@ -25,12 +25,19 @@ namespace XDagNetWallet.Components
 
         public WalletState walletState = WalletState.None;
 
+        private Logger logger = Logger.GetInstance();
 
         public static string BalanceToString(double balance)
         {
-            return String.Format("{0:0,0.00000000}", balance);
+            if (balance >= 1000)
+            {
+                return String.Format("{0:0,0.000000000}", balance);
+            }
+            else
+            {
+                return String.Format("{0:0.000000000}", balance);
+            }
         }
-
 
         public XDagWallet(WalletOptions walletOptions = null)
         {
@@ -203,10 +210,7 @@ namespace XDagNetWallet.Components
         /// <returns></returns>
         public int OnUpdateState(string state, string balance, string address, string message)
         {
-            using(StreamWriter sw = new StreamWriter("testout.txt", true))
-            {
-                sw.WriteLine("State=[{0}] Message=[{1}]", state, message);
-            }
+            logger.Trace(string.Format("State=[{0}] Message=[{1}]", state, message));
             
             return 0;
         }
