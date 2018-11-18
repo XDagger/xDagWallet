@@ -103,6 +103,17 @@
     <Compile Include="sources\Interop\WalletState.cs" />
     <Compile Include="sources\Interop\XDagErrorCode.cs" />
     <Compile Include="sources\Interop\XDagErrorHandler.cs" />
+    <Compile Include="sources\Rpc\JsonRpcClient.cs" />
+    <Compile Include="sources\Rpc\JsonRpcException.cs" />
+    <Compile Include="sources\Rpc\Methods\GetTransactionsMethod.cs" />
+    <Compile Include="sources\Rpc\Methods\GetVersionMethod.cs" />
+    <Compile Include="sources\Rpc\Methods\MethodBase.cs" />
+    <Compile Include="sources\Rpc\Models\Responses\ErrorResponse.cs" />
+    <Compile Include="sources\Rpc\Models\ModelBase.cs" />
+    <Compile Include="sources\Rpc\Models\Responses\ResultResponse.cs" />
+    <Compile Include="sources\Rpc\Models\Requests\TransactionRequest.cs" />
+    <Compile Include="sources\Rpc\Models\Responses\TransactionsResult.cs" />
+    <Compile Include="sources\Rpc\Models\Responses\VersionsResult.cs" />
     <Compile Include="sources\UI\Async\BackgroundResult.cs" />
     <Compile Include="sources\UI\Async\BackgroundWork.cs" />
     <Compile Include="sources\UI\Windows\LogonWindow.xaml.cs">
@@ -251,6 +262,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy $(SolutionDir)core\dependencies\x64\msvcr100.dll $(TargetDir)
