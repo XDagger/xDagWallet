@@ -58,11 +58,26 @@ namespace XDagNetWallet.Components
             return transactionList;
         }
 
-        public static string GetPartnerAddress(string walletAddress, GetBlockResponse response, string direction)
+        /// <summary>
+        /// Fill the following fields for a transaction block: 
+        ///     1. Status
+        ///     2. PartnerAddress
+        /// </summary>
+        /// <param name="transaction"></param>
+        public static void FillTransactionData(string walletAddress, XDagTransaction transaction)
+        {
+            XDagExplorerClient client = new XDagExplorerClient();
+            GetBlockResponse tResponse = client.GetBlock(transaction.BlockAddress);
+
+            transaction.SetStatus(tResponse.State);
+            transaction.PartnerAddress = GetPartnerAddress(walletAddress, tResponse, transaction.Direction.ToString());
+        }
+
+        private static string GetPartnerAddress(string walletAddress, GetBlockResponse response, string direction)
         {
             foreach(TransactionData data in response.PartnersList)
             {
-                if (data.Direction.Equals(direction) && !data.Address.Equals(walletAddress))
+                if (data.Direction.Equals(direction, StringComparison.InvariantCultureIgnoreCase) && !data.Address.Equals(walletAddress))
                 {
                     return data.Address;
                 }

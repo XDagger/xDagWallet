@@ -4,21 +4,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using XDagNetWallet.ExplorerAPI.Models;
 
 namespace XDagNetWallet.ExplorerAPI
 {
     public class XDagExplorerException : Exception
     {
-        [JsonProperty(PropertyName = "error")]
-        public int ErrorCode
+        public string ErrorCode
         {
-            get; private set;
+            get; set;
         }
-
-        [JsonProperty(PropertyName = "message")]
+        
         public string ErrorMessage
         {
-            get; private set;
+            get; set;
         }
 
         public XDagExplorerException()
@@ -26,10 +25,18 @@ namespace XDagNetWallet.ExplorerAPI
 
         }
 
-        public XDagExplorerException(int code, string message)
+        public XDagExplorerException(string code, string message)
+            : base(message)
         {
             this.ErrorCode = code;
             this.ErrorMessage = message;
+        }
+
+        public XDagExplorerException(ErrorData data)
+            : base (data.ErrorMessage)
+        {
+            this.ErrorCode = data.ErrorCode;
+            this.ErrorMessage = data.ErrorMessage;
         }
     }
 }

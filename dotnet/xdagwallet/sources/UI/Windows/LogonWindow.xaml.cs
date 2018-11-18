@@ -447,9 +447,21 @@ namespace XDagNetWallet.UI.Windows
 
         private void btnTest_Click(object sender, RoutedEventArgs e)
         {
-            List<XDagTransaction> transactions = XDagTransactionProvider.GetTransactionHistory("1Nwa0TCr5umw5ZLAvKmHCl+SJDP21dyL");
+            try
+            {
+                List<XDagTransaction> transactions = XDagTransactionProvider.GetTransactionHistory("1Nwa0TCr5umw5ZLAvKmHCl+SJDP21dyL");
 
-            MessageBox.Show(transactions[0].Amount.ToString());
+                MessageBox.Show(transactions[0].Amount.ToString());
+
+                XDagTransactionProvider.FillTransactionData(xdagWallet.Address, transactions[0]);
+
+                MessageBox.Show(transactions[0].Status.ToString());
+                MessageBox.Show(transactions[0].PartnerAddress);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
         }
 
         private void btnTest_Click1(object sender, RoutedEventArgs e)

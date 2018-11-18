@@ -32,20 +32,20 @@ namespace XDagNetWallet.ExplorerAPI
             var task = Task.Run(async () =>
             {
                 var response = await client.SendAsync(request);
-
                 var responseString = await response.Content.ReadAsStringAsync();
-                if (!response.IsSuccessStatusCode)
-                {
-                    XDagExplorerException exception = JsonConvert.DeserializeObject<XDagExplorerException>(responseString);
-                    throw exception;
-                }
 
                 return responseString;
             });
             task.Wait();
 
-            return task.Result;
-        }
+            string responseStr = task.Result;
+            ErrorData errorData = JsonConvert.DeserializeObject<ErrorData>(responseStr);
+            if (!string.IsNullOrEmpty(errorData.ErrorCode))
+            {
+                throw new XDagExplorerException(errorData);
+            }
 
+            return responseStr;
+        }
     }
 }
