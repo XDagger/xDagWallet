@@ -23,6 +23,8 @@ using XDagNetWallet.Rpc;
 using XDagNetWallet.Rpc.Methods;
 using XDagNetWallet.Rpc.Models.Requests;
 using XDagNetWallet.Rpc.Models.Responses;
+using XDagNetWallet.ExplorerAPI;
+using XDagNetWallet.ExplorerAPI.Models;
 
 namespace XDagNetWallet.UI.Windows
 {
@@ -445,8 +447,14 @@ namespace XDagNetWallet.UI.Windows
 
         private void btnTest_Click(object sender, RoutedEventArgs e)
         {
+            List<XDagTransaction> transactions = XDagTransactionProvider.GetTransactionHistory("1Nwa0TCr5umw5ZLAvKmHCl+SJDP21dyL");
+
+            MessageBox.Show(transactions[0].Amount.ToString());
+        }
+
+        private void btnTest_Click1(object sender, RoutedEventArgs e)
+        {
             JsonRpcClient client = new JsonRpcClient();
-           
             GetTransactionsMethod method = new GetTransactionsMethod(1, new TransactionRequest("1Nwa0TCr5umw5ZLAvKmHCl+SJDP21dyL"));
 
             try
@@ -456,7 +464,7 @@ namespace XDagNetWallet.UI.Windows
                 MessageBox.Show(result.Total.ToString());
                 MessageBox.Show(result.Transactions[1].Amount);
             }
-            catch(JsonRpcException ex)
+            catch (JsonRpcException ex)
             {
                 MessageBox.Show(ex.ErrorMessage);
             }

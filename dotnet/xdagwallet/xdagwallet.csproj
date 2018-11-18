@@ -100,6 +100,12 @@
     </Compile>
     <Compile Include="sources\Components\WalletConfig.cs" />
     <Compile Include="sources\Components\WalletOptions.cs" />
+    <Compile Include="sources\Components\XDagTransaction.cs" />
+    <Compile Include="sources\Components\XDagTransactionProvider.cs" />
+    <Compile Include="sources\ExplorerAPI\Models\GetBlockResponse.cs" />
+    <Compile Include="sources\ExplorerAPI\Models\TransactionData.cs" />
+    <Compile Include="sources\ExplorerAPI\XDagExplorerClient.cs" />
+    <Compile Include="sources\ExplorerAPI\XDagExplorerException.cs" />
     <Compile Include="sources\Interop\WalletState.cs" />
     <Compile Include="sources\Interop\XDagErrorCode.cs" />
     <Compile Include="sources\Interop\XDagErrorHandler.cs" />
