@@ -19,6 +19,7 @@ using XDagNetWalletCLI;
 using XDagNetWallet.Interop;
 using XDagNetWallet.UI.Async;
 using System.Timers;
+using System.Collections.ObjectModel;
 
 namespace XDagNetWallet.UI.Windows
 {
@@ -39,6 +40,7 @@ namespace XDagNetWallet.UI.Windows
 
         private readonly object refreshWalletDataLock = new object();
 
+        private ObservableCollection<XDagTransaction> transactionHistory = new ObservableCollection<XDagTransaction>();
         public WalletWindow(XDagWallet wallet)
         {
             if (wallet == null)
@@ -58,6 +60,8 @@ namespace XDagNetWallet.UI.Windows
             refreshWalletDataRepeatTimer = new System.Timers.Timer();
             refreshWalletDataRepeatTimer.Interval = 10 * 1000;
             refreshWalletDataRepeatTimer.Elapsed += new ElapsedEventHandler(this.OnRefreshWalletData);
+
+            
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -105,8 +109,15 @@ namespace XDagNetWallet.UI.Windows
             xdagRuntime.RefreshData();
 
             refreshWalletDataRepeatTimer.Start();
+
+            transactionHistory.Add(new XDagTransaction() { TimeStamp = DateTime.UtcNow, Amount = 0.1, PartnerAddress = "xxxxxx", Direction = XDagTransaction.Directions.Input });
+            transactionHistory.Add(new XDagTransaction() { TimeStamp = DateTime.UtcNow, Amount = 2.1, PartnerAddress = "xxxxxx", Direction = XDagTransaction.Directions.Output });
+            transactionHistory.Add(new XDagTransaction() { TimeStamp = DateTime.UtcNow, Amount = 2.1, PartnerAddress = "xxxxxx", Direction = XDagTransaction.Directions.Input });
+
+            dgdTransactionHistory.DataContext = transactionHistory;
+            dgdTransactionHistory.ItemsSource = transactionHistory;
         }
-        
+
         private void Load_LocalizedStrings()
         {
             string cultureInfo = walletConfig.ReadOrDefaultCultureInfo;
