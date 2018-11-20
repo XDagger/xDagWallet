@@ -41,6 +41,7 @@ namespace XDagNetWallet.UI.Windows
         private readonly object refreshWalletDataLock = new object();
 
         private ObservableCollection<XDagTransaction> transactionHistory = new ObservableCollection<XDagTransaction>();
+
         public WalletWindow(XDagWallet wallet)
         {
             if (wallet == null)
@@ -114,7 +115,6 @@ namespace XDagNetWallet.UI.Windows
             transactionHistory.Add(new XDagTransaction() { TimeStamp = DateTime.UtcNow, Amount = 2.1, PartnerAddress = "xxxxxx", Direction = XDagTransaction.Directions.Output });
             transactionHistory.Add(new XDagTransaction() { TimeStamp = DateTime.UtcNow, Amount = 2.1, PartnerAddress = "xxxxxx", Direction = XDagTransaction.Directions.Input });
 
-            dgdTransactionHistory.DataContext = transactionHistory;
             dgdTransactionHistory.ItemsSource = transactionHistory;
         }
 
@@ -337,5 +337,27 @@ namespace XDagNetWallet.UI.Windows
             this.progressBar.IsIndeterminate = false;
         }
 
+        private void tabHistory_Loaded(object sender, RoutedEventArgs e)
+        {
+            
+        }
+
+        private void tabHistory_GotFocus(object sender, RoutedEventArgs e)
+        {
+            biTransactionHistoryLoading.IsBusy = true;
+            //// MessageBox.Show("tabHistory_GotFocus");
+
+            if (xdagWallet == null)
+            {
+                return;
+            }
+
+            List<XDagTransaction> transactions = XDagTransactionProvider.GetTransactionHistory(xdagWallet.Address);
+
+            foreach(XDagTransaction tran in transactions)
+            {
+                transactionHistory.Add(tran);
+            }
+        }
     }
 }

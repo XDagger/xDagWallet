@@ -128,30 +128,36 @@
                 </Grid>
             </xctk:MaterialTabItem>
             <xctk:MaterialTabItem x:Name="tabHistory" Header="Transaction History" FontSize="20" FontWeight="Bold"
-                                        HorizontalContentAlignment="Left">
+                                        HorizontalContentAlignment="Left" Loaded="tabHistory_Loaded" GotFocus="tabHistory_GotFocus">
                 <Grid Width="690">
-                    <xcdg:DataGridControl x:Name="dgdTransactionHistory"
+                    <xctk:BusyIndicator x:Name="biTransactionHistoryLoading" IsBusy="False" DisplayAfter="00:00:00.250" BusyContent="Loading...">
+                        <xcdg:DataGridControl x:Name="dgdTransactionHistory"
                                  ReadOnly="True"
                                  IsGroupSelectionEnabled="False"
-                                 ItemsSource="{Binding Source={StaticResource transactionHistory}}">
-                        <!--<xcdg:DataGridControl.View>
-                            <xcdg:TableflowView />
-                        </xcdg:DataGridControl.View>-->
+                                           
+                                 ItemsSource="{Binding Source={StaticResource transactionHistory}}"
+                                 Margin="0,0,0,0"
+                                          >
+                            <xcdg:DataGridControl.View>
+                                <xcdg:TableflowView />
+                            </xcdg:DataGridControl.View>
 
-                        <xcdg:DataGridControl.Columns>
-                            <xcdg:Column FieldName="TimeStamp"
+                            <xcdg:DataGridControl.Columns>
+                                <xcdg:Column FieldName="TimeStamp"
                            Title="TimeStamp"
                            Width="100"
                            IsMainColumn="True">
-                            </xcdg:Column>
+                                </xcdg:Column>
 
-                            <xcdg:Column FieldName="Direction" Title="Direction" Width="185"/>
-                            <xcdg:Column FieldName="PartnerAddress" Title="PartnerAddress" Width="185"/>
-                            <xcdg:Column FieldName="Amount" Title="Amount" Width="120" />
-                            <xcdg:Column FieldName="Status" Title="Status" Width="120" />
+                                <xcdg:Column FieldName="Direction" Title="Direction" Width="185"/>
+                                <xcdg:Column FieldName="Amount" Title="Amount" Width="120" />
+                                <xcdg:Column FieldName="Status" Title="Status" Width="120" />
+                                <xcdg:Column FieldName="BlockAddress" Title="Block Address" Width="185"/>
+                                <xcdg:Column FieldName="PartnerAddress" Title="Partner Address" Width="185"/>
 
-                        </xcdg:DataGridControl.Columns>
-                    </xcdg:DataGridControl>
+                            </xcdg:DataGridControl.Columns>
+                        </xcdg:DataGridControl>
+                    </xctk:BusyIndicator>
                 </Grid>
             </xctk:MaterialTabItem>
         </xctk:MaterialTabControl>
