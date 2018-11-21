@@ -88,5 +88,12 @@ namespace XDagNetWallet.Components
                 this.Status = TransactionStatus.Pending;
             }
         }
+
+        public void MergeWith(XDagTransaction another)
+        {
+            this.Status = another.Status;
+            this.Amount = another.Amount;
+            this.PartnerAddress = another.PartnerAddress;
+        }
     }
 }

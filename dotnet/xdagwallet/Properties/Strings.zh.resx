@@ -130,7 +130,7 @@
     <value>正在查找网络连接...</value>
   </data>
   <data name="LogonWindow_Title" xml:space="preserve">
-    <value>欢迎使用XDAG钱包</value>
+    <value>欢迎使用XDAG钱包 (版本 {0})</value>
   </data>
   <data name="Common_ConfirmTitle" xml:space="preserve">
     <value>确认</value>
@@ -275,5 +275,38 @@
   </data>
   <data name="WalletWindow_TabTransfer" xml:space="preserve">
     <value>转账</value>
+  </data>
+  <data name="LogonWindow_NoPoolAddress" xml:space="preserve">
+    <value>读取配置文件错误：请检查wallet-config.json文件，确认options/pool_address填写正确</value>
+  </data>
+  <data name="WalletWindow_HistoryBusy" xml:space="preserve">
+    <value>正在读取交易信息数据...</value>
+  </data>
+  <data name="WalletWindow_HistoryColumns_Amount" xml:space="preserve">
+    <value>数额</value>
+  </data>
+  <data name="WalletWindow_HistoryColumns_BlockAddress" xml:space="preserve">
+    <value>区块地址</value>
+  </data>
+  <data name="WalletWindow_HistoryColumns_Direction" xml:space="preserve">
+    <value>转入/转出</value>
+  </data>
+  <data name="WalletWindow_HistoryColumns_PartnerAddress" xml:space="preserve">
+    <value>对方地址</value>
+  </data>
+  <data name="WalletWindow_HistoryColumns_Status" xml:space="preserve">
+    <value>状态</value>
+  </data>
+  <data name="WalletWindow_HistoryColumns_TimeStamp" xml:space="preserve">
+    <value>发起时间</value>
+  </data>
+  <data name="WalletWindow_VersionLabel" xml:space="preserve">
+    <value>版本:{0}</value>
+  </data>
+  <data name="WalletWindow_Transfer_Amount" xml:space="preserve">
+    <value>转账数额：</value>
+  </data>
+  <data name="WalletWindow_Transfer_ToAddress" xml:space="preserve">
+    <value>目标地址：</value>
   </data>
 </root>

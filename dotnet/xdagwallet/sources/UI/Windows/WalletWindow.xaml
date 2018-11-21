@@ -4,7 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-        xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid"
         xmlns:local="clr-namespace:XDagNetWallet.UI.Windows"
         mc:Ignorable="d"
         Title="XDag Wallet" Height="446.868" Width="699.313" Loaded="Window_Loaded" WindowStartupLocation="CenterScreen" WindowStyle="None">
@@ -12,76 +11,32 @@
     <Window.Resources>
         <ResourceDictionary>
 
-            <xcdg:ImageConverter x:Key="imageConverter" />
-            <!-- Converter used to return a BitmapImage from a Country name -->
-            <!--<conv:FlagPathConverter x:Key="flagPathConverter" />-->
-
-            <!-- DataTemplate to display an Employee object -->
-            <DataTemplate x:Key="employeeDataTemplate">
-                <Grid MaxHeight="30"
-                  VerticalAlignment="Center">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    
-                    <StackPanel Grid.Column="1"
-                           Orientation="Horizontal"
-                           VerticalAlignment="Center">
-                        <TextBlock Text="{Binding FirstName, NotifyOnValidationError=False, ValidatesOnDataErrors=False}" />
-                        <TextBlock Text=" " />
-                        <TextBlock Text="{Binding LastName, NotifyOnValidationError=False, ValidatesOnDataErrors=False}" />
-                    </StackPanel>
-                </Grid>
-            </DataTemplate>
-
-            <!-- DataTemplate to display the $ in Freight column -->
-            <DataTemplate x:Key="freightDataTemplate">
-                <TextBlock Text="{Binding StringFormat=\{0:C\}}"
-                       VerticalAlignment="Center" />
-            </DataTemplate>
-
-            <!-- DataTemplate to display a Country -->
-            <DataTemplate x:Key="countryDataTemplate">
-                <StackPanel Orientation="Horizontal"
-                        VerticalAlignment="Center"
-                        Margin="5,0,0,0">
-                    <!--The flagPathConverter resource changes the value of a
-                               group (e.g., "Canada") to an image. -->
-                    
-                    <TextBlock Text="{Binding}"
-                          TextTrimming="WordEllipsis"
-                          VerticalAlignment="Center" />
-                </StackPanel>
-            </DataTemplate>
-
+            <!--
             <xcdg:DataGridCollectionViewSource x:Key="transactionHistory"
                                             Source="{Binding}">
-                <!--<xcdg:DataGridCollectionViewSource.GroupDescriptions>
-                    <PropertyGroupDescription PropertyName="ShipCountry" />
-                    <PropertyGroupDescription PropertyName="ShipCity" />
-                </xcdg:DataGridCollectionViewSource.GroupDescriptions>-->
+                <xcdg:DataGridCollectionViewSource.GroupDescriptions>
+                    <PropertyGroupDescription PropertyName="Direction" />
+                </xcdg:DataGridCollectionViewSource.GroupDescriptions>
             </xcdg:DataGridCollectionViewSource>
+            -->
         </ResourceDictionary>
     </Window.Resources>
     <Grid>
 
-        <xctk:MaterialTabControl x:Name="materialTabControl"
-                                        TabStripPlacement="Top"
-                                        IsInkEffectActive="True"
-                                        IsInkBarActive="True"
-                                 
-                                        IsSlidingAnimationActive="True" Margin="0,62,-0.333,0">
-            <xctk:MaterialTabItem x:Name="tabAccount" Header="Account" FontSize="20" FontWeight="Bold"
+        <TabControl x:Name="materialTabControl"
+                                 TabStripPlacement="Top"
+                                 BorderThickness="1"
+                                 Margin="0,62,-0.333,0">
+            <TabItem x:Name="tabAccount" Header="Account" FontSize="20" FontWeight="Bold"
                                         HorizontalContentAlignment="Left">
                 <Grid Width="690">
                     <Label x:Name="lblWalletStatus" Content="" Margin="199,28,285,0" VerticalAlignment="Top" RenderTransformOrigin="-0.974,0.603" FontSize="14"/>
                     <Label x:Name="lblAddressTitle" Content="Address: " HorizontalAlignment="Left" Margin="99,97,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.974,0.603" Width="95" Height="30" FontSize="18" FontWeight="Bold"/>
                     <Label x:Name="lblBalanceTitle" Content="Balance:" HorizontalAlignment="Left" Margin="99,179,0,0" VerticalAlignment="Top" Width="85" Height="35" FontSize="18" FontWeight="Bold"/>
                     <TextBox x:Name="txtWalletAddress" Height="30" Margin="199,97,133,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" FontSize="14" IsEnabled="False"/>
-                    <xctk:MaterialButton x:Name="btnCopyWalletAddress" HorizontalAlignment="Left" Margin="557,97,0,0" Cursor="Hand" VerticalAlignment="Top" Width="30" Height="30" Background="FloralWhite" Foreground="SteelBlue"  Click="btnCopyWalletAddress_Click">
-                        <Image Source="/xdagnetwallet;component/Resources/icon-copy-2.png" />
-                    </xctk:MaterialButton>
+                    <Button x:Name="btnCopyWalletAddress" HorizontalAlignment="Left" Margin="557,97,0,0" Cursor="Hand" VerticalAlignment="Top" Width="30" Height="30" Background="FloralWhite" Foreground="SteelBlue"  Click="btnCopyWalletAddress_Click">
+                        <Image Source="/XDagWallet;component/Resources/icon-copy-2.png" />
+                    </Button>
                     <Label x:Name="lblBalance" Content="0.000000000" Margin="198,174,106,0" FontSize="32" FontWeight="Bold" FontFamily="Arial Black" Height="47" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5">
                         <Label.RenderTransform>
                             <TransformGroup>
@@ -92,78 +47,50 @@
                             </TransformGroup>
                         </Label.RenderTransform>
                     </Label>
-                    <Image x:Name="imgStatus" HorizontalAlignment="Left" Height="30"  Width="30" Margin="147,28,0,0" VerticalAlignment="Top" Source="/xdagnetwallet;component/Resources/icon-status-online.png"/>
+                    <Image x:Name="imgStatus" HorizontalAlignment="Left" Height="30"  Width="30" Margin="147,28,0,0" VerticalAlignment="Top" Source="/XDagWallet;component/Resources/icon-status-online.png"/>
                     <!--<Image HorizontalAlignment="Left" Height="30" Width="30" Margin="15,19,0,0" VerticalAlignment="Top"/>-->
 
                 </Grid>
-            </xctk:MaterialTabItem>
-            <xctk:MaterialTabItem x:Name="tabTransfer" Header="Transfer" FontSize="20" FontWeight="Bold"
-                                        HorizontalContentAlignment="Left"
+            </TabItem>
+            <TabItem x:Name="tabTransfer" Header="Transfer" FontSize="20" FontWeight="Bold"
+                                        HorizontalContentAlignment="Stretch"
                                         >
-                <Grid Width="690">
-                    <xctk:MaterialButton x:Name="btnTransfer" Content="Generate Transaction" Margin="80,0,74,37.333" Cursor="Hand" FontSize="24" Background="FloralWhite" Foreground="SteelBlue"  Click="btnTransfer_Click" FontWeight="Bold" Height="48" VerticalAlignment="Bottom"/>
-                    <Label Content="To Address:" HorizontalAlignment="Left" Margin="80,26,0,0" VerticalAlignment="Top" Width="157"/>
-                    <Label Content="Amount to Transfer:" HorizontalAlignment="Left" Margin="80,105,0,0" VerticalAlignment="Top" Width="262"/>
-                    <xctk:WatermarkTextBox x:Name="txtTransferTargetAddress" Margin="80,60,74,0" Height="36"
-                                   Watermark="12345678901234567890123456789012" FontSize="16"
-                                   KeepWatermarkOnGotFocus="True" VerticalAlignment="Top">
-                        <xctk:WatermarkTextBox.WatermarkTemplate>
-                            <DataTemplate>
-                                <Border BorderBrush="Green"
-                             BorderThickness="0"
-                             Padding="0">
-                                    <ContentControl Content="{Binding}"
-                                        Foreground="LightGray"
-                                        FontWeight="Normal"
-                                        Focusable="False" />
-                                </Border>
-                            </DataTemplate>
-                        </xctk:WatermarkTextBox.WatermarkTemplate>
-                    </xctk:WatermarkTextBox>
-                    <xctk:WatermarkTextBox x:Name="txtTransferAmount" Margin="80,140,74,0" Height="36"
-                                   Watermark="0.00" FontSize="16"
-                                   KeepWatermarkOnGotFocus="True" VerticalAlignment="Top">
-                    </xctk:WatermarkTextBox>
-                    <ProgressBar x:Name="progressBar" Height="10" Margin="0,0,0,0.333" VerticalAlignment="Bottom"/>
+                <Grid Margin="0,0,0,0" HorizontalAlignment="Stretch">
+                    <Button x:Name="btnTransfer" Content="Generate Transaction" Margin="80,0,74,37.333" Cursor="Hand" FontSize="24" Background="FloralWhite" Foreground="SteelBlue"  Click="btnTransfer_Click" FontWeight="Bold" Height="48" VerticalAlignment="Bottom"/>
+                    <Label x:Name="lblTransferToAddress" Content="To Address:" HorizontalAlignment="Left" Margin="80,26,0,0" VerticalAlignment="Top" Width="157"/>
+                    <Label x:Name="lblTransferAmount" Content="Amount to Transfer:" HorizontalAlignment="Left" Margin="80,105,0,0" VerticalAlignment="Top" Width="262"/>
+                    <TextBox x:Name="txtTransferTargetAddress" Margin="80,60,74,0" Height="36"
+                                   FontSize="16"
+                                   VerticalAlignment="Top">
+                    </TextBox>
+                    <TextBox x:Name="txtTransferAmount" Margin="80,140,74,0" Height="36"
+                                   FontSize="16"
+                                   VerticalAlignment="Top">
+                    </TextBox>
+                    <ProgressBar x:Name="progressBar" Height="10" Margin="0,0,0,0" VerticalAlignment="Bottom" Visibility="Hidden"/>
                 </Grid>
-            </xctk:MaterialTabItem>
-            <xctk:MaterialTabItem x:Name="tabHistory" Header="Transaction History" FontSize="20" FontWeight="Bold"
-                                        HorizontalContentAlignment="Left" Loaded="tabHistory_Loaded" GotFocus="tabHistory_GotFocus">
-                <Grid Width="690">
-                    <xctk:BusyIndicator x:Name="biTransactionHistoryLoading" IsBusy="False" DisplayAfter="00:00:00.250" BusyContent="Loading...">
-                        <xcdg:DataGridControl x:Name="dgdTransactionHistory"
-                                 ReadOnly="True"
-                                 IsGroupSelectionEnabled="False"
-                                           
-                                 ItemsSource="{Binding Source={StaticResource transactionHistory}}"
-                                 Margin="0,0,0,0"
-                                          >
-                            <xcdg:DataGridControl.View>
-                                <xcdg:TableflowView />
-                            </xcdg:DataGridControl.View>
-
-                            <xcdg:DataGridControl.Columns>
-                                <xcdg:Column FieldName="TimeStamp"
-                           Title="TimeStamp"
-                           Width="100"
-                           IsMainColumn="True">
-                                </xcdg:Column>
-
-                                <xcdg:Column FieldName="Direction" Title="Direction" Width="185"/>
-                                <xcdg:Column FieldName="Amount" Title="Amount" Width="120" />
-                                <xcdg:Column FieldName="Status" Title="Status" Width="120" />
-                                <xcdg:Column FieldName="BlockAddress" Title="Block Address" Width="185"/>
-                                <xcdg:Column FieldName="PartnerAddress" Title="Partner Address" Width="185"/>
-
-                            </xcdg:DataGridControl.Columns>
-                        </xcdg:DataGridControl>
-                    </xctk:BusyIndicator>
+            </TabItem>
+            <TabItem x:Name="tabHistory" Header="Transaction History" FontSize="20" FontWeight="Bold"
+                                        HorizontalContentAlignment="Stretch" Loaded="tabHistory_Loaded" GotFocus="tabHistory_GotFocus">
+                <Grid x:Name="tabItemHistory" Margin="0,0,0,0" HorizontalAlignment="Stretch">
+                    <DataGrid x:Name="dgdTransactionHistorySimple" Margin="0,0,0,0" ItemsSource="{Binding}" FontSize="14" FontWeight="Black" IsReadOnly="True" AutoGenerateColumns="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn x:Name="transactionColumn_TimeStamp" FontSize="14" FontWeight="Normal" Header="TimeStamp" Binding="{Binding TimeStamp}" />
+                            <DataGridTextColumn x:Name="transactionColumn_Direction" FontSize="14" FontWeight="Normal" Header="Direction" Binding="{Binding Direction}" />
+                            <DataGridTextColumn x:Name="transactionColumn_Amount" FontSize="14" FontWeight="Normal" Header="Amount" Binding="{Binding Amount}" />
+                            <DataGridTextColumn x:Name="transactionColumn_Status" FontSize="14" FontWeight="Normal" Header="Status" Binding="{Binding Status}" />
+                            <DataGridTextColumn x:Name="transactionColumn_BlockAddress" FontWeight="Normal" FontSize="14" Header="Block Address" Binding="{Binding BlockAddress}" />
+                            <DataGridTextColumn x:Name="transactionColumn_PartnerAddress" FontWeight="Normal" FontSize="14" Header="Opponent Address" Binding="{Binding PartnerAddress}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Grid x:Name="grdBusyIndicator" Height="80" Width="200" Margin="201,112,213.667,0" Visibility="Hidden" VerticalAlignment="Top" HorizontalAlignment="Center">
+                        <Rectangle Stroke="{DynamicResource {x:Static SystemColors.InfoBrushKey}}" Fill="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}" />
+                        <TextBox x:Name="grdBusyIndicatorText" Height="35" Width="200" Text="Loading Data..." BorderThickness="0" Background="Transparent" Margin="0,10,0,0" VerticalAlignment="Top" />
+                        <ProgressBar Height="30" VerticalAlignment="Bottom" IsIndeterminate="True"/>
+                    </Grid>
                 </Grid>
-            </xctk:MaterialTabItem>
-        </xctk:MaterialTabControl>
-
-
-
+            </TabItem>
+        </TabControl>
 
         <Rectangle Height="57" VerticalAlignment="Top" Margin="0,0,-0.333,0" RenderTransformOrigin="0.5,0.5" MouseDown="Rectangle_MouseDown">
             <Rectangle.Fill>
@@ -174,28 +101,28 @@
                 </LinearGradientBrush>
             </Rectangle.Fill>
         </Rectangle>
-        <xctk:MaterialButton x:Name="btnSettings" Margin="0,14,55.667,0" Cursor="Hand" VerticalAlignment="Top" Height="30" Width="30" Click="btnSettings_Click" Foreground="Black" MaterialAccent="Cyan" Mode="Circle" HorizontalAlignment="Right">
-            <!--<xctk:MaterialButton.Background>
+        <Button x:Name="btnSettings" Margin="0,14,55.667,0" Cursor="Hand" VerticalAlignment="Top" Height="30" Width="30" Click="btnSettings_Click" Foreground="Black" HorizontalAlignment="Right">
+            <Button.Background>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                    <GradientStop Color="#FFD6D6DB" Offset="0"/>
-                    <GradientStop Color="#FFDBD8C5" Offset="1"/>
+                    <GradientStop Color="#FF20A2A6" Offset="0"/>
+                    <GradientStop Color="#FF1A7275" Offset="1"/>
                 </LinearGradientBrush>
-            </xctk:MaterialButton.Background>-->
-            <Image Source="/xdagnetwallet;component/Resources/icon-settings.png" />
-        </xctk:MaterialButton>
-        <xctk:MaterialButton x:Name="btnExit" Margin="0,14,9.667,0" Cursor="Hand" VerticalAlignment="Top" Height="30" Width="30" Click="btnExit_Click" Foreground="Black" MaterialAccent="Cyan" Mode="Circle" HorizontalAlignment="Right">
-            <!--<xctk:MaterialButton.Background>
+            </Button.Background>
+            <Image Source="/XDagWallet;component/Resources/icon-settings.png" />
+        </Button>
+        <Button x:Name="btnExit" Margin="0,14,9.667,0" Cursor="Hand" VerticalAlignment="Top" Height="30" Width="30" Click="btnExit_Click" Foreground="Black" HorizontalAlignment="Right">
+            <Button.Background>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                    <GradientStop Color="#FFD6D6DB" Offset="0"/>
-                    <GradientStop Color="#FFDBD8C5" Offset="1"/>
+                    <GradientStop Color="#FFDFCFCD" Offset="0"/>
+                    <GradientStop Color="#FFE5809B" Offset="1"/>
                 </LinearGradientBrush>
-            </xctk:MaterialButton.Background>-->
-            <Image Source="/xdagnetwallet;component/Resources/icon-close.png" />
-        </xctk:MaterialButton>
+            </Button.Background>
+            <Image Source="/XDagWallet;component/Resources/icon-close.png" />
+        </Button>
 
-        <Image HorizontalAlignment="Left" Height="57" Margin="18,0,0,0" VerticalAlignment="Top" Width="58" Source="/xdagnetwallet;component/Resources/XDagger.ico"/>
+        <Image HorizontalAlignment="Left" Height="57" Margin="18,0,0,0" VerticalAlignment="Top" Width="58" Source="/XDagWallet;component/Resources/XDagger.ico"/>
         <Label Content="XDAG Wallet" HorizontalAlignment="Left" Margin="76,8,0,0" VerticalAlignment="Top" FontSize="24" FontFamily="Segoe UI Black" Foreground="#FFD6DBD0" Background="Transparent"/>
-        <Label Content="Version: 0.2.0" HorizontalAlignment="Left" Margin="510,18,0,0" VerticalAlignment="Top" Background="Transparent" />
+        <Label x:Name="lblVersion" Content="Version: " HorizontalAlignment="Right" Margin="0,18,101.667,0" VerticalAlignment="Top" Background="Transparent" />
 
     </Grid>
 </Window>

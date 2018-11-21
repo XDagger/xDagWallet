@@ -22,7 +22,7 @@ Class XDagNetWalletCLI.XDagRuntime: AutoLayout, AnsiClass, Class, Public, Before
     InputPassword(SByte*, SByte*, UInt32): PrivateScope, Public, HideBySig
     OnUpdateState(SByte*, SByte*, SByte*): PrivateScope, Public, HideBySig
     EventCallback(Void*, xdag_event*): PrivateScope, Public, HideBySig
-    Start(): PrivateScope, Public, HideBySig
+    Start(String): PrivateScope, Public, HideBySig
     HasExistingAccount(): PrivateScope, Public, HideBySig
     DoTesting(): PrivateScope, Public, HideBySig
     TransferToAddress(String, Double): PrivateScope, Public, HideBySig

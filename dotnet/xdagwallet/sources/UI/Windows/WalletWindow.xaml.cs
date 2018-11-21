@@ -38,9 +38,15 @@ namespace XDagNetWallet.UI.Windows
 
         private System.Timers.Timer refreshWalletDataRepeatTimer = null;
 
+        private System.Timers.Timer fillTransactionHistoryTimer = null;
+
         private readonly object refreshWalletDataLock = new object();
 
         private ObservableCollection<XDagTransaction> transactionHistory = new ObservableCollection<XDagTransaction>();
+
+        private HashSet<XDagTransaction> fillingTransactionHistory = new HashSet<XDagTransaction>();
+
+        private RefreshingOperation refreshingTransactionHistory = null;
 
         public WalletWindow(XDagWallet wallet)
         {
@@ -62,12 +68,15 @@ namespace XDagNetWallet.UI.Windows
             refreshWalletDataRepeatTimer.Interval = 10 * 1000;
             refreshWalletDataRepeatTimer.Elapsed += new ElapsedEventHandler(this.OnRefreshWalletData);
 
-            
+            fillTransactionHistoryTimer = new System.Timers.Timer();
+            fillTransactionHistoryTimer.Interval = 1000;
+            fillTransactionHistoryTimer.Elapsed += new ElapsedEventHandler(this.OnFillTransactionHistoryData);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             xdagRuntime = new XDagRuntime(xdagWallet);
+            refreshingTransactionHistory = new RefreshingOperation(() => { this.LoadTransactionHistory(); }, TimeSpan.FromMinutes(1));
 
             xdagWallet.SetPromptInputPasswordFunction((prompt, passwordSize) =>
             {
@@ -110,12 +119,9 @@ namespace XDagNetWallet.UI.Windows
             xdagRuntime.RefreshData();
 
             refreshWalletDataRepeatTimer.Start();
-
-            transactionHistory.Add(new XDagTransaction() { TimeStamp = DateTime.UtcNow, Amount = 0.1, PartnerAddress = "xxxxxx", Direction = XDagTransaction.Directions.Input });
-            transactionHistory.Add(new XDagTransaction() { TimeStamp = DateTime.UtcNow, Amount = 2.1, PartnerAddress = "xxxxxx", Direction = XDagTransaction.Directions.Output });
-            transactionHistory.Add(new XDagTransaction() { TimeStamp = DateTime.UtcNow, Amount = 2.1, PartnerAddress = "xxxxxx", Direction = XDagTransaction.Directions.Input });
-
-            dgdTransactionHistory.ItemsSource = transactionHistory;
+            
+            dgdTransactionHistorySimple.ItemsSource = transactionHistory;
+            fillTransactionHistoryTimer.Start();
         }
 
         private void Load_LocalizedStrings()
@@ -124,16 +130,33 @@ namespace XDagNetWallet.UI.Windows
 
             Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(cultureInfo);
             this.Title = string.Format("{0} ({1})", Properties.Strings.WalletWindow_Title, walletConfig.Version);
+            this.lblVersion.Content = string.Format(Properties.Strings.WalletWindow_VersionLabel, walletConfig.Version);
 
             this.lblBalanceTitle.Content = Properties.Strings.WalletWindow_BalanceTitle;
             this.lblAddressTitle.Content = Properties.Strings.WalletWindow_AddressTitle;
-
+            
             this.btnTransfer.Content = Properties.Strings.WalletWindow_TransferTitle;
             this.lblWalletStatus.Content = WalletStateConverter.Localize(xdagWallet.State);
 
             this.tabAccount.Header = Properties.Strings.WalletWindow_TabAccount;
             this.tabTransfer.Header = Properties.Strings.WalletWindow_TabTransfer;
             this.tabHistory.Header = Properties.Strings.WalletWindow_TabHistory;
+
+            // Transfer
+            this.lblTransferToAddress.Content = Properties.Strings.WalletWindow_Transfer_ToAddress;
+            this.lblTransferAmount.Content = Properties.Strings.WalletWindow_Transfer_Amount;
+
+            // DataGrid for TransactionHistory
+            this.tabHistory.Header = Properties.Strings.WalletWindow_TabHistory;
+            ////this.biTransactionHistoryLoading.BusyContent = Properties.Strings.WalletWindow_HistoryBusy;
+            this.grdBusyIndicatorText.Text = Properties.Strings.WalletWindow_HistoryBusy;
+
+            this.transactionColumn_TimeStamp.Header = Properties.Strings.WalletWindow_HistoryColumns_TimeStamp;
+            this.transactionColumn_Direction.Header = Properties.Strings.WalletWindow_HistoryColumns_Direction;
+            this.transactionColumn_Amount.Header = Properties.Strings.WalletWindow_HistoryColumns_Amount;
+            this.transactionColumn_Status.Header = Properties.Strings.WalletWindow_HistoryColumns_Status;
+            this.transactionColumn_BlockAddress.Header = Properties.Strings.WalletWindow_HistoryColumns_BlockAddress;
+            this.transactionColumn_PartnerAddress.Header = Properties.Strings.WalletWindow_HistoryColumns_PartnerAddress;
 
         }
 
@@ -154,20 +177,20 @@ namespace XDagNetWallet.UI.Windows
         private void OnUpdatingState(WalletState state)
         {
             lblWalletStatus.Content = WalletStateConverter.Localize(state);
-            
+
+            refreshingTransactionHistory.ResetTime();
+
             switch(state)
             {
                 case WalletState.ConnectedPool:
                 case WalletState.ConnectedAndMining:
-                    imgStatus.Source = new BitmapImage(new Uri(@"/xdagnetwallet;component/Resources/icon-status-online.png", UriKind.Relative));
-                    ////ellPortrait.Fill = new SolidColorBrush(Colors.Green);
+                    imgStatus.Source = new BitmapImage(new Uri(@"/XDagWallet;component/Resources/icon-status-online.png", UriKind.Relative));
                     break;
                 case WalletState.TransferPending:
-                    imgStatus.Source = new BitmapImage(new Uri(@"/xdagnetwallet;component/Resources/icon-status-pending.png", UriKind.Relative));
-                    ////ellPortrait.Fill = new SolidColorBrush(Colors.Orange);
+                    imgStatus.Source = new BitmapImage(new Uri(@"/XDagWallet;component/Resources/icon-status-pending.png", UriKind.Relative));
                     break;
                 default:
-                    imgStatus.Source = new BitmapImage(new Uri(@"/xdagnetwallet;component/Resources/icon-status-offline.png", UriKind.Relative));
+                    imgStatus.Source = new BitmapImage(new Uri(@"/XDagWallet;component/Resources/icon-status-offline.png", UriKind.Relative));
                     break;
             }
 
@@ -195,6 +218,57 @@ namespace XDagNetWallet.UI.Windows
             lock (refreshWalletDataLock)
             {
                 xdagRuntime.RefreshData();
+                fillingTransactionHistory.Clear();
+            }
+        }
+
+        private void OnFillTransactionHistoryData(object sender, ElapsedEventArgs e)
+        {
+            DateTime startTime = e.SignalTime;
+
+            foreach (XDagTransaction transaction in transactionHistory)
+            {
+                if (startTime + TimeSpan.FromSeconds(15) < DateTime.Now)
+                {
+                    return;
+                }
+
+                if (!string.IsNullOrWhiteSpace(transaction.PartnerAddress))
+                {
+                    continue;
+                }
+
+                if (fillingTransactionHistory.Contains(transaction))
+                {
+                    continue;
+                }
+                
+                try
+                {
+                    fillingTransactionHistory.Add(transaction);
+
+                    XDagTransactionProvider.FillTransactionData(xdagWallet.Address, transaction);
+
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        this.dgdTransactionHistorySimple.Items.Refresh();
+                    });
+                }
+                catch (Exception)
+                {
+                    // Ignore the exception
+                }
+                finally
+                {
+                    try
+                    { 
+                        fillingTransactionHistory.Remove(transaction);
+                    }
+                    catch (Exception)
+                    {
+                        // Ignore the exception
+                    }
+                }
             }
         }
 
@@ -344,20 +418,84 @@ namespace XDagNetWallet.UI.Windows
 
         private void tabHistory_GotFocus(object sender, RoutedEventArgs e)
         {
-            biTransactionHistoryLoading.IsBusy = true;
-            //// MessageBox.Show("tabHistory_GotFocus");
-
             if (xdagWallet == null)
             {
                 return;
             }
 
-            List<XDagTransaction> transactions = XDagTransactionProvider.GetTransactionHistory(xdagWallet.Address);
+            refreshingTransactionHistory.Refresh();
+        }
 
-            foreach(XDagTransaction tran in transactions)
+        private void LoadTransactionHistory()
+        {
+            BackgroundWork< List<XDagTransaction>>.CreateWork(
+                this,
+                () => {
+                    ////biTransactionHistoryLoading.IsBusy = true;
+                    this.grdBusyIndicator.Visibility = Visibility.Visible;
+                    this.tabItemHistory.IsEnabled = false;
+                },
+                () => {
+                    List<XDagTransaction> transactions = XDagTransactionProvider.GetTransactionHistory(xdagWallet.Address);
+                    return transactions;
+                },
+                (taskResult) => {
+
+                    ////biTransactionHistoryLoading.IsBusy = false;
+                    this.grdBusyIndicator.Visibility = Visibility.Hidden;
+                    this.tabItemHistory.IsEnabled = true;
+
+                    if (taskResult.HasError)
+                    {
+                        // Do nothing
+                        return;
+                    }
+
+                    List<XDagTransaction> transactions = taskResult.Result;
+
+                    // Merge the Transaction results into the current history
+                    foreach (XDagTransaction tran in transactions)
+                    {
+                        if (!transactionHistory.Any(t => (t.BlockAddress == tran.BlockAddress)))
+                        {
+                            transactionHistory.Add(tran);
+                        }
+                        else
+                        {
+                            XDagTransaction existing = transactionHistory.FirstOrDefault(t => (t.BlockAddress == tran.BlockAddress));
+                            existing.MergeWith(tran);
+                        }
+                    }
+
+                    /*
+                    foreach(XDagTransaction transaction in transactionHistory)
+                    {
+                        LoadTransactionDataAsync(transaction);
+                    }
+                    */
+                }
+            ).Execute();
+        }
+
+        private void LoadTransactionDataAsync(XDagTransaction transaction)
+        {
+            if (!string.IsNullOrWhiteSpace(transaction.PartnerAddress))
             {
-                transactionHistory.Add(tran);
+                return;
             }
+
+            BackgroundWork.CreateWork(
+                this,
+                () => {
+                },
+                () => {
+                    XDagTransactionProvider.FillTransactionData(xdagWallet.Address, transaction);
+                    return 0;
+                },
+                (taskResult) => {
+                    this.dgdTransactionHistorySimple.Items.Refresh();
+                }
+            ).Execute();
         }
     }
 }

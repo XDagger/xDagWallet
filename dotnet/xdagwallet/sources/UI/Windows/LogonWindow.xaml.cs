@@ -135,7 +135,7 @@ namespace XDagNetWallet.UI.Windows
 
             btnConnectAccount.Content = Properties.Strings.LogonWindow_ConnectWallet;
             btnRegisterAccount.Content = Properties.Strings.LogonWindow_RegisterWallet;
-            this.Title = string.Format("{0} ({1})", Properties.Strings.LogonWindow_Title, walletConfig.Version);
+            this.Title = string.Format(Properties.Strings.LogonWindow_Title, walletConfig.Version);
         }
 
         private void btnRegisterAccount_Click(object sender, RoutedEventArgs e)
@@ -217,6 +217,13 @@ namespace XDagNetWallet.UI.Windows
                 return;
             }
 
+            if (string.IsNullOrEmpty(walletConfig?.Options?.PoolAddress))
+            {
+                MessageBox.Show(Properties.Strings.LogonWindow_NoPoolAddress, Properties.Strings.Common_MessageTitle);
+            }
+
+            string poolAddress = walletConfig.Options.PoolAddress;
+
             PasswordWindow passwordWindow = new PasswordWindow(Properties.Strings.PasswordWindow_SetPassword, (passwordInput) =>
             {
                 userInputPassword = passwordInput;
@@ -241,7 +248,6 @@ namespace XDagNetWallet.UI.Windows
             }
 
             btnRegisterAccount.IsEnabled = false;
-            ////btnLang.IsEnabled = false;
             BackgroundWork.CreateWork(
                 this,
                 () => {
@@ -251,7 +257,7 @@ namespace XDagNetWallet.UI.Windows
                     ShowStatus(Properties.Strings.LogonWindow_InitializingAccount);
                 },
                 () => {
-                    runtime.Start();
+                    runtime.Start(poolAddress);
 
                     return 0;
                 },
@@ -282,6 +288,13 @@ namespace XDagNetWallet.UI.Windows
                 return;
             }
 
+            if (string.IsNullOrEmpty(walletConfig?.Options?.PoolAddress))
+            {
+                MessageBox.Show(Properties.Strings.LogonWindow_NoPoolAddress, Properties.Strings.Common_MessageTitle);
+            }
+
+            string poolAddress = walletConfig.Options.PoolAddress;
+
             PasswordWindow passwordWindow = new PasswordWindow(Properties.Strings.PasswordWindow_InputPassword, (passwordInput) =>
             {
                 userInputPassword = passwordInput;
@@ -297,7 +310,6 @@ namespace XDagNetWallet.UI.Windows
             }
 
             btnConnectAccount.IsEnabled = false;
-            ////btnLang.IsEnabled = false;
 
             BackgroundWork.CreateWork(
                 this,
@@ -306,7 +318,7 @@ namespace XDagNetWallet.UI.Windows
                 },
                 () => {
                     logonStatus = LogonStatus.Connecting;
-                    runtime.Start();
+                    runtime.Start(poolAddress);
 
                     return 0;
                 },

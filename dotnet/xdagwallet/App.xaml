@@ -8,8 +8,6 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <xcpt:MetroLightThemeResourceDictionary AccentColor="DeepSkyBlue" />
-                <xctt:ToolkitMetroLightThemeResourceDictionary AccentColor="DeepSkyBlue" />
 
             </ResourceDictionary.MergedDictionaries>
             

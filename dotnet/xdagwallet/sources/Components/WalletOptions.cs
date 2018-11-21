@@ -39,6 +39,12 @@ namespace XDagNetWallet.Components
             get; set;
         }
 
+        [JsonProperty(PropertyName = "pool_address")]
+        public string PoolAddress
+        {
+            get; set;
+        }
+
         public WalletOptions()
         {
 

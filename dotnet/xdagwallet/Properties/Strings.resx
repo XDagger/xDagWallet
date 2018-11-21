@@ -130,7 +130,7 @@
     <value>Searching connection...</value>
   </data>
   <data name="LogonWindow_Title" xml:space="preserve">
-    <value>Welcome to XDAG Wallet</value>
+    <value>Welcome to XDAG Wallet (Version {0})</value>
   </data>
   <data name="Common_ConfirmTitle" xml:space="preserve">
     <value>Confirm</value>
@@ -275,5 +275,38 @@
   </data>
   <data name="WalletWindow_TabTransfer" xml:space="preserve">
     <value>Transfer</value>
+  </data>
+  <data name="LogonWindow_NoPoolAddress" xml:space="preserve">
+    <value>Read PoolAddress from config file failed. Please check wallet-config.json to make sure pool_address is set correctly under Options.</value>
+  </data>
+  <data name="WalletWindow_HistoryBusy" xml:space="preserve">
+    <value>Loading History Data...</value>
+  </data>
+  <data name="WalletWindow_HistoryColumns_Amount" xml:space="preserve">
+    <value>Amount</value>
+  </data>
+  <data name="WalletWindow_HistoryColumns_BlockAddress" xml:space="preserve">
+    <value>Block Address</value>
+  </data>
+  <data name="WalletWindow_HistoryColumns_Direction" xml:space="preserve">
+    <value>Direction</value>
+  </data>
+  <data name="WalletWindow_HistoryColumns_PartnerAddress" xml:space="preserve">
+    <value>Opponent Address</value>
+  </data>
+  <data name="WalletWindow_HistoryColumns_Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="WalletWindow_HistoryColumns_TimeStamp" xml:space="preserve">
+    <value>Time Stamp</value>
+  </data>
+  <data name="WalletWindow_VersionLabel" xml:space="preserve">
+    <value>Version {0}</value>
+  </data>
+  <data name="WalletWindow_Transfer_Amount" xml:space="preserve">
+    <value>Amount:</value>
+  </data>
+  <data name="WalletWindow_Transfer_ToAddress" xml:space="preserve">
+    <value>To Address:</value>
   </data>
 </root>

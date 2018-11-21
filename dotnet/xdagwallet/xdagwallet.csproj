@@ -7,7 +7,7 @@
     <ProjectGuid>{3A8D3961-2C28-4D2E-92E4-36F05963BBBA}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>XDagNetWallet</RootNamespace>
-    <AssemblyName>XDagNetWallet</AssemblyName>
+    <AssemblyName>XDagWallet</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -75,42 +75,6 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="Xceed.Wpf.Controls.v6.6, Version=6.6.18313.21330, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
-      <HintPath>..\packages\Xceed.Wpf.Controls.6.6.18313.21330\lib\net40\Xceed.Wpf.Controls.v6.6.dll</HintPath>
-    </Reference>
-    <Reference Include="Xceed.Wpf.DataGrid.ThemePack.1.v6.6, Version=6.6.18313.21330, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
-      <HintPath>..\packages\Xceed.Wpf.DataGrid.ThemePack.1.6.6.18313.21330\lib\net40\Xceed.Wpf.DataGrid.ThemePack.1.v6.6.dll</HintPath>
-    </Reference>
-    <Reference Include="Xceed.Wpf.DataGrid.ThemePack.2.v6.6, Version=6.6.18313.21330, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
-      <HintPath>..\packages\Xceed.Wpf.DataGrid.ThemePack.2.6.6.18313.21330\lib\net40\Xceed.Wpf.DataGrid.ThemePack.2.v6.6.dll</HintPath>
-    </Reference>
-    <Reference Include="Xceed.Wpf.DataGrid.ThemePack.3.v6.6, Version=6.6.18313.21330, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
-      <HintPath>..\packages\Xceed.Wpf.DataGrid.ThemePack.3.6.6.18313.21330\lib\net40\Xceed.Wpf.DataGrid.ThemePack.3.v6.6.dll</HintPath>
-    </Reference>
-    <Reference Include="Xceed.Wpf.DataGrid.ThemePack.4.v6.6, Version=6.6.18313.21330, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
-      <HintPath>..\packages\Xceed.Wpf.DataGrid.ThemePack.4.6.6.18313.21330\lib\net40\Xceed.Wpf.DataGrid.ThemePack.4.v6.6.dll</HintPath>
-    </Reference>
-    <Reference Include="Xceed.Wpf.DataGrid.ThemePack.5.v6.6, Version=6.6.18313.21330, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
-      <HintPath>..\packages\Xceed.Wpf.DataGrid.ThemePack.5.6.6.18313.21330\lib\net40\Xceed.Wpf.DataGrid.ThemePack.5.v6.6.dll</HintPath>
-    </Reference>
-    <Reference Include="Xceed.Wpf.DataGrid.v6.6, Version=6.6.18313.21330, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
-      <HintPath>..\packages\Xceed.Wpf.DataGrid.6.6.18313.21330\lib\net40\Xceed.Wpf.DataGrid.v6.6.dll</HintPath>
-    </Reference>
-    <Reference Include="Xceed.Wpf.DataGrid.Views3D.v6.6, Version=6.6.18313.21330, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
-      <HintPath>..\packages\Xceed.Wpf.DataGrid.Views3D.6.6.18313.21330\lib\net40\Xceed.Wpf.DataGrid.Views3D.v6.6.dll</HintPath>
-    </Reference>
-    <Reference Include="Xceed.Wpf.Themes, Version=3.7.18313.20590, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
-      <HintPath>..\packages\Xceed.Wpf.Themes.3.7.18313.20590\lib\net40\Xceed.Wpf.Themes.dll</HintPath>
-    </Reference>
-    <Reference Include="Xceed.Wpf.Themes.Metro, Version=3.7.18313.20590, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
-      <HintPath>..\packages\Xceed.Wpf.Themes.Metro.3.7.18313.20590\lib\net40\Xceed.Wpf.Themes.Metro.dll</HintPath>
-    </Reference>
-    <Reference Include="Xceed.Wpf.Toolkit, Version=3.7.18313.20590, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
-      <HintPath>..\packages\Xceed.Wpf.Toolkit.3.7.18313.20590\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
-    </Reference>
-    <Reference Include="Xceed.Wpf.Toolkit.Themes.Metro, Version=3.7.18313.20590, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
-      <HintPath>..\packages\Xceed.Wpf.Toolkit.Themes.Metro.3.7.18313.20590\lib\net40\Xceed.Wpf.Toolkit.Themes.Metro.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -147,6 +111,7 @@
     <Compile Include="sources\Rpc\Models\Responses\VersionsResult.cs" />
     <Compile Include="sources\UI\Async\BackgroundResult.cs" />
     <Compile Include="sources\UI\Async\BackgroundWork.cs" />
+    <Compile Include="sources\UI\RefreshingOperation.cs" />
     <Compile Include="sources\UI\Windows\LogonWindow.xaml.cs">
       <DependentUpon>LogonWindow.xaml</DependentUpon>
     </Compile>
@@ -157,9 +122,6 @@
     <Compile Include="sources\UI\Windows\SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="sources\UI\Windows\TransferWindow.xaml.cs">
-      <DependentUpon>TransferWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="sources\UI\Windows\WalletWindow.xaml.cs">
       <DependentUpon>WalletWindow.xaml</DependentUpon>
     </Compile>
@@ -168,16 +130,8 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="sources\UI\Windows\MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="sources\UI\Windows\MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Page Include="sources\UI\Windows\PasswordWindow.xaml">
@@ -185,10 +139,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="sources\UI\Windows\SettingsWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="sources\UI\Windows\TransferWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

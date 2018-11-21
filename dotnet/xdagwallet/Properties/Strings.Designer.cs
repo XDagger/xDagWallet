@@ -142,6 +142,15 @@ namespace XDagNetWallet.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Read PoolAddress from config file failed. Please check wallet-config.json to make sure pool_address is set correctly under Options..
+        /// </summary>
+        internal static string LogonWindow_NoPoolAddress {
+            get {
+                return ResourceManager.GetString("LogonWindow_NoPoolAddress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Create New Wallet.
         /// </summary>
         internal static string LogonWindow_RegisterWallet {
@@ -160,7 +169,7 @@ namespace XDagNetWallet.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Welcome to XDAG Wallet.
+        ///   Looks up a localized string similar to Welcome to XDAG Wallet (Version {0}).
         /// </summary>
         internal static string LogonWindow_Title {
             get {
@@ -484,6 +493,69 @@ namespace XDagNetWallet.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Loading History Data....
+        /// </summary>
+        internal static string WalletWindow_HistoryBusy {
+            get {
+                return ResourceManager.GetString("WalletWindow_HistoryBusy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Amount.
+        /// </summary>
+        internal static string WalletWindow_HistoryColumns_Amount {
+            get {
+                return ResourceManager.GetString("WalletWindow_HistoryColumns_Amount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Block Address.
+        /// </summary>
+        internal static string WalletWindow_HistoryColumns_BlockAddress {
+            get {
+                return ResourceManager.GetString("WalletWindow_HistoryColumns_BlockAddress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Direction.
+        /// </summary>
+        internal static string WalletWindow_HistoryColumns_Direction {
+            get {
+                return ResourceManager.GetString("WalletWindow_HistoryColumns_Direction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Opponent Address.
+        /// </summary>
+        internal static string WalletWindow_HistoryColumns_PartnerAddress {
+            get {
+                return ResourceManager.GetString("WalletWindow_HistoryColumns_PartnerAddress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Status.
+        /// </summary>
+        internal static string WalletWindow_HistoryColumns_Status {
+            get {
+                return ResourceManager.GetString("WalletWindow_HistoryColumns_Status", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Time Stamp.
+        /// </summary>
+        internal static string WalletWindow_HistoryColumns_TimeStamp {
+            get {
+                return ResourceManager.GetString("WalletWindow_HistoryColumns_TimeStamp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Status:.
         /// </summary>
         internal static string WalletWindow_StatusTitle {
@@ -529,11 +601,38 @@ namespace XDagNetWallet.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Amount:.
+        /// </summary>
+        internal static string WalletWindow_Transfer_Amount {
+            get {
+                return ResourceManager.GetString("WalletWindow_Transfer_Amount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to To Address:.
+        /// </summary>
+        internal static string WalletWindow_Transfer_ToAddress {
+            get {
+                return ResourceManager.GetString("WalletWindow_Transfer_ToAddress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Generate Transaction.
         /// </summary>
         internal static string WalletWindow_TransferTitle {
             get {
                 return ResourceManager.GetString("WalletWindow_TransferTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Version {0}.
+        /// </summary>
+        internal static string WalletWindow_VersionLabel {
+            get {
+                return ResourceManager.GetString("WalletWindow_VersionLabel", resourceCulture);
             }
         }
     }

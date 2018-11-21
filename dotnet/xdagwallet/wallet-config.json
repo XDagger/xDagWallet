@@ -1,6 +1,7 @@
 ﻿{
-    "version": "0.2.0",
+    "version": "0.2.5",
     "wallet_options": {
+        "pool_address": "de2.xdag.org:13655",
         "rpc_enabled": false,
         "rpc_port": null,
         "is_test_net": false,

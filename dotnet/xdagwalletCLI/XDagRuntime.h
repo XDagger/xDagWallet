@@ -43,7 +43,7 @@ namespace XDagNetWalletCLI {
 
 		int EventCallback(void* obj, xdag_event * eve);
 
-		void Start();
+		void Start(String^ poolAddress);
 
 		bool HasExistingAccount();
 
@@ -64,6 +64,8 @@ namespace XDagNetWalletCLI {
 		String^ ConvertFromConstChar(const char* str);
 
 		const char* ConvertFromString(String^ str);
+
+		System::IntPtr pooAddressPtr;
 	};
 
 }

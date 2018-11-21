@@ -51,7 +51,7 @@ int xdag_event_callback(void* thisObj, xdag_event *event);
 
 
 ////---- Exporting functions ----
-NATIVE_LIB_EXPORT int xdag_init_wrap(int argc, char **argv, int isGui);
+NATIVE_LIB_EXPORT int xdag_init_wrap(int argc, char **argv, const char * pool_address);
 NATIVE_LIB_EXPORT int xdag_set_password_callback_wrap(int(*callback)(const char *prompt, char *buf, unsigned size));
 NATIVE_LIB_EXPORT int xdag_set_event_callback_wrap(int(*callback)(void*, xdag_event *));
 NATIVE_LIB_EXPORT int xdag_get_state_wrap(void);
@@ -67,15 +67,15 @@ NATIVE_LIB_EXPORT bool xdag_dnet_crpt_found();
 ////------------------------------------
 
 ////---- Exporting functions wrapping functions ----
-int xdag_init_wrap(int argc, char **argv, int isGui)
+int xdag_init_wrap(int argc, char **argv, const char * pool_address)
 {
 	xdag_init_path(argv[0]);
 
-	const char *pool_arg = "de1.xdag.org:13654";
+	////const char *pool_arg = "de1.xdag.org:13654";
 
 	////xdag_set_event_callback(&xdag_event_callback);
 
-	if (xdag_client_init(pool_arg)) return -1;
+	if (xdag_client_init(pool_address)) return -1;
 
 	return 0;
 }

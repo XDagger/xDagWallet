@@ -39,12 +39,13 @@ namespace XDagNetWallet.ExplorerAPI
             task.Wait();
 
             string responseStr = task.Result;
+
             ErrorData errorData = JsonConvert.DeserializeObject<ErrorData>(responseStr);
             if (!string.IsNullOrEmpty(errorData.ErrorCode))
             {
                 throw new XDagExplorerException(errorData);
             }
-
+            
             return responseStr;
         }
     }
