@@ -197,7 +197,7 @@ xdag_error_no xdag_do_xfer(const char *amount, const char *address, char **out)
 	int err = xdag_traverse_our_blocks(&xfer, &xfer_callback);
 	if(err != 0 && err != 1) {
 		sprintf(result, "%.9Lf", amount2xdags(xfer.done));
-		return (xdag_error_no)err;
+		return err;
 	}
 
 	xdag_hash2address(xfer.transactionBlockHash, address_buf);
@@ -270,7 +270,7 @@ xdag_error_no processExitCommand()
 	xdag_storage_finish();
 	xdag_blocks_finish();
 
-	return (xdag_error_no)-1;
+	return -1;
 }
 
 xdag_error_no processHelpCommand(char **out)

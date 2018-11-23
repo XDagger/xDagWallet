@@ -2,17 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
+#include <unistd.h>
 #include "storage.h"
 #include "common.h"
 #include "hash.h"
 #include "utils/log.h"
 #include "utils/utils.h"
-
-#if defined(_WIN32) || defined(_WIN64)
-#include "../win/unistd.h"
-#else
-#include <unistd.h>
-#endif
 
 #define STORAGE_DIR0            "storage%s"
 #define STORAGE_DIR0_ARGS(t)    (g_xdag_testnet ? "-testnet" : "")

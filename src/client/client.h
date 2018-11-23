@@ -3,7 +3,6 @@
 
 #include <stdio.h>
 #include "block.h"
-#include <pthread.h>
 
 struct xdag_pool_task {
 	struct xdag_field task[2], lastfield, minhash, nonce;

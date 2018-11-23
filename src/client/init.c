@@ -9,12 +9,8 @@
 #include "terminal.h"
 #include "utils/utils.h"
 #include "utils/log.h"
-#include "xdag_wrapper.h"
-
-#if defined(_WIN32) || defined(_WIN64)
-#else
 #include <sys/termios.h>
-#endif
+#include "xdag_wrapper.h"
 
 void printUsage(char* appName);
 int log_callback(int level, xdag_error_no err, char *buffer);
@@ -200,12 +196,9 @@ int event_callback(void* thisObj, xdag_event *event)
 
 int password_callback(const char *prompt, char *buf, unsigned len)
 {
-
-#if !defined(_WIN32) && !defined(_WIN64)
 	struct termios t[1];
 	int noecho = !!strstr(prompt, "assword");
 	fprintf(stdout,"%s: ", prompt); fflush(stdout);
-
 	if (noecho) {
 		tcgetattr(0, t);
 		t->c_lflag &= ~ECHO;
@@ -219,8 +212,6 @@ int password_callback(const char *prompt, char *buf, unsigned len)
 	}
 	len = (int)strlen(buf);
 	if (len && buf[len - 1] == '\n') buf[len - 1] = 0;
-#endif
-
 	return 0;
 }
 

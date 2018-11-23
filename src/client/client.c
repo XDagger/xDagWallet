@@ -4,16 +4,6 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <pthread.h>
-
-#if defined(_WIN32) || defined(_WIN64)
-
-#include "../win/unistd.h"
-#include <Winsock2.h>
-#include <windows.h>
-// need link with Ws2_32.lib
-#pragma comment(lib, "ws2_32.lib")
-
-#else
 #include <unistd.h>
 #include <sys/socket.h>
 #include <sys/ioctl.h>
@@ -21,8 +11,6 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include "system.h"
-
-#endif
 #include "../dus/dfslib_crypt.h"
 #include "../dus/crc.h"
 #include "crypt.h"
@@ -200,7 +188,7 @@ int client_init(void)
 
 	xdag_mess("Starting xdag, version %s", XDAG_VERSION);
 	xdag_mess("Starting dnet transport...");
-	/// printf("Initialize...\n");
+	printf("Initialize...\n");
 	if (dnet_crypt_init(DNET_VERSION)) {
 		sleep(3);
 		xdag_wrapper_event(event_id_err_exit, error_pwd_incorrect, "Password incorrect.\n");
@@ -236,7 +224,7 @@ int client_init(void)
 		return -1;
 	}
 
-	//// xdag_wrapper_event(event_id_err_exit, error_unknown, "unkown error\n");
+	xdag_wrapper_event(event_id_err_exit, error_unknown, "unkown error\n");
 
 	//	if(is_rpc) {
 	//		xdag_mess("Initializing RPC service...");
@@ -345,20 +333,7 @@ begin:
 	}
 
 	// Create a socket
-#if defined(_WIN32) || defined(_WIN64)
-	WSADATA mainSdata;
-	if (WSAStartup(2.2, &mainSdata) == 0)
-	{
-		g_socket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, NULL);
-	}
-	else
-	{
-		g_socket = INVALID_SOCKET;
-	}
-#else
 	g_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-#endif
-	
 	if(g_socket == INVALID_SOCKET) {
 		xdag_err(error_socket_create, "cannot create a socket");
 		goto end;
@@ -379,13 +354,7 @@ begin:
 	}
 	if(!strcmp(s, "any")) {
 		peeraddr.sin_addr.s_addr = htonl(INADDR_ANY);
-	} else if(
-#if defined(_WIN32) || defined(_WIN64)
-		!inet_pton(AF_INET, s, &peeraddr.sin_addr)
-#else
-		!inet_aton(s, &peeraddr.sin_addr)
-#endif
-		) {
+	} else if(!inet_aton(s, &peeraddr.sin_addr)) {
 		struct hostent *host = gethostbyname(s);
 		if(host == NULL || host->h_addr_list[0] == NULL) {
 			xdag_err(error_socket_resolve_host, "cannot resolve host %s", s);

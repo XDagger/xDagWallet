@@ -10,22 +10,19 @@
 #include <string.h>
 #include <ctype.h>
 #include <sys/stat.h>
+#include <unistd.h>
 #include <time.h>
-
+#include <sys/time.h>
 #if defined (__MACOS__) || defined (__APPLE__)
 #include <libgen.h>
 #define PATH_MAX 4096
-#include <sys/time.h>
-#include <unistd.h>
-#elif defined(_WIN32) || defined(_WIN64)
+#elif defined (_WIN32)
 #include <direct.h>
 #include <shlwapi.h>
-//// #include "../../win/unistd.h"
 #else
 #include <libgen.h>
 #include <linux/limits.h>
 #endif
-
 #include "log.h"
 #include "../system.h"
 #include "math.h"

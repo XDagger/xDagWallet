@@ -1,14 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
-#if defined(_WIN32) || defined(_WIN64)
-#include "../win/unistd.h"
-#else
 #include <unistd.h>
 #include <termios.h>
-#endif
-
 #include "system.h"
 #include "../dus/dfslib_random.h"
 #include "../dus/dfslib_crypt.h"

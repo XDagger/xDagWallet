@@ -4,7 +4,7 @@
 #if defined(_WIN32) || defined(_WIN64)
 #include <Windows.h>
 #define inline              __inline
-#include "../dus/dfsrsa.h"
+#include "../dus/programs/dfstools/source/include/dfsrsa.h"
 
 #define strtok_r            strtok_s
 #define localtime_r(a, b)   localtime_s(b, a)

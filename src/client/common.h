@@ -17,14 +17,6 @@
 
 #define COINNAME "XDAG"
 
-// This is for timeval redefinition issue for pthread
-#define HAVE_STRUCT_TIMESPEC
-
-// This is to disable security warning from Visual C++
-#ifdef _MSC_VER
-#define _CRT_SECURE_NO_WARNINGS
-#endif
-
 enum xdag_states
 {
 #define xdag_state(n,s) XDAG_STATE_##n ,

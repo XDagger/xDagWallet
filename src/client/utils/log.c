@@ -6,6 +6,7 @@
 #include <stdarg.h>
 #include <pthread.h>
 #include <string.h>
+#include <sys/time.h>
 #include <sys/stat.h>
 #include <semaphore.h>
 #include <fcntl.h>
@@ -13,15 +14,8 @@
 #include "log.h"
 #include "../init.h"
 #include "utils.h"
-#include "../xdag_wrapper.h"
-#include "../common.h"
-
-#if defined(_WIN32) || defined(_WIN64)
-#include < time.h >
-#include "../../win/wintime.h"
-#else
-#include <sys/time.h>
-#endif
+#include "xdag_wrapper.h"
+#include "common.h"
 
 static int log_level = XDAG_INFO;
 
@@ -53,9 +47,7 @@ int xdag_log(int level, int err, char* file, int line, const char *format, ...)
 	char buffer[4096] = {0};
 
 //	pos = sprintf(buffer, "%s.%03d [%012llx:%.4s]  ", tbuf, (int)(tv.tv_usec / 1000), (long long)pthread_self_ptr(), lvl + 4 * level);
-	//// pos += sprintf(buffer, "[%012llx][%.4s][%s] %s:%d  ",  (long long)pthread_self(), lvl + 4 * level, tbuf, xdag_filename(file), line);
-	pos += sprintf(buffer, "[%012llx][%.4s][%s] %s:%d  ", pthread_self(), lvl + 4 * level, tbuf, xdag_filename(file), line);
-	
+	pos += sprintf(buffer, "[%012llx][%.4s][%s] %s:%d  ",  (long long)pthread_self(), lvl + 4 * level, tbuf, xdag_filename(file), line);
 	va_start(arg, format);
 	pos = vsprintf(buffer + pos, format, arg);
 	va_end(arg);

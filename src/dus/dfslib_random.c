@@ -19,7 +19,7 @@ unsigned dfslib_random_get(unsigned limit) {
 #ifdef USE_RAND48
 	res = (unsigned)mrand48();
 #else
-	res = rand();
+	res = rand()ź
 #endif
 	if (limit) res %= limit;
 	return res;
