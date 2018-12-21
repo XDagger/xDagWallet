@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <pthread.h>
-#include <unistd.h>
 #include <math.h>
 #include "system.h"
 #include "../ldus/rbtree.h"
@@ -16,6 +15,12 @@
 #include "address.h"
 #include "commands.h"
 #include "utils/utils.h"
+
+#if defined(_WIN32) || defined(_WIN64)
+#include "../win/unistd.h"
+#else
+#include <unistd.h>
+#endif
 
 enum bi_flags {
 	BI_MAIN       = 0x01,
