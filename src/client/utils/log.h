@@ -27,13 +27,14 @@ extern "C" {
 
 	extern int xdag_log_init(void);
 
-#define xdag_log_hash(hash) xdag_log_array(hash, sizeof(xdag_hash_t))
-
 	// sets the maximum error level for output to the log, returns the previous level (0 - do not log anything, 9 - all)
 	extern int xdag_set_log_level(int level);
+    
 #ifdef __cplusplus
 };
 #endif
+
+#define xdag_log_hash(hash) xdag_log_array(hash, sizeof(xdag_hash_t))
 
 #define xdag_fatal(err, ...) xdag_log(XDAG_FATAL, err, __FILE__, __LINE__, __VA_ARGS__)
 #define xdag_crit(err, ...)  xdag_log(XDAG_CRITICAL, err, __FILE__, __LINE__, __VA_ARGS__)

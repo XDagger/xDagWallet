@@ -7,14 +7,14 @@
 extern "C" {
 #endif
 	
-/* intializes the addresses module */
-extern int xdag_address_init(void);
+    /* intializes the addresses module */
+    extern int xdag_address_init(void);
 
-/* converts address to hash */
-extern int xdag_address2hash(const char *address, xdag_hash_t hash);
+    /* converts address to hash */
+    extern int xdag_address2hash(const char *address, xdag_hash_t hash);
 
-/* converts hash to address */
-extern void xdag_hash2address(const xdag_hash_t hash, char *address);
+    /* converts hash to address */
+    extern void xdag_hash2address(const xdag_hash_t hash, char *address);
 	
 #ifdef __cplusplus
 };

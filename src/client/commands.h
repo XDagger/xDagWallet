@@ -24,6 +24,7 @@ extern "C" {
 	extern xdag_error_no xdag_do_xfer(const char *amount, const char *address, char **out);
 
 	extern void xdag_log_xfer(xdag_hash_t from, xdag_hash_t to, xdag_amount_t amount);
+    
 #ifdef __cplusplus
 };
 #endif

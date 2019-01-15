@@ -6,7 +6,9 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+    
 	extern int xdag_init(int argc, char **argv, int isGui);
+    
 #ifdef __cplusplus
 };
 #endif
