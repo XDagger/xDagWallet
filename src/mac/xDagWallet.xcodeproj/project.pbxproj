@@ -13,7 +13,7 @@
 		385771D321EE393B0087C6D6 /* wallet.c in Sources */ = {isa = PBXBuildFile; fileRef = 3857719D21EE393B0087C6D6 /* wallet.c */; };
 		385771D421EE393B0087C6D6 /* terminal.c in Sources */ = {isa = PBXBuildFile; fileRef = 3857719E21EE393B0087C6D6 /* terminal.c */; };
 		385771D521EE393B0087C6D6 /* storage.c in Sources */ = {isa = PBXBuildFile; fileRef = 3857719F21EE393B0087C6D6 /* storage.c */; };
-		385771D621EE393B0087C6D6 /* init.c in Sources */ = {isa = PBXBuildFile; fileRef = 385771A121EE393B0087C6D6 /* init.c */; };
+		385771D621EE393B0087C6D6 /* cli.c in Sources */ = {isa = PBXBuildFile; fileRef = 385771A121EE393B0087C6D6 /* cli.c */; };
 		385771D721EE393B0087C6D6 /* log.c in Sources */ = {isa = PBXBuildFile; fileRef = 385771A621EE393B0087C6D6 /* log.c */; };
 		385771D821EE393B0087C6D6 /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 385771A821EE393B0087C6D6 /* utils.c */; };
 		385771D921EE393B0087C6D6 /* dnet_crypt.c in Sources */ = {isa = PBXBuildFile; fileRef = 385771AB21EE393B0087C6D6 /* dnet_crypt.c */; };
@@ -56,7 +56,7 @@
 		3857719E21EE393B0087C6D6 /* terminal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = terminal.c; sourceTree = "<group>"; };
 		3857719F21EE393B0087C6D6 /* storage.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = storage.c; sourceTree = "<group>"; };
 		385771A021EE393B0087C6D6 /* types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = types.h; sourceTree = "<group>"; };
-		385771A121EE393B0087C6D6 /* init.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = init.c; sourceTree = "<group>"; };
+		385771A121EE393B0087C6D6 /* cli.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cli.c; sourceTree = "<group>"; };
 		385771A221EE393B0087C6D6 /* address.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = address.h; sourceTree = "<group>"; };
 		385771A321EE393B0087C6D6 /* events.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = events.h; sourceTree = "<group>"; };
 		385771A421EE393B0087C6D6 /* sha256.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sha256.h; sourceTree = "<group>"; };
@@ -80,7 +80,7 @@
 		385771B721EE393B0087C6D6 /* sha256.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sha256.c; sourceTree = "<group>"; };
 		385771B821EE393B0087C6D6 /* system.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = system.h; sourceTree = "<group>"; };
 		385771B921EE393B0087C6D6 /* address.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = address.c; sourceTree = "<group>"; };
-		385771BA21EE393B0087C6D6 /* init.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = init.h; sourceTree = "<group>"; };
+		385771BA21EE393B0087C6D6 /* cli.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cli.h; sourceTree = "<group>"; };
 		385771BB21EE393B0087C6D6 /* state.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = state.h; sourceTree = "<group>"; };
 		385771BC21EE393B0087C6D6 /* xdag_wrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xdag_wrapper.h; sourceTree = "<group>"; };
 		385771BD21EE393B0087C6D6 /* hash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hash.h; sourceTree = "<group>"; };
@@ -148,7 +148,7 @@
 				3857719E21EE393B0087C6D6 /* terminal.c */,
 				3857719F21EE393B0087C6D6 /* storage.c */,
 				385771A021EE393B0087C6D6 /* types.h */,
-				385771A121EE393B0087C6D6 /* init.c */,
+				385771A121EE393B0087C6D6 /* cli.c */,
 				385771A221EE393B0087C6D6 /* address.h */,
 				385771A321EE393B0087C6D6 /* events.h */,
 				385771A421EE393B0087C6D6 /* sha256.h */,
@@ -169,7 +169,7 @@
 				385771B721EE393B0087C6D6 /* sha256.c */,
 				385771B821EE393B0087C6D6 /* system.h */,
 				385771B921EE393B0087C6D6 /* address.c */,
-				385771BA21EE393B0087C6D6 /* init.h */,
+				385771BA21EE393B0087C6D6 /* cli.h */,
 				385771BB21EE393B0087C6D6 /* state.h */,
 				385771BC21EE393B0087C6D6 /* xdag_wrapper.h */,
 				385771BD21EE393B0087C6D6 /* hash.h */,
@@ -302,7 +302,7 @@
 				385771D121EE393B0087C6D6 /* common.c in Sources */,
 				385771DA21EE393B0087C6D6 /* xdag_wrapper.c in Sources */,
 				385771DC21EE393B0087C6D6 /* client.c in Sources */,
-				385771D621EE393B0087C6D6 /* init.c in Sources */,
+				385771D621EE393B0087C6D6 /* cli.c in Sources */,
 				385771D421EE393B0087C6D6 /* terminal.c in Sources */,
 				385771E021EE393B0087C6D6 /* commands.c in Sources */,
 				385771DE21EE393B0087C6D6 /* sha256.c in Sources */,

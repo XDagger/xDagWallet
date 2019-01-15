@@ -11,7 +11,6 @@
 #include <fcntl.h>
 #include "../system.h"
 #include "log.h"
-#include "../init.h"
 #include "utils.h"
 #include "../xdag_wrapper.h"
 #include "../common.h"

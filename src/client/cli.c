@@ -3,7 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 #include "version.h"
-#include "init.h"
+#include "cli.h"
 #include "common.h"
 #include "client.h"
 #include "terminal.h"
@@ -16,12 +16,16 @@
 #include <sys/termios.h>
 #endif
 
+/*
+ Command line wallet
+ */
+
 void printUsage(char* appName);
 int log_callback(int level, xdag_error_no err, char *buffer);
 int event_callback(void* thisObj, xdag_event *event);
 int password_callback(const char *prompt, char *buf, unsigned len);
 
-int xdag_init(int argc, char **argv, int isGui)
+int xdag_cli_init(int argc, char **argv, int isGui)
 {
 	xdag_init_path(argv[0]);
 
