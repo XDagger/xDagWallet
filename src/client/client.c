@@ -8,10 +8,12 @@
 #if defined(_WIN32) || defined(_WIN64)
 
 #include "../win/unistd.h"
+#include "../win/winsockx.h"
 #include <Winsock2.h>
+#include <ws2tcpip.h>
 #include <windows.h>
 // need link with Ws2_32.lib
-#pragma comment(lib, "ws2_32.lib")
+#pragma comment(lib, "Ws2_32.lib")
 
 #else
 #include <unistd.h>
@@ -380,8 +382,10 @@ begin:
 	if(!strcmp(s, "any")) {
 		peeraddr.sin_addr.s_addr = htonl(INADDR_ANY);
 	} else if(
-#if defined(_WIN32) || defined(_WIN64)
+#if defined(_WIN64)
 		!inet_pton(AF_INET, s, &peeraddr.sin_addr)
+#elif defined(_WIN32)
+		!inet_pton_32(AF_INET, s, &peeraddr.sin_addr)
 #else
 		!inet_aton(s, &peeraddr.sin_addr)
 #endif
