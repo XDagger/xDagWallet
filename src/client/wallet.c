@@ -20,7 +20,6 @@ struct key_internal {
 
 static struct key_internal *def_key = 0;
 static struct xdag_public_key *keys_arr = 0;
-static pthread_mutex_t wallet_mutex = PTHREAD_MUTEX_INITIALIZER;
 int nkeys = 0, maxnkeys = 0;
 
 static int add_key(xdag_hash_t priv)
@@ -28,8 +27,6 @@ static int add_key(xdag_hash_t priv)
 	struct key_internal *k = malloc(sizeof(struct key_internal));
 
 	if (!k) return -1;
-
-	pthread_mutex_lock(&wallet_mutex);
 
 	if (priv) {
 		memcpy(k->priv, priv, sizeof(xdag_hash_t));
@@ -77,12 +74,10 @@ static int add_key(xdag_hash_t priv)
 	
 	nkeys++;
 	
-	pthread_mutex_unlock(&wallet_mutex);
 	
 	return 0;
  
 fail:
-	pthread_mutex_unlock(&wallet_mutex);
 	free(k);
 	return -1;
 }
@@ -154,5 +149,5 @@ struct xdag_public_key *xdag_wallet_our_keys(int *pnkeys)
 /* completes work with wallet */
 void xdag_wallet_finish(void)
 {
-	pthread_mutex_lock(&wallet_mutex);
+
 }

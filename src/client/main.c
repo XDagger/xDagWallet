@@ -4,6 +4,6 @@
 
 int main(int argc, char **argv)
 {
-	xdag_cli_init(argc, argv, 0);
+	xdag_cli_init(argc, argv);
 	return 0;
 }

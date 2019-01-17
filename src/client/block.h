@@ -113,9 +113,6 @@ extern "C" {
 	// calculate difficulty from hash
 	xdag_diff_t xdag_hash_difficulty(xdag_hash_t hash);
 
-	// get all transactions of specified address, and return total number of transactions
-	extern int xdag_get_transactions(xdag_hash_t hash, void *data, int (*callback)(void*, int, xdag_hash_t, xdag_amount_t, xdag_time_t));
-
 #ifdef __cplusplus
 };
 #endif

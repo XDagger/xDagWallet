@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include <ctype.h>
 #include "version.h"
 #include "cli.h"
@@ -25,20 +26,21 @@ int log_callback(int level, xdag_error_no err, char *buffer);
 int event_callback(void* thisObj, xdag_event *event);
 int password_callback(const char *prompt, char *buf, unsigned len);
 
-int xdag_cli_init(int argc, char **argv, int isGui)
+
+static int g_client_init_done = 0;
+
+int xdag_cli_init(int argc, char **argv)
 {
-	xdag_init_path(argv[0]);
-
-	const char *pool_arg = 0;
-	if(!isGui) {
-		printf("xdag client/server, version %s.\n", XDAG_VERSION);
-	}
-
-	if (argc <= 1) {
-		printUsage(argv[0]);
-		return 0;
-	}
-
+    printf("XDAG client/server, version %s.\n", XDAG_VERSION);
+    
+    if (argc <= 1) {
+        printUsage(argv[0]);
+        return 0;
+    }
+    
+    const char *pool_arg = 0;
+    int testnet = 0;
+    
 	for (int i = 1; i < argc; ++i) {
 		if (argv[i][0] != '-') {
 			if ((!argv[i][1] || argv[i][2]) && strchr(argv[i], ':')) {
@@ -49,8 +51,10 @@ int xdag_cli_init(int argc, char **argv, int isGui)
 			}
 			continue;
 		}
-		
-		if(ARG_EQUAL(argv[i], "-h", "--help")) { /* help */
+        
+        if(ARG_EQUAL(argv[i], "-t", "--testnet")) { /* testnet */
+            testnet = 1;
+        } else if(ARG_EQUAL(argv[i], "-h", "--help")) { /* help */
 			printUsage(argv[0]);
 			return 0;
 		} else {
@@ -58,17 +62,28 @@ int xdag_cli_init(int argc, char **argv, int isGui)
 			return 0;
 		}
 	}
-
-	printf("Set log callback...\n");
-	xdag_wrapper_init(NULL, &password_callback, &event_callback);
-
-	printf("Starting...\n");
-	if(xdag_client_init(pool_arg)) return -1;
-
-	if (!isGui) {
-		startCommandProcessing();
-	}
-
+    
+    printf("Init path...\n");
+    xdag_init_path(argv[0]);
+    printf("Set log callback...\n");
+    xdag_wrapper_init(NULL, &password_callback, &event_callback);
+    
+	printf("Starting command line wallet...\n");
+    xdag_thread_param_t param;
+    strncpy(param.pool_arg, pool_arg, 255);
+    param.testnet = testnet;
+    
+    int err = pthread_create(&g_client_thread, 0, xdag_client_thread, (void*)&param);
+    if(err != 0) {
+        printf("create xdag_client_thread failed, error : %s\n", strerror(err));
+        return -1;
+    }
+    
+    while (!g_client_init_done) {
+        sleep(1);
+    }
+    startCommandProcessing();
+    
 	return 0;
 }
 
@@ -81,6 +96,12 @@ int event_callback(void* thisObj, xdag_event *event)
 	}
 
 	switch (event->event_id) {
+        case event_id_init_done:
+        {
+            g_client_init_done = 1;
+            break;
+        }
+            
 		case event_id_log:
 		{
 			printf("%s\n", event->event_data);
@@ -103,12 +124,12 @@ int event_callback(void* thisObj, xdag_event *event)
 			break;
 		}
 
-//		case event_id_err:
-//		{
-//			fprintf(stdout, "error : %x, msg : %s\n", event->error_no, event->event_data);
-//			fflush(stdout);
-//			break;
-//		}
+        case event_id_err:
+        {
+            fprintf(stdout, "error : %x, msg : %s\n", event->error_no, event->event_data);
+            fflush(stdout);
+            break;
+        }
 
 		case event_id_err_exit:
 		{
@@ -119,6 +140,14 @@ int event_callback(void* thisObj, xdag_event *event)
 			exit(1);
 			break;
 		}
+            
+        case event_id_exit:
+        {
+            xdag_wrapper_exit();
+            pthread_cancel(g_client_thread);
+            exit(1);
+            break;
+        }
 
 		case event_id_account_done:
 		{
@@ -186,7 +215,7 @@ int event_callback(void* thisObj, xdag_event *event)
 
 		case event_id_state_change:
 		{
-			fprintf(stdout, "state changed %s\n", event->event_data);
+			fprintf(stdout, "State changed %s\n", event->event_data);
 			fflush(stdout);
 			break;
 		}

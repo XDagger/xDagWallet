@@ -9,7 +9,7 @@
 extern "C" {
 #endif
     
-	extern int xdag_cli_init(int argc, char **argv, int isGui);
+	extern int xdag_cli_init(int argc, char **argv);
     
 #ifdef __cplusplus
 };

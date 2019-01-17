@@ -13,10 +13,12 @@
 #include "errno.h"
 
 typedef enum {
+    event_id_init_done,
 	event_id_log,
 	event_id_interact,
-//	event_id_err,
+    event_id_err,
 	event_id_err_exit,
+    event_id_exit,
 
 	// command result
 	event_id_account_done,
