@@ -32,8 +32,6 @@ int xdag_com_state(char *);
 int xdag_com_help(char *);
 int xdag_com_exit(char *);
 
-XDAG_COMMAND* find_xdag_command(char*);
-
 XDAG_COMMAND commands[] = {
 	{ "account"    , xdag_com_account },
 	{ "address"    , xdag_com_address },
@@ -88,25 +86,7 @@ int xdag_com_exit(char * args)
 
 int xdag_com_help(char *args)
 {
-	char *result = NULL;
-
-	processHelpCommand(&result);
-
-	if(result) {
-        xdag_wrapper_event(event_id_log, error_none, result);
-		free(result);
-	}
-	return 0;
-}
-
-XDAG_COMMAND* find_xdag_command(char *name)
-{
-	for(int i = 0; commands[i].name; i++) {
-		if(strcmp(name, commands[i].name) == 0) {
-			return (&commands[i]);
-		}
-	}
-	return (XDAG_COMMAND *)NULL;
+	return xdag_wrapper_help();
 }
 
 int xdag_command(char *cmd)
@@ -116,13 +96,13 @@ int xdag_command(char *cmd)
 	cmd = strtok_r(cmd, " \t\r\n", &nextParam);
 	if(!cmd) return 0;
 
-	XDAG_COMMAND *command = find_xdag_command(cmd);
+    for(int i = 0; commands[i].name; i++) {
+        if(strcmp(cmd, commands[i].name) == 0) {
+            return (*(commands[i].func))(nextParam);
+        }
+    }
 
-	if(!command) {
-		xdag_wrapper_event(event_id_promot, error_none, "Illegal command.\n");
-	} else {
-		return (*(command->func))(nextParam);
-	}
+    xdag_wrapper_event(event_id_promot, error_none, "Illegal command.\n");
 	return 0;
 }
 
