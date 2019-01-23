@@ -209,7 +209,7 @@ int event_callback(void* thisObj, xdag_event *event)
         case event_id_set_passwd_again:
         case event_id_random_key:
         {
-            input(event->event_id, event->event_data);
+            input(event->event_id, (xdag_wrapper_msg *)event->event_data);
             break;
         }
             
