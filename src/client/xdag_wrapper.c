@@ -45,7 +45,7 @@ int xdag_set_password_callback(xdag_password_callback_t callback)
 int xdag_wrapper_init(void* thisObj, xdag_password_callback_t password, xdag_event_callback_t event)
 {
 	if(thisObj) g_thisObj = thisObj;
-	if(password) xdag_set_password_callback(password);
+//    if(password) xdag_set_password_callback(password);
 	if(event) xdag_set_event_callback(event);
 
 	return 0;
@@ -166,29 +166,45 @@ int xdag_wrapper_exit(void)
 
 int xdag_wrapper_log(int level, xdag_error_no err, const char *data)
 {
-	xdag_wrapper_event(event_id_log, err, data);
+    if (err == error_none) {
+        xdag_wrapper_event(event_id_log, err, data);
+    } else {
+        xdag_wrapper_event(event_id_err, err, data);
+    }
+    
 	return 0;
 }
 
-int xdag_wrapper_interact(const char *data)
+int xdag_wrapper_interact(xdag_event_id event_id, xdag_wrapper_msg *data)
 {
-	xdag_wrapper_event(event_id_interact, 0, data);
+    if(!g_wrapper_event_callback) {
+        assert(0);
+    } else {
+        xdag_event *evt = calloc(1, sizeof(xdag_event));
+        evt->event_id = event_id;
+        evt->error_no = error_none;
+        evt->event_data = data;
+        
+        if (g_wrapper_event_callback) {
+            (*g_wrapper_event_callback)(g_thisObj, evt);
+        }
+        
+        free(evt);
+    }
 	return 0;
 }
 
-int xdag_wrapper_event(xdag_event_id event_id, xdag_error_no err, const char *data)
+int xdag_wrapper_event(xdag_event_id event_id, xdag_error_no err,  const char *msg)
 {
 	if(!g_wrapper_event_callback) {
 		assert(0);
-	}
-	else {
+	} else {
 		xdag_event *evt = calloc(1, sizeof(xdag_event));
 		evt->event_id = event_id;
 		evt->error_no = err;
-		evt->event_data = data ? strdup(data) : strdup("");
+        evt->event_data = msg == NULL? strdup(""): strdup(msg);
 
-		if (g_wrapper_event_callback)
-		{
+		if (g_wrapper_event_callback) {
 			(*g_wrapper_event_callback)(g_thisObj, evt);
 		}
 

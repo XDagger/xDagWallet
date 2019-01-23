@@ -26,6 +26,7 @@ int log_callback(int level, xdag_error_no err, char *buffer);
 int event_callback(void* thisObj, xdag_event *event);
 int password_callback(const char *prompt, char *buf, unsigned len);
 
+int input(xdag_event_id evt, xdag_wrapper_msg *msg);
 
 static int g_client_init_done = 0;
 
@@ -102,9 +103,14 @@ int event_callback(void* thisObj, xdag_event *event)
             break;
         }
             
+        case event_id_promot:
+        {
+            printf("%s\n", event->event_data);
+            break;
+        }
+            
 		case event_id_log:
 		{
-			printf("%s\n", event->event_data);
 			FILE *f;
 			char buf[64] = {0};
 			sprintf(buf, XDAG_LOG_FILE);
@@ -198,21 +204,15 @@ int event_callback(void* thisObj, xdag_event *event)
 			break;
 		}
 
-		case event_id_passwd:
-		{
-			break;
-		}
-
-		case event_id_passwd_again:
-		{
-			break;
-		}
-
-		case event_id_random_key:
-		{
-			break;
-		}
-
+        case event_id_passwd:
+        case event_id_set_passwd:
+        case event_id_set_passwd_again:
+        case event_id_random_key:
+        {
+            input(event->event_id, event->event_data);
+            break;
+        }
+            
 		case event_id_state_change:
 		{
 			fprintf(stdout, "State changed %s\n", event->event_data);
@@ -222,18 +222,22 @@ int event_callback(void* thisObj, xdag_event *event)
 
 		default:
 		{
-			if(event->event_data) {
-				printf("%s\n", event->event_data);
-			}
 			break;
 		}
 	}
 	return 0;
 }
 
+
+
 int password_callback(const char *prompt, char *buf, unsigned len)
 {
-
+    /*
+     Password
+     Set password
+     Re-type password
+     Type random keys
+     */
 #if !defined(_WIN32) && !defined(_WIN64)
 	struct termios t[1];
 	int noecho = !!strstr(prompt, "assword");
@@ -255,6 +259,51 @@ int password_callback(const char *prompt, char *buf, unsigned len)
 #endif
 
 	return 0;
+}
+
+int input(xdag_event_id evt, xdag_wrapper_msg *msg)
+{
+#if !defined(_WIN32) && !defined(_WIN64)
+    /*
+     Password
+     Set password
+     Re-type password
+     Type random keys
+     */
+    struct termios t[1];
+    int noecho = 0;
+    if (evt == event_id_passwd) {
+        noecho = 1;
+        fprintf(stdout,"%s: ", "Password"); fflush(stdout);
+    } else if(evt == event_id_set_passwd) {
+        noecho = 1;
+        fprintf(stdout,"%s: ", "Set password"); fflush(stdout);
+    } else if(evt == event_id_set_passwd_again) {
+        noecho = 1;
+        fprintf(stdout,"%s: ", "Re-type password"); fflush(stdout);
+    } else if(evt == event_id_random_key) {
+        noecho = 0;
+        fprintf(stdout,"%s: ", "Type random keys"); fflush(stdout);
+    }
+    
+    if (noecho) {
+        tcgetattr(0, t);
+        t->c_lflag &= ~ECHO;
+        tcsetattr(0, TCSANOW, t);
+    }
+    
+    fgets(msg->msg, XDAG_WRAPPER_MSG_LEN, stdin);
+    
+    if (noecho) {
+        t->c_lflag |= ECHO;
+        tcsetattr(0, TCSANOW, t);
+        fprintf(stdout,"\n");
+    }
+    int len = (int)strlen(msg->msg);
+    if (len && msg->msg[len - 1] == '\n') msg->msg[len - 1] = 0;
+#endif
+    
+    return 0;
 }
 
 void printUsage(char* appName)

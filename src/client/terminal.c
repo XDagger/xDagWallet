@@ -93,7 +93,7 @@ int xdag_com_help(char *args)
 	processHelpCommand(&result);
 
 	if(result) {
-		xdag_wrapper_interact(result);
+        xdag_wrapper_event(event_id_log, error_none, result);
 		free(result);
 	}
 	return 0;
@@ -119,7 +119,7 @@ int xdag_command(char *cmd)
 	XDAG_COMMAND *command = find_xdag_command(cmd);
 
 	if(!command) {
-		xdag_wrapper_interact("Illegal command.\n");
+		xdag_wrapper_event(event_id_promot, error_none, "Illegal command.\n");
 	} else {
 		return (*(command->func))(nextParam);
 	}
@@ -137,7 +137,7 @@ int read_command(char *cmd)
 void startCommandProcessing(void)
 {
 	char cmd[XDAG_COMMAND_MAX];
-	xdag_wrapper_interact("Type command, help for example.\n");
+	xdag_wrapper_event(event_id_promot, error_none, "Type command, help for example.\n");
 
 	for(;;) {
 		read_command(cmd);

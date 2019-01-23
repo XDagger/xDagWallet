@@ -19,6 +19,7 @@
 #include "./utils/log.h"
 #include "errno.h"
 #include "common.h"
+#include "xdag_wrapper.h"
 
 #define KEYFILE	    "dnet_key.dat"
 #define PWDLEN	    64
@@ -50,29 +51,32 @@ struct dnet_session {
 
 static int g_keylen = 0;
 
-//static int input_password(const char *prompt, char *buf, unsigned len) {
-//	struct termios t[1];
-//	int noecho = !!strstr(prompt, "assword");
-//	printf("%s: ", prompt); fflush(stdout);
-//	if (noecho) {
-//		tcgetattr(0, t);
-//		t->c_lflag &= ~ECHO;
-//		tcsetattr(0, TCSANOW, t);
-//	}
-//	fgets(buf, len, stdin);
-//	if (noecho) {
-//		t->c_lflag |= ECHO;
-//		tcsetattr(0, TCSANOW, t);
-//		printf("\n");
-//	}
-//	len = (int)strlen(buf);
-//	if (len && buf[len - 1] == '\n') buf[len - 1] = 0;
-//	return 0;
-//}
+static int input_password(const char *prompt, char *buf, unsigned len) {
+    /*
+     Password
+     Set password
+     Re-type password
+     Type random keys
+     */
+    
+    xdag_wrapper_msg msg;
+    if (strcmp(prompt, "Password") == 0) {
+        xdag_wrapper_interact(event_id_passwd, &msg);
+    } else if (strcmp(prompt, "Set password") == 0) {
+        xdag_wrapper_interact(event_id_set_passwd, &msg);
+    } else if (strcmp(prompt, "Re-type password") == 0) {
+        xdag_wrapper_interact(event_id_set_passwd_again, &msg);
+    } else if (strcmp(prompt, "Type random keys") == 0) {
+        xdag_wrapper_interact(event_id_random_key, &msg);
+    }
+    
+    strncpy(buf, msg.msg, len);
+    return 0;
+}
 
-//static int(*g_input_password)(const char *prompt, char *buf, unsigned size) = &input_password;
+static int(*g_input_password)(const char *prompt, char *buf, unsigned size) = &input_password;
 
-static int(*g_input_password)(const char *prompt, char *buf, unsigned size) = NULL;
+//static int(*g_input_password)(const char *prompt, char *buf, unsigned size) = NULL;
 
 
 static void dnet_make_key(dfsrsa_t *key, int keylen) {
@@ -270,7 +274,7 @@ int dnet_crypt_init(const char *version) {
 			dfslib_utf8_string(&str1, pwd1, strlen(pwd1));
 			if (str.len != str1.len || memcmp(str.utf8, str1.utf8, str.len)) {
 				xdag_err(error_pwd_inconsistent, "Passwords differ.");
-				xdag_wrapper_interact("Passwords differ.\n");
+				xdag_wrapper_event(event_id_promot, error_none,"Passwords differ.\n");
 				return 4;
 			}
 			if (str.len) set_user_crypt(&str);
@@ -278,7 +282,7 @@ int dnet_crypt_init(const char *version) {
 		}
 
 		dfslib_random_fill(keys->pub.key, DNET_KEYLEN * sizeof(dfsrsa_t), 0, dfslib_utf8_string(&str, buf, strlen(buf)));
-		xdag_wrapper_interact("Generating host keys... ");
+		xdag_wrapper_event(event_id_promot, error_none, "Generating host keys... ");
 #ifdef __arm__
 		g_keylen = KEYLEN_MIN;
 #else
@@ -287,7 +291,7 @@ int dnet_crypt_init(const char *version) {
 		dfsrsa_keygen(keys->priv.key, keys->pub.key, g_keylen);
 		dnet_make_key(keys->priv.key, g_keylen);
 		dnet_make_key(keys->pub.key, g_keylen);
-		xdag_wrapper_interact("OK.\n");
+		xdag_wrapper_event(event_id_promot, error_none,"OK.\n");
 		if (g_dnet_user_crypt) for (i = 0; i < (sizeof(struct dnet_keys) >> 9); ++i)
 			dfslib_encrypt_sector(g_dnet_user_crypt, (uint32_t *)keys + 128 * i, ~(uint64_t)i);
 		if (fwrite(keys, sizeof(struct dnet_keys), 1, f) != 1) return 5;

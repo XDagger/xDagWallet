@@ -13,6 +13,11 @@
 #include "errno.h"
 #include "events.h"
 
+#define XDAG_WRAPPER_MSG_LEN 256
+typedef struct {
+    char msg[XDAG_WRAPPER_MSG_LEN];
+} xdag_wrapper_msg;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
