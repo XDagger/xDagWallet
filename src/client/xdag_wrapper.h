@@ -37,6 +37,7 @@ extern "C" {
     extern int xdag_wrapper_level(const char *level);
     extern int xdag_wrapper_state(void);
     extern int xdag_wrapper_exit(void);
+    extern int xdag_wrapper_help(void);
 
     extern int xdag_set_event_callback(xdag_event_callback_t callback);
     extern int xdag_wrapper_exit(void);
