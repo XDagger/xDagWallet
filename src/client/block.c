@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <pthread.h>
-#include <unistd.h>
 #include <math.h>
 #include "system.h"
 #include "../ldus/rbtree.h"
@@ -16,6 +15,12 @@
 #include "address.h"
 #include "commands.h"
 #include "utils/utils.h"
+
+#if defined(_WIN32) || defined(_WIN64)
+#include "../win/unistd.h"
+#else
+#include <unistd.h>
+#endif
 
 enum bi_flags {
 	BI_MAIN       = 0x01,
@@ -58,7 +63,6 @@ xdag_time_t g_xdag_era = XDAG_MAIN_ERA;
 static struct ldus_rbtree *root = 0;
 static struct block_internal *volatile top_main_chain = 0, *volatile pretop_main_chain = 0;
 static struct block_internal *ourfirst = 0, *ourlast = 0, *noref_first = 0, *noref_last = 0;
-static pthread_mutex_t block_mutex;
 //TODO: this variable duplicates existing global variable g_is_pool. Probably should be removed
 static int g_light_mode = 0;
 
@@ -673,25 +677,19 @@ static void *add_block_callback(void *block, void *data)
 	xdag_time_t *t = (xdag_time_t*)data;
 	int res;
 
-	pthread_mutex_lock(&block_mutex);
-
 	if(*t < XDAG_ERA) {
 		(res = add_block_nolock(b, *t));
 	} else if((res = add_block_nolock(b, 0)) >= 0 && b->field[0].time > *t) {
 		*t = b->field[0].time;
 	}
 
-	pthread_mutex_unlock(&block_mutex);
 	return 0;
 }
 
 /* checks and adds block to the storage. Returns non-zero value in case of error. */
 int xdag_add_block(struct xdag_block *b)
 {
-	pthread_mutex_lock(&block_mutex);
 	int res = add_block_nolock(b, time_limit);
-	pthread_mutex_unlock(&block_mutex);
-
 	return res;
 }
 
@@ -825,8 +823,6 @@ int xdag_create_block(struct xdag_field *fields, int inputsCount, int outputsCou
 /* start of regular block processing */
 int xdag_blocks_start(void)
 {
-	pthread_mutexattr_t attr;
-
 	if (g_xdag_testnet) {
 		g_xdag_era = XDAG_TEST_ERA;
 	} else {
@@ -835,16 +831,13 @@ int xdag_blocks_start(void)
 
 	g_light_mode = 1;
 
-	pthread_mutexattr_init(&attr);
-	pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
-	pthread_mutex_init(&block_mutex, &attr);
-
 	// loading block from the local storage
 	xdag_time_t t = XDAG_ERA;
+    xdag_time_t e = get_timestamp();
 	xdag_set_state(XDAG_STATE_LOAD);
 	xdag_mess("Loading blocks from local storage...");
 	uint64_t start = get_timestamp();
-	xdag_load_blocks(t, get_timestamp(), &t, &add_block_callback);
+	xdag_load_blocks(t, e, &t, &add_block_callback);
 	xdag_mess("Finish loading blocks, time cost %ldms", get_timestamp() - start);
 
 	return 0;
@@ -853,15 +846,11 @@ int xdag_blocks_start(void)
 /* returns our first block. If there is no blocks yet - the first block is created. */
 int xdag_get_our_block(xdag_hash_t hash)
 {
-	pthread_mutex_lock(&block_mutex);
 	struct block_internal *bi = ourfirst;
-	pthread_mutex_unlock(&block_mutex);
 
 	if (!bi) {
 		xdag_create_block(0, 0, 0, 0, 0, NULL);
-		pthread_mutex_lock(&block_mutex);
 		bi = ourfirst;
-		pthread_mutex_unlock(&block_mutex);
 		if (!bi) {
 			return -1;
 		}
@@ -876,15 +865,9 @@ int xdag_get_our_block(xdag_hash_t hash)
 int xdag_traverse_our_blocks(void *data, int (*callback)(void*, xdag_hash_t, xdag_amount_t, xdag_time_t, int))
 {
 	int res = 0;
-
-	pthread_mutex_lock(&block_mutex);
-
 	for (struct block_internal *bi = ourfirst; !res && bi; bi = bi->ournext) {
 		res = (*callback)(data, bi->hash, bi->amount, bi->time, bi->n_our_key);
 	}
-
-	pthread_mutex_unlock(&block_mutex);
-
 	return res;
 }
 
@@ -902,11 +885,9 @@ static void traverse_all_callback(struct ldus_rbtree *node)
 int xdag_traverse_all_blocks(void *data, int (*callback)(void *data, xdag_hash_t hash,
 	xdag_amount_t amount, xdag_time_t time))
 {
-	pthread_mutex_lock(&block_mutex);
 	g_traverse_callback = callback;
 	g_traverse_data = data;
 	ldus_rbtree_walk_right(root, traverse_all_callback);
-	pthread_mutex_unlock(&block_mutex);
 	return 0;
 }
 
@@ -917,9 +898,7 @@ xdag_amount_t xdag_get_balance(xdag_hash_t hash)
 		return g_balance;
 	}
 
-	pthread_mutex_lock(&block_mutex);
 	struct block_internal *bi = block_by_hash(hash);
-	pthread_mutex_unlock(&block_mutex);
 
 	if (!bi) {
 		return 0;
@@ -932,8 +911,6 @@ xdag_amount_t xdag_get_balance(xdag_hash_t hash)
 int xdag_set_balance(xdag_hash_t hash, xdag_amount_t balance)
 {
 	if (!hash) return -1;
-
-	pthread_mutex_lock(&block_mutex);
 
 	struct block_internal *bi = block_by_hash(hash);
 	if (bi->flags & BI_OURS && bi != ourfirst) {
@@ -960,8 +937,6 @@ int xdag_set_balance(xdag_hash_t hash, xdag_amount_t balance)
 
 		ourfirst = bi;
 	}
-
-	pthread_mutex_unlock(&block_mutex);
 
 	if (!bi) return -1;
 
@@ -994,9 +969,7 @@ int xdag_set_balance(xdag_hash_t hash, xdag_amount_t balance)
 // returns position and time of block by hash
 int64_t xdag_get_block_pos(const xdag_hash_t hash, xdag_time_t *t)
 {
-	pthread_mutex_lock(&block_mutex);
 	struct block_internal *bi = block_by_hash(hash);
-	pthread_mutex_unlock(&block_mutex);
 
 	if (!bi) {
 		return -1;
@@ -1010,10 +983,7 @@ int64_t xdag_get_block_pos(const xdag_hash_t hash, xdag_time_t *t)
 //returns a number of key by hash of block, or -1 if block is not ours
 int xdag_get_key(xdag_hash_t hash)
 {
-	pthread_mutex_lock(&block_mutex);
 	struct block_internal *bi = block_by_hash(hash);
-	pthread_mutex_unlock(&block_mutex);
-
 	if (!bi || !(bi->flags & BI_OURS)) {
 		return -1;
 	}
@@ -1024,12 +994,10 @@ int xdag_get_key(xdag_hash_t hash)
 /* reinitialization of block processing */
 int xdag_blocks_reset(void)
 {
-	pthread_mutex_lock(&block_mutex);
 	if (xdag_get_state() != XDAG_STATE_REST) {
 		xdag_crit(error_storage_corrupted, "The local storage is corrupted. Resetting blocks engine.");
 		xdag_set_state(XDAG_STATE_REST);
 	}
-	pthread_mutex_unlock(&block_mutex);
 
 	return 0;
 }
@@ -1042,7 +1010,6 @@ static void reset_callback(struct ldus_rbtree *node)
 /* cleanup blocks */
 int xdag_blocks_finish(void)
 {
-	pthread_mutex_lock(&block_mutex);
 	ldus_rbtree_walk_up(root, reset_callback);
 
 	root = 0;
@@ -1087,71 +1054,4 @@ static int32_t find_and_verify_signature_out(struct xdag_block* bref, struct xda
 		return 9;
 	}
 	return 0;
-}
-
-int xdag_get_transactions(xdag_hash_t hash, void *data, int (*callback)(void*, int, xdag_hash_t, xdag_amount_t, xdag_time_t))
-{
-	pthread_mutex_lock(&block_mutex);
-	struct block_internal *bi = block_by_hash(hash);
-	pthread_mutex_unlock(&block_mutex);
-	
-	if (!bi) {
-		return -1;
-	}
-	
-	int size = 0x10000; 
-	int n = 0;
-	struct block_internal **block_array = malloc(size * sizeof(struct block_internal *));
-	
-	if (!block_array) return -1;
-	
-	int i;
-	for (struct block_backrefs *br = bi->backrefs; br; br = br->next) {
-		for (i = N_BACKREFS; i && !br->backrefs[i - 1]; i--);
-		
-		if (!i) {
-			continue;
-		}
-		
-		if (n + i > size) {
-			size *= 2;
-			struct block_internal **tmp_array = realloc(block_array, size * sizeof(struct block_internal *));
-			if (!tmp_array) {
-				free(block_array);
-				return -1;
-			}
-			
-			block_array = tmp_array;
-		}
-		
-		memcpy(block_array + n, br->backrefs, i * sizeof(struct block_internal *));
-		n += i;
-	}
-	
-	if (!n) {
-		free(block_array);
-		return 0;
-	}
-	
-	qsort(block_array, n, sizeof(struct block_internal *), bi_compar);
-	
-	for (i = 0; i < n; ++i) {
-		if (!i || block_array[i] != block_array[i - 1]) {
-			struct block_internal *ri = block_array[i];
-			if (ri->flags & BI_APPLIED) {
-				for (int j = 0; j < ri->nlinks; j++) {
-					if(ri->link[j] == bi && ri->linkamount[j]) {
-						if(callback(data, 1 << j & ri->in_mask, ri->hash, ri->linkamount[j], ri->time)) {
-							free(block_array);
-							return 0;
-						}
-					}
-				}
-			}
-		}
-	}
-	
-	free(block_array);
-	
-	return n;
 }

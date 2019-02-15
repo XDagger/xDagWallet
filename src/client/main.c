@@ -1,9 +1,9 @@
 /* xdag main, T13.654-T13.895 $DVS:time$ */
 
-#include "init.h"
+#include "cli.h"
 
 int main(int argc, char **argv)
 {
-	xdag_init(argc, argv, 0);
+	xdag_cli_init(argc, argv);
 	return 0;
 }

@@ -44,5 +44,4 @@ typedef unsigned int		dfs32;
 typedef unsigned short		dfs16;
 typedef unsigned char		dfs8;
 
-
 #endif

@@ -1,39 +1,35 @@
 #ifndef _DAR_CRC_H_INCLUDED
 #define _DAR_CRC_H_INCLUDED
 
-/* h-файл библиотеки CRC, T4.046-T9.267; $DVS:time$ */
+/* CRC library h-file, T4.046-T9.267; $DVS:time$ */
 
-#ifdef __DuS__
-#define EXTERN extern "dar/crc_c.o"
-#else
 #include <stdio.h>
-#define EXTERN extern
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+    /* initialization of internal CRC table (with memory allocation) */
+    extern int crc_init(void);
+
+    /* constructing a table in an external array of 256 double words */
+	extern int crc_makeTable(unsigned table[256]);
+
+    /* add to the accumulated CRC new data contained in the array buf
+     len lengths; returns a new CRC; CRC initial value = 0 */
+    extern unsigned crc_addArray(unsigned char *buf, unsigned len, unsigned crc);
+
+    /* add to the accumulated CRC new data contained in file f, but not
+     more len bytes; returns a new CRC; CRC initial value = 0 */
+	extern unsigned crc_addFile	(FILE *f, unsigned len, unsigned crc);
+#ifdef __cplusplus
+};
 #endif
 
-/* инициализация внутренней таблицы CRC (с выделением памяти) */
-EXTERN int
-	crc_init	(void),
+/* calculate the CRC of the array */
+#define crc_of_array(buf,len)    crc_addArray(buf,len,0)
 
-/* построение таблицы во внешнем массиве длины 256 двойных слов */
-	crc_makeTable	(unsigned table[256]);
-
-
-EXTERN unsigned
-
-/* добавить к накопленному CRC новые данные, содержащиеся в массиве buf
-   длины len; возвращает новый CRC; начальное значение CRC=0 */
-	crc_addArray	(unsigned char *buf, unsigned len, unsigned crc),
-
-/* добавить к накопленному CRC новые данные, содержащиеся в файле f, но не
-   более len байт; возвращает новый CRC; начальное значение CRC=0 */
-	crc_addFile	(FILE *f, unsigned len, unsigned crc);
-
-/* подсчитать CRC массива */
-#define crc_of_array(buf,len)	crc_addArray(buf,len,0)
-
-/* подсчитать CRC файла */
-#define crc_of_file(f)		crc_addFile(f,-1,0)
-
-#undef EXTERN
+/* CRC file count */
+#define crc_of_file(f)        crc_addFile(f,-1,0)
 
 #endif

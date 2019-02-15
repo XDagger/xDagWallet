@@ -4,6 +4,18 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <pthread.h>
+
+#if defined(_WIN32) || defined(_WIN64)
+
+#include "../win/unistd.h"
+#include "../win/winsockx.h"
+#include <Winsock2.h>
+#include <ws2tcpip.h>
+#include <windows.h>
+// need link with Ws2_32.lib
+#pragma comment(lib, "Ws2_32.lib")
+
+#else
 #include <unistd.h>
 #include <sys/socket.h>
 #include <sys/ioctl.h>
@@ -11,6 +23,8 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include "system.h"
+
+#endif
 #include "../dus/dfslib_crypt.h"
 #include "../dus/crc.h"
 #include "crypt.h"
@@ -44,8 +58,7 @@
 time_t g_xdag_last_received = 0;
 pthread_t g_client_thread;
 
-
-struct xdag_pool_task g_xdag_pool_task[2];
+xdag_pool_task_t g_xdag_pool_task[2];
 uint64_t g_xdag_pool_task_index;
 
 struct dfslib_crypt *g_crypt;
@@ -82,29 +95,6 @@ static int crypt_start(void)
 	for(i = 0; i < 128; ++i) {
 		dfslib_crypt_set_sector0(g_crypt, sector0);
 		dfslib_encrypt_sector(g_crypt, sector0, SECTOR0_BASE + i * SECTOR0_OFFSET);
-	}
-
-	return 0;
-}
-
-/* pool_arg - pool parameters ip:port[:CFG] */
-int xdag_client_init(const char *pool_arg)
-{
-
-#if (defined __android__) || (defined __ios__) || (defined__stand_alone_lib__)
-
-#else
-	if(!!client_init()) {
-		return -1;
-	}
-#endif
-
-	printf("%s\n", pool_arg);
-	
-	int err = pthread_create(&g_client_thread, 0, client_thread, (void*)pool_arg);
-	if(err != 0) {
-		printf("create client_thread failed, error : %s\n", strerror(err));
-		return -1;
 	}
 
 	return 0;
@@ -176,20 +166,19 @@ static int send_to_pool(struct xdag_field *fld, int nfld)
 	return 0;
 }
 
-int client_init(void)
+static int client_init(void)
 {
 	memset(&g_xdag_stats, 0, sizeof(g_xdag_stats));
 	memset(&g_xdag_extstats, 0, sizeof(g_xdag_extstats));
 
-//	g_xdag_testnet = 1;
-//	if(g_xdag_testnet) {
-//		g_block_header_type = XDAG_FIELD_HEAD_TEST; //block header has the different type in the test network
-//	}
+    if(g_xdag_testnet) {
+        g_block_header_type = XDAG_FIELD_HEAD_TEST; //block header has the different type in the test network
+    }
 
 	xdag_mess("Starting xdag, version %s", XDAG_VERSION);
 	xdag_mess("Starting dnet transport...");
-	printf("Initialize...\n");
-	if (dnet_crypt_init(DNET_VERSION)) {
+
+    if (dnet_crypt_init(DNET_VERSION)) {
 		sleep(3);
 		xdag_wrapper_event(event_id_err_exit, error_pwd_incorrect, "Password incorrect.\n");
 		return -1;
@@ -224,8 +213,6 @@ int client_init(void)
 		return -1;
 	}
 
-	xdag_wrapper_event(event_id_err_exit, error_unknown, "unkown error\n");
-
 	//	if(is_rpc) {
 	//		xdag_mess("Initializing RPC service...");
 	//		if(!!xdag_rpc_service_init(rpc_port)) return -1;
@@ -242,7 +229,7 @@ int client_init(void)
 	}
 
 	if(crypt_start()) {
-		xdag_wrapper_event(event_id_err_exit, error_start_crypto, "crypt start failed.\n");
+		xdag_wrapper_event(event_id_err_exit, error_start_crypto, "Crypt start failed.\n");
 		return -1;
 	}
 
@@ -252,40 +239,51 @@ int client_init(void)
 static void client_thread_cleanup()
 {
 	xdag_debug("client thread clean up called ");
-	xdag_blocks_finish();
+    xdag_wallet_finish();
+    xdag_storage_finish();
+    xdag_blocks_finish();
 	xdag_debug(" work thread clean up finished ");
 }
 
-void *client_thread(void *arg)
+void *xdag_client_thread(void *arg)
 {
-	if(!arg) {
-		xdag_err(error_missing_param, "need pool arguments!");
-		return 0;
+    int oldcancelstate;
+    int oldcanceltype;
+    pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, &oldcancelstate);
+    pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, &oldcanceltype);
+    
+    pthread_cleanup_push(client_thread_cleanup, NULL);
+    
+    xdag_error_no err_no = error_none;
+    char *err_mess = NULL;
+    
+    int err = pthread_detach(pthread_self());
+    if(err != 0) {
+        err_no = error_unknown;
+        err_mess = "Detach xdag_client_thread failed.";
+        goto end;
+    }
+    
+    xdag_thread_param_t *param = (xdag_thread_param_t *)arg;
+	if(!param) {
+        err_no = error_missing_param;
+        err_mess = "Missing parameters.";
+        goto end;
 	}
+    
+	char pool_param[256];
+	strcpy(pool_param, param->pool_arg);
+    
+    g_xdag_testnet = param->testnet;
+    
+    xdag_mess("testnet %d", g_xdag_testnet);
 
-	const char *str = (const char*)arg;
-	char pool_param[0x100];
-	strcpy(pool_param, str);
-
-#if (defined __android__) || (defined __ios__) || (defined __stand_alone_lib__)
 	if(!!client_init()) {
-		return (void *)1;
-	}
-#else
-
-	int oldcancelstate;
-	int oldcanceltype;
-	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, &oldcancelstate);
-	pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, &oldcanceltype);
-
-	pthread_cleanup_push(client_thread_cleanup, NULL);
-
-	int err = pthread_detach(pthread_self());
-	if(err != 0) {
-		printf("detach client_thread failed, error : %s\n", strerror(err));
-		return 0;
-	}
-#endif
+        pthread_exit((void *)event_id_err_exit);
+        return 0;
+    } else {
+        xdag_wrapper_event(event_id_init_done, error_none, "");
+    }
 
 	xdag_mess("Initialize miner...");
 
@@ -319,29 +317,46 @@ begin:
 
 	const int64_t pos = xdag_get_block_pos(hash, &t);
 	if(pos < 0) {
-		xdag_err(error_block_not_found, "can't find the block");
-		goto err;
+        err_no = error_block_not_found;
+        err_mess = "Cann't find the block";
+        goto end;
 	}
-
+    
 	struct xdag_block *blk = xdag_storage_load(hash, t, pos, &b);
 	if(!blk) {
-		xdag_err(error_block_load_failed, "can't load the block");
-		goto end;
+        err_no = error_storage_load_faild;
+        err_mess = "Cann't load the block";
+        goto end;
 	}
 	if(blk != &b) {
 		memcpy(&b, blk, sizeof(struct xdag_block));
 	}
-
+    
 	// Create a socket
+#if defined(_WIN32) || defined(_WIN64)
+	WSADATA mainSdata;
+	if (WSAStartup(2.2, &mainSdata) == 0)
+	{
+		g_socket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, NULL);
+	}
+	else
+	{
+		g_socket = INVALID_SOCKET;
+	}
+#else
 	g_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+#endif
+	
 	if(g_socket == INVALID_SOCKET) {
-		xdag_err(error_socket_create, "cannot create a socket");
-		goto end;
+        err_no = error_socket_create;
+        err_mess = "Cann't create a socket.";
+        goto end;
 	}
+    
 	if(fcntl(g_socket, F_SETFD, FD_CLOEXEC) == -1) {
-		xdag_err(error_socket_create, "pool  : can't set FD_CLOEXEC flag on socket %d, %s\n", g_socket, strerror(errno));
+		xdag_err(error_socket_create, "pool  : Cann't set FD_CLOEXEC flag on socket %d, %s\n", g_socket, strerror(errno));
 	}
-
+    
 	// Fill in the address of server
 	memset(&peeraddr, 0, sizeof(peeraddr));
 	peeraddr.sin_family = AF_INET;
@@ -349,17 +364,27 @@ begin:
 	// Resolve the server address (convert from symbolic name to IP number)
 	const char *s = strtok_r(pool_arg, " \t\r\n:", &lasts);
 	if(!s) {
-		xdag_err(error_missing_param, "host is not given");
-		goto end;
+        err_no = error_missing_param;
+        err_mess = "Host is not given.";
+        goto end;
 	}
+    
 	if(!strcmp(s, "any")) {
 		peeraddr.sin_addr.s_addr = htonl(INADDR_ANY);
-	} else if(!inet_aton(s, &peeraddr.sin_addr)) {
+	} else if(
+#if defined(_WIN64)
+		!inet_pton(AF_INET, s, &peeraddr.sin_addr)
+#elif defined(_WIN32)
+		!inet_pton_32(AF_INET, s, &peeraddr.sin_addr)
+#else
+		!inet_aton(s, &peeraddr.sin_addr)
+#endif
+		) {
 		struct hostent *host = gethostbyname(s);
 		if(host == NULL || host->h_addr_list[0] == NULL) {
-			xdag_err(error_socket_resolve_host, "cannot resolve host %s", s);
-			res = h_errno;
-			goto end;
+            err_no = error_socket_resolve_host;
+            err_mess = "Cann't resolve host.";
+            goto end;
 		}
 		// Write resolved IP address of a server to the address structure
 		memmove(&peeraddr.sin_addr.s_addr, host->h_addr_list[0], 4);
@@ -368,46 +393,46 @@ begin:
 	// Resolve port
 	s = strtok_r(0, " \t\r\n:", &lasts);
 	if(!s) {
-		xdag_err(error_missing_param, "port is not given");
-		goto end;
+        err_no = error_missing_param;
+        err_mess = "Port is not given.";
+        goto end;
 	}
+    
 	peeraddr.sin_port = htons(atoi(s));
 
 	// Set the "LINGER" timeout to zero, to close the listen socket
 	// immediately at program termination.
 	setsockopt(g_socket, SOL_SOCKET, SO_LINGER, (char*)&linger_opt, sizeof(linger_opt));
 	setsockopt(g_socket, SOL_SOCKET, SO_REUSEADDR, (char*)&reuseaddr, sizeof(int));
-
+    
+    xdag_set_state(g_xdag_testnet ? XDAG_STATE_TTST : XDAG_STATE_TRYP);
+    
 	// Now, connect to a pool
 	res = connect(g_socket, (struct sockaddr*)&peeraddr, sizeof(peeraddr));
 	if(res) {
-		xdag_err(error_socket_connect, "cannot connect to the pool");
-//		g_xdag_state = g_xdag_testnet ? XDAG_STATE_TTST : XDAG_STATE_TRYP;
+		xdag_err(error_socket_connect, "Cann't connect to the pool");
 		xdag_set_state(g_xdag_testnet ? XDAG_STATE_TTST : XDAG_STATE_TRYP);
 		goto err;
 	}
 
 	if(send_to_pool(b.field, XDAG_BLOCK_FIELDS) < 0) {
-		xdag_err(error_socket_closed, "socket is closed");
-//		g_xdag_state = g_xdag_testnet ? XDAG_STATE_TTST : XDAG_STATE_TRYP;
+		xdag_err(error_socket_closed, "Socket is closed");
 		xdag_set_state(g_xdag_testnet ? XDAG_STATE_TTST : XDAG_STATE_TRYP);
 		goto err;
 	}
-
+    
 	for(;;) {
 		if(get_timestamp() - t > 1024) {
 			t = get_timestamp();
 			if (xdag_get_state() == XDAG_STATE_REST) {
-				xdag_err(error_block_load_failed, "block reset!!!");
+				xdag_err(error_block_load_failed, "Block reset!!!");
 			} else {
 				if (t > (g_xdag_last_received << 10) && t - (g_xdag_last_received << 10) > 3 * MAIN_CHAIN_PERIOD) {
-//					g_xdag_state = g_xdag_testnet ? XDAG_STATE_TTST : XDAG_STATE_TRYP;
 					xdag_set_state(g_xdag_testnet ? XDAG_STATE_TTST : XDAG_STATE_TRYP);
 				} else {
 					if (t - (g_xdag_xfer_last << 10) <= 2 * MAIN_CHAIN_PERIOD + 4) {
 						xdag_set_state(XDAG_STATE_XFER);
 					} else {
-//						g_xdag_state = g_xdag_testnet ? XDAG_STATE_PTST : XDAG_STATE_POOL;
 						xdag_set_state(g_xdag_testnet ? XDAG_STATE_PTST : XDAG_STATE_POOL);
 					}
 				}
@@ -424,22 +449,12 @@ begin:
 		p.fd = g_socket;
 		time_t current_time = time(0);
 		p.events = POLLIN | (can_send_share(current_time, task_time, share_time) ? POLLOUT : 0);
-
+        
 		if(!poll(&p, 1, 0)) {
 			sleep(1);
 			continue;
 		}
-
-		if(p.revents & POLLHUP) {
-			xdag_err(error_socket_hangup, "socket hangup");
-			goto err;
-		}
-
-		if(p.revents & POLLERR) {
-			xdag_err(error_socket_err, "socket error");
-			goto err;
-		}
-
+        
 		if(p.revents & POLLIN) {
 			res = (int)read(g_socket, (uint8_t*)data + ndata, maxndata - ndata);
 			if(res < 0) {
@@ -462,7 +477,7 @@ begin:
 					maxndata = sizeof(struct xdag_field);
 				} else if(maxndata == 2 * sizeof(struct xdag_field)) {
 					const uint64_t task_index = g_xdag_pool_task_index + 1;
-					struct xdag_pool_task *task = &g_xdag_pool_task[task_index & 1];
+                    xdag_pool_task_t *task = &g_xdag_pool_task[task_index & 1];
 
 					task->task_time = xdag_main_time();
 					xdag_hash_set_state(task->ctx, data[0].data,
@@ -488,11 +503,9 @@ begin:
 					maxndata = 2 * sizeof(struct xdag_field);
 				}
 			}
-		}
-
-		if(p.revents & POLLOUT) {
+		} else if(p.revents & POLLOUT) {
 			const uint64_t task_index = g_xdag_pool_task_index;
-			struct xdag_pool_task *task = &g_xdag_pool_task[task_index & 1];
+            xdag_pool_task_t *task = &g_xdag_pool_task[task_index & 1];
 			uint64_t *h = task->minhash.data;
 
 			share_time = time(0);
@@ -505,11 +518,18 @@ begin:
 				xdag_err(error_socket_write, "write error on socket");
 				goto err;
 			}
-		}
+        } else {
+            if(p.revents & POLLHUP) {
+                xdag_err(error_socket_hangup, "socket hangup");
+                goto err;
+            }
+            
+            if(p.revents & POLLERR) {
+                xdag_err(error_socket_err, "socket error");
+                goto err;
+            }
+        }
 	}
-
-	pthread_cleanup_pop(0);
-	return 0;
 
 err:
 	if(g_socket != INVALID_SOCKET) {
@@ -524,7 +544,14 @@ end:
 		close(g_socket);
 		g_socket = INVALID_SOCKET;
 	}
-	return 0;
+    
+    if (err_no != error_none || err_mess != NULL) {
+        xdag_wrapper_event(event_id_err_exit, err_no, err_mess);
+    }
+    
+    pthread_cleanup_pop(0);
+    pthread_exit(0);
+    return 0;
 }
 
 /* send block to network via pool */

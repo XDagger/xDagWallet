@@ -14,8 +14,17 @@
 #include "system.h"
 #include "errno.h"
 #include "events.h"
+#include "xdag_wrapper.h"
 
 #define COINNAME "XDAG"
+
+// This is for timeval redefinition issue for pthread
+#define HAVE_STRUCT_TIMESPEC
+
+// This is to disable security warning from Visual C++
+#ifdef _MSC_VER
+#define _CRT_SECURE_NO_WARNINGS
+#endif
 
 enum xdag_states
 {
@@ -84,9 +93,9 @@ extern "C" {
 	/* see dnet_user_crypt_action */
 	extern int xdag_user_crypt_action(unsigned *data, unsigned long long data_id, unsigned size, int action);
 
-	extern int xdag_wrapper_log(int level, xdag_error_no err, const char *data);
-	extern int xdag_wrapper_interact(const char *data);
-	extern int xdag_wrapper_event(xdag_event_id event_id, xdag_error_no err, const char *data);
+	extern int xdag_wrapper_log(int level, xdag_error_no err, const char *msg);
+	extern int xdag_wrapper_event(xdag_event_id event_id, xdag_error_no err, const char *msg);
+    extern int xdag_wrapper_interact(xdag_event_id event_id, xdag_wrapper_msg *data);
 #ifdef __cplusplus
 }
 #endif

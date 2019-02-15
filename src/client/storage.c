@@ -2,12 +2,17 @@
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
-#include <unistd.h>
 #include "storage.h"
 #include "common.h"
 #include "hash.h"
 #include "utils/log.h"
 #include "utils/utils.h"
+
+#if defined(_WIN32) || defined(_WIN64)
+#include "../win/unistd.h"
+#else
+#include <unistd.h>
+#endif
 
 #define STORAGE_DIR0            "storage%s"
 #define STORAGE_DIR0_ARGS(t)    (g_xdag_testnet ? "-testnet" : "")
@@ -20,8 +25,6 @@
 #define STORAGE_FILE            STORAGE_DIR3 DELIMITER "%02x.dat"
 #define STORAGE_FILE_ARGS(t)    STORAGE_DIR3_ARGS(t), (int)((t) >> 16) & 0xff
 #define SUMS_FILE               "sums.dat"
-
-static pthread_mutex_t storage_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 static int correct_storage_sum(const char *path, int pos, const struct xdag_storage_sum *sum, int add)
 {
@@ -38,7 +41,7 @@ static int correct_storage_sum(const char *path, int pos, const struct xdag_stor
 	} else {
 		f = xdag_open_file(path, "wb");
 		if (!f) {
-			xdag_err(error_storage_create_file,"Storage: can't create file %s", path);
+			xdag_err(error_storage_create_file,"Storage: Cann't create file %s", path);
 			return -1;
 		}
 		memset(sums, 0, sizeof(sums));
@@ -60,7 +63,7 @@ static int correct_storage_sum(const char *path, int pos, const struct xdag_stor
 	
 	if (fwrite(sums, sizeof(struct xdag_storage_sum), 256, f) != 256) {
 		xdag_close_file(f);
-		xdag_err(error_storage_write_file,"Storage: can't write file %s", path); return -1;
+		xdag_err(error_storage_write_file,"Storage: Cann't write file %s", path); return -1;
 	}
 	
 	xdag_close_file(f);
@@ -111,9 +114,7 @@ int64_t xdag_storage_save(const struct xdag_block *b)
 	xdag_mkdir(path);
 	
 	sprintf(path, STORAGE_FILE, STORAGE_FILE_ARGS(b->field[0].time));
-	
-	pthread_mutex_lock(&storage_mutex);
-	
+		
 	FILE *f = xdag_open_file(path, "ab");
 	if (f) {
 		fseek(f, 0, SEEK_END);
@@ -133,8 +134,6 @@ int64_t xdag_storage_save(const struct xdag_block *b)
 	} else {
 		res = -1;
 	}
-
-	pthread_mutex_unlock(&storage_mutex);
 	
 	return res;
 }
@@ -146,8 +145,6 @@ struct xdag_block *xdag_storage_load(xdag_hash_t hash, xdag_time_t time, uint64_
 	char path[256];
 
 	sprintf(path, STORAGE_FILE, STORAGE_FILE_ARGS(time));
-
-	pthread_mutex_lock(&storage_mutex);
 	
 	FILE *f = xdag_open_file(path, "rb");
 	if (f) {
@@ -158,8 +155,6 @@ struct xdag_block *xdag_storage_load(xdag_hash_t hash, xdag_time_t time, uint64_
 	} else {
 		buf = 0;
 	}
-
-	pthread_mutex_unlock(&storage_mutex);
 	
 	if (buf) {
 		xdag_hash(buf, sizeof(struct xdag_block), hash0);
@@ -175,7 +170,7 @@ struct xdag_block *xdag_storage_load(xdag_hash_t hash, xdag_time_t time, uint64_
 	return buf;
 }
 
-#define bufsize (0x100000 / sizeof(struct xdag_block))
+#define bufsize (0x1000 / sizeof(struct xdag_block)) /* the original size is (0x100000 / sizeof(struct xdag_block)), but not suitable for mobile devices and MacOS */
 
 static int sort_callback(const void *l, const void *r)
 {
@@ -201,8 +196,6 @@ uint64_t xdag_load_blocks(xdag_time_t start_time, xdag_time_t end_time, void *da
 
 	while (start_time < end_time) {
 		sprintf(path, STORAGE_FILE, STORAGE_FILE_ARGS(start_time));
-
-		pthread_mutex_lock(&storage_mutex);
 		
 		FILE *f = xdag_open_file(path, "rb");
 		if (f) {
@@ -212,9 +205,7 @@ uint64_t xdag_load_blocks(xdag_time_t start_time, xdag_time_t end_time, void *da
 		} else {
 			todo = 0;
 		}
-		
-		pthread_mutex_unlock(&storage_mutex);
-		
+				
 		uint64_t pos0 = pos;
 
 		for (i = k = 0; i < todo; ++i, pos += sizeof(struct xdag_block)) {
@@ -241,12 +232,8 @@ uint64_t xdag_load_blocks(xdag_time_t start_time, xdag_time_t end_time, void *da
 
 		if (todo != bufsize) {
 			if (f) {
-				pthread_mutex_lock(&storage_mutex);
-				
 				int res = correct_storage_sums(start_time, &s, 0);
-				
-				pthread_mutex_unlock(&storage_mutex);
-				
+								
 				if (res) break;
 				
 				s.size = s.sum = 0;
@@ -319,5 +306,5 @@ int xdag_load_sums(xdag_time_t start_time, xdag_time_t end_time, struct xdag_sto
 /* completes work with the storage */
 void xdag_storage_finish(void)
 {
-	pthread_mutex_lock(&storage_mutex);
+    
 }

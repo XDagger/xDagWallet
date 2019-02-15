@@ -13,10 +13,13 @@
 #include "errno.h"
 
 typedef enum {
+    event_id_init_done,
+    event_id_promot,
 	event_id_log,
 	event_id_interact,
-//	event_id_err,
+    event_id_err,
 	event_id_err_exit,
+    event_id_exit,
 
 	// command result
 	event_id_account_done,
@@ -28,7 +31,8 @@ typedef enum {
 	event_id_exit_done,
 
 	event_id_passwd,
-	event_id_passwd_again,
+    event_id_set_passwd,
+	event_id_set_passwd_again,
 	event_id_random_key,
 	event_id_state_change
 } xdag_event_id;
