@@ -17,13 +17,13 @@ typedef struct {
     int testnet;
 } xdag_thread_param_t;
 
-extern pthread_t g_client_thread;
 extern int g_xdag_client_running;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 	
+	extern pthread_t g_client_thread;
 	extern struct dfslib_crypt *g_crypt;
 
 	/* client main thread */
