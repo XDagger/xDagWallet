@@ -50,7 +50,7 @@ int xdag_log(int level, int err, char* file, int line, const char *format, ...)
 
 	int pos = 0;
 	char buffer[4096] = {0};
-	pos += sprintf(buffer, "[%012llx][%.4s][%s] %s:%d  ", (long long)pthread_self(), lvl + 4 * level, tbuf, xdag_filename(file), line);
+	pos += sprintf(buffer, "[%012llx][%.4s][%s] %s:%d  ", (long long)(pthread_self()).p, lvl + 4 * level, tbuf, xdag_filename(file), line);
 	
 	va_start(arg, format);
 	pos = vsprintf(buffer + pos, format, arg);
