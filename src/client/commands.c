@@ -118,7 +118,7 @@ xdag_error_no processLevelCommand(const char *level, char **out)
 	}
 }
 
-xdag_error_no processXferCommand(const char *amount, const char *address, char **out)
+xdag_error_no processXferCommand(const char *amount, const char *address, const char *remark, char **out)
 {
 	if(!amount) {
 		*out = strdup("Xfer: amount not given.");
@@ -127,6 +127,10 @@ xdag_error_no processXferCommand(const char *amount, const char *address, char *
 	if(!address) {
 		*out = strdup("Xfer: destination address not given.");
 		return error_xfer_no_address;
+	}
+	if (!remark) {
+		*out = strdup("Xfer: remark not given.");
+		return error_xfer_no_remark;
 	}
 	if(xdag_user_crypt_action(0, 0, 0, 3)) {
 		sleep(3);

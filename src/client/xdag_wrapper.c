@@ -56,10 +56,10 @@ int xdag_wrapper_init_client(const char *args)
 	return 0;
 }
 
-int xdag_wrapper_xfer(const char *amount, const char *to)
+int xdag_wrapper_xfer(const char *amount, const char *to, const char *remark)
 {
 	char *result = NULL;
-	int err = processXferCommand(amount, to, &result);
+	int err = processXferCommand(amount, to, remark, &result);
 
 	if(err != error_none) {
 		xdag_wrapper_event(event_id_promot, err, result);
