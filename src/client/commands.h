@@ -21,7 +21,7 @@ extern "C" {
 	extern xdag_error_no processExitCommand(void);
 	extern xdag_error_no processHelpCommand(char **out);
 
-	extern xdag_error_no xdag_do_xfer(const char *amount, const char *address, char **out);
+	extern xdag_error_no xdag_do_xfer(const char *amount, const char *address, const char *remark, char **out);
 
 	extern void xdag_log_xfer(xdag_hash_t from, xdag_hash_t to, xdag_amount_t amount);
     
