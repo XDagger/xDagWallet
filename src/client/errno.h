@@ -54,6 +54,8 @@ typedef enum {
 	error_xfer_no_amount			= 0x3005,
 	error_xfer_not_ready			= 0x3006,
 	error_xfer_make_failed			= 0x3007,
+	error_xfer_no_remark			= 0x3008,
+	error_xfer_incorrect_remark		= 0x3009,
 
 	// block
 	error_block_create				= 0x4001,

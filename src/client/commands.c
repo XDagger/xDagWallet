@@ -7,6 +7,7 @@
 #include "address.h"
 #include "wallet.h"
 #include "utils/log.h"
+#include "utils/utils.h"
 #include "client.h"
 #include "crypt.h"
 #include "client.h"
@@ -17,7 +18,7 @@
 #include <unistd.h>
 #endif
 
-#define Nfields(d) (2 + d->fieldsCount + 3 * d->keysCount + 2 * d->outsig)
+#define Nfields(d) (2 + d->hasRemark + d->fieldsCount + 3 * d->keysCount + 2 * d->outsig)
 
 struct account_callback_data {
 	char out[128];
@@ -28,8 +29,9 @@ struct xfer_callback_data {
 	struct xdag_field fields[XFER_MAX_IN + 1];
 	int keys[XFER_MAX_IN + 1];
 	xdag_amount_t todo, done, remains;
-	int fieldsCount, keysCount, outsig;
+	int fieldsCount, keysCount, outsig, hasRemark;
 	xdag_hash_t transactionBlockHash;
+	xdag_remark_t remark;
 };
 
 // Function declarations
@@ -118,7 +120,7 @@ xdag_error_no processLevelCommand(const char *level, char **out)
 	}
 }
 
-xdag_error_no processXferCommand(const char *amount, const char *address, char **out)
+xdag_error_no processXferCommand(const char *amount, const char *address, const char *remark, char **out)
 {
 	if(!amount) {
 		*out = strdup("Xfer: amount not given.");
@@ -128,12 +130,16 @@ xdag_error_no processXferCommand(const char *amount, const char *address, char *
 		*out = strdup("Xfer: destination address not given.");
 		return error_xfer_no_address;
 	}
+	if (!remark) {
+		*out = strdup("Xfer: remark not given.");
+		return error_xfer_no_remark;
+	}
 	if(xdag_user_crypt_action(0, 0, 0, 3)) {
 		sleep(3);
 		*out = strdup("Password incorrect.");
 		return error_pwd_incorrect;
 	} else {
-		return xdag_do_xfer(amount, address, out);
+		return xdag_do_xfer(amount, address, remark, out);
 	}
 }
 
@@ -151,7 +157,12 @@ static int make_transaction_block(struct xfer_callback_data *xferData)
 		memcpy(xferData->fields + xferData->fieldsCount, xferData->fields + XFER_MAX_IN, sizeof(xdag_hashlow_t));
 	}
 	xferData->fields[xferData->fieldsCount].amount = xferData->todo;
-	int res = xdag_create_block(xferData->fields, xferData->fieldsCount, 1, 0, 0, xferData->transactionBlockHash);
+
+	if(xferData->hasRemark) {
+		memcpy(xferData->fields + xferData->fieldsCount + xferData->hasRemark, xferData->remark, sizeof(xdag_remark_t));
+	}
+
+	int res = xdag_create_block(xferData->fields, xferData->fieldsCount, 1, xferData->hasRemark, 0, 0, xferData->transactionBlockHash);
 	if(res) {
 		xdag_hash2address(xferData->fields[xferData->fieldsCount].hash, address);
 		xdag_err(error_block_create, "FAILED: to %s xfer %.9Lf %s, error %d",
@@ -166,7 +177,7 @@ static int make_transaction_block(struct xfer_callback_data *xferData)
 	return 0;
 }
 
-xdag_error_no xdag_do_xfer(const char *amount, const char *address, char **out)
+xdag_error_no xdag_do_xfer(const char *amount, const char *address, const char *remark, char **out)
 {
 	char address_buf[33];
 	char result[256] = {0};
@@ -188,6 +199,20 @@ xdag_error_no xdag_do_xfer(const char *amount, const char *address, char **out)
 		*out = strdup("Xfer: incorrect address.");
 		return error_xfer_incorrect_address;
 	}
+#if REMARK_ENABLED
+	if (remark) {
+		if (!validate_remark(remark)) {
+			if (out) {
+				fprintf(out, "Xfer: transaction remark exceeds max length 32 chars or is invalid ascii.\n");
+			}
+			return error_xfer_incorrect_remark;
+		}
+		else {
+			memcpy(xfer.remark, remark, strlen(remark));
+			xfer.hasRemark = 1;
+		}
+	}
+#endif
 
 	xdag_wallet_default_key(&xfer.keys[XFER_MAX_IN]);
 	xfer.outsig = 1;

@@ -29,10 +29,42 @@ enum xdag_field_type {
 	XDAG_FIELD_SIGN_OUT,     //5
 	XDAG_FIELD_PUBLIC_KEY_0, //6
 	XDAG_FIELD_PUBLIC_KEY_1, //7
-	XDAG_FIELD_HEAD_TEST     //8
+	XDAG_FIELD_HEAD_TEST,    //8
+	XDAG_FIELD_REMARK,       //9
+	XDAG_FIELD_RESERVE1,     //A
+	XDAG_FIELD_RESERVE2,     //B
+	XDAG_FIELD_RESERVE3,     //C
+	XDAG_FIELD_RESERVE4,     //D
+	XDAG_FIELD_RESERVE5,     //E
+	XDAG_FIELD_RESERVE6      //F
+};
+
+enum xdag_message_type {
+	XDAG_MESSAGE_BLOCKS_REQUEST,
+	XDAG_MESSAGE_BLOCKS_REPLY,
+	XDAG_MESSAGE_SUMS_REQUEST,
+	XDAG_MESSAGE_SUMS_REPLY,
+	XDAG_MESSAGE_BLOCKEXT_REQUEST,
+	XDAG_MESSAGE_BLOCKEXT_REPLY,
+	XDAG_MESSAGE_BLOCK_REQUEST,
+};
+
+enum bi_flags {
+	BI_MAIN = 0x01,
+	BI_MAIN_CHAIN = 0x02,
+	BI_APPLIED = 0x04,
+	BI_MAIN_REF = 0x08,
+	BI_REF = 0x10,
+	BI_OURS = 0x20,
+	BI_EXTRA = 0x40,
+	BI_REMARK = 0x80
 };
 
 #define XDAG_BLOCK_FIELDS 16
+
+#define REMARK_ENABLED 1
+
+typedef uint8_t xdag_remark_t[32];
 
 struct xdag_field {
 	union {
@@ -51,6 +83,7 @@ struct xdag_field {
 			};
 		};
 		xdag_hash_t data;
+		xdag_remark_t remark;
 	};
 };
 
@@ -80,7 +113,7 @@ extern "C" {
 	extern int xdag_traverse_all_blocks(void *data,int (*callback)(void *data, xdag_hash_t hash, xdag_amount_t amount, xdag_time_t time));
 
 	// create and publish a block
-	extern int xdag_create_block(struct xdag_field *fields, int inputsCount, int outputsCount, xdag_amount_t fee,
+	extern int xdag_create_block(struct xdag_field *fields, int inputsCount, int outputsCount, int hasRemark, xdag_amount_t fee,
 		xdag_time_t send_time, xdag_hash_t newBlockHashResult);
 
 	// returns current balance for specified address or balance for all addresses if hash == 0
