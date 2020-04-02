@@ -44,7 +44,8 @@ extern "C" {
 	// convert time_t to string representation
 	// minimal length of string buffer `buf` should be 50
 	void time_to_string(time_t time, char* buf);
-
+	size_t validate_remark(const char *str);
+	size_t validate_ascii_safe(const char *str, size_t maxsize);
 
 #ifdef __cplusplus
 };

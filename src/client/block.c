@@ -22,15 +22,6 @@
 #include <unistd.h>
 #endif
 
-enum bi_flags {
-	BI_MAIN       = 0x01,
-	BI_MAIN_CHAIN = 0x02,
-	BI_APPLIED    = 0x04,
-	BI_MAIN_REF   = 0x08,
-	BI_REF        = 0x10,
-	BI_OURS       = 0x20,
-};
-
 struct block_backrefs;
 
 struct block_internal {
@@ -377,9 +368,10 @@ static int add_block_nolock(struct xdag_block *newBlock, xdag_time_t limit)
 	int keysCount = 0, ourKeysCount = 0;
 	int signInCount = 0, signOutCount = 0;
 	int signinmask = 0, signoutmask = 0;
-	int inmask = 0, outmask = 0;
-	int verified_keys_mask = 0, err, type;
-	struct block_internal tmpNodeBlock, *blockRef, *blockRef0;
+	int inmask = 0, outmask = 0, remark_index = 0;
+	int verified_keys_mask = 0, err = 0, type = 0;
+	struct block_internal tmpNodeBlock, *blockRef = NULL, *blockRef0 = NULL;
+	struct block_internal* blockRefs[XDAG_BLOCK_FIELDS-1]= {0};
 	xdag_diff_t diff0, diff;
 
 	memset(&tmpNodeBlock, 0, sizeof(struct block_internal));
@@ -432,6 +424,18 @@ static int add_block_nolock(struct xdag_block *newBlock, xdag_time_t limit)
 				if((public_keys[keysCount].key = xdag_public_to_key(newBlock->field[i].data, type - XDAG_FIELD_PUBLIC_KEY_0))) {
 					public_keys[keysCount++].pub = (uint64_t*)((uintptr_t)&newBlock->field[i].data | (type - XDAG_FIELD_PUBLIC_KEY_0));
 				}
+				break;
+
+			case XDAG_FIELD_REMARK:
+				tmpNodeBlock.flags |= BI_REMARK;
+				remark_index = i;
+				break;
+			case XDAG_FIELD_RESERVE1:
+			case XDAG_FIELD_RESERVE2:
+			case XDAG_FIELD_RESERVE3:
+			case XDAG_FIELD_RESERVE4:
+			case XDAG_FIELD_RESERVE5:
+			case XDAG_FIELD_RESERVE6:
 				break;
 			default:
 				err = 3;
@@ -705,7 +709,7 @@ int xdag_add_block(struct xdag_block *b)
  * in the following 'noutput' fields similarly - outputs, fee; send_time (time of sending the block);
  * if it is greater than the current one, then the mining is performed to generate the most optimal hash
  */
-int xdag_create_block(struct xdag_field *fields, int inputsCount, int outputsCount, xdag_amount_t fee,
+int xdag_create_block(struct xdag_field *fields, int inputsCount, int outputsCount, int hasRemark, xdag_amount_t fee,
 	xdag_time_t send_time, xdag_hash_t newBlockHashResult)
 {
 	struct xdag_block block[2];
@@ -731,7 +735,7 @@ int xdag_create_block(struct xdag_field *fields, int inputsCount, int outputsCou
 		}
 	}
 
-	int res0 = 1 + inputsCount + outputsCount + 3 * nkeysnum + (outsigkeyind < 0 ? 2 : 0);
+	int res0 = 1 + inputsCount + outputsCount + hasRemark + 3 * nkeysnum + (outsigkeyind < 0 ? 2 : 0);
 
 	if (res0 > XDAG_BLOCK_FIELDS) {
 		return -1;
@@ -777,7 +781,11 @@ int xdag_create_block(struct xdag_field *fields, int inputsCount, int outputsCou
 	}
 
 	for (j = 0; j < outputsCount; ++j) {
-		setfld(XDAG_FIELD_OUT, fields + inputsCount + j, xdag_hash_t);
+		setfld(XDAG_FIELD_OUT, fields + inputsCount + j, xdag_hash_t);	
+	}
+
+	if (hasRemark) {
+		setfld(XDAG_FIELD_REMARK, fields + inputsCount + outputsCount, xdag_remark_t);
 	}
 
 	for (j = 0; j < nkeysnum; ++j) {
@@ -849,7 +857,7 @@ int xdag_get_our_block(xdag_hash_t hash)
 	struct block_internal *bi = ourfirst;
 
 	if (!bi) {
-		xdag_create_block(0, 0, 0, 0, 0, NULL);
+		xdag_create_block(0, 0, 0, 0, 0, 0, NULL);
 		bi = ourfirst;
 		if (!bi) {
 			return -1;

@@ -64,8 +64,9 @@ int xdag_com_xfer(char *args)
 {
 	char *amount = strtok_r(args, " \t\r\n", &args);
 	char *address = strtok_r(0, " \t\r\n", &args);
+	char *remark = strtok_r(0, " \t\r\n", &args);
 
-	return xdag_wrapper_xfer(amount, address);
+	return xdag_wrapper_xfer(amount, address, remark);
 }
 
 int xdag_com_level(char *args)

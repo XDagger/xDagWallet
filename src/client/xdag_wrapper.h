@@ -30,7 +30,7 @@ extern "C" {
     extern int xdag_wrapper_init(void* thisObj, xdag_password_callback_t password, xdag_event_callback_t event);
     extern int xdag_wrapper_init_client(const char *args);
 
-    extern int xdag_wrapper_xfer(const char *amount, const char *to);
+    extern int xdag_wrapper_xfer(const char *amount, const char *to, const char *remark);
     extern int xdag_wrapper_account(void);
     extern int xdag_wrapper_address(void);
     extern int xdag_wrapper_balance(void);
